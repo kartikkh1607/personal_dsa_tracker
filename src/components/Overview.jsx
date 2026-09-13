@@ -1,211 +1,257 @@
-import { topicName } from '../constants.js'
-import { DifficultyLabel, TierBadge } from './QuestionControls.jsx'
+import { DIFFICULTIES, DIFFICULTY_BAR, DIFFICULTY_TEXT, topicName } from '../constants.js'
+import { ProblemRow } from './ProblemList.jsx'
+import { DifficultyPill, PhaseBadge, ProgressBar } from './QuestionControls.jsx'
+import { ArrowRightIcon, BookmarkIcon, CalendarIcon, CheckIcon, FlameIcon } from './icons.jsx'
 
-const MINUTES_PER_PROBLEM = 15
-const RING_RADIUS = 34
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS
+const CARD = 'rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] sm:p-6'
 
-function ProgressRing({ percent }) {
+function greeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
+function Chip({ icon, children }) {
   return (
-    <div className="relative h-24 w-24 shrink-0" role="img" aria-label={`${percent}% of the Core track complete`}>
-      <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
-        <circle cx="40" cy="40" r={RING_RADIUS} fill="none" stroke="#e2e8f0" strokeWidth="7" />
-        <circle
-          cx="40"
-          cy="40"
-          r={RING_RADIUS}
-          fill="none"
-          stroke="#4f46e5"
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeDasharray={RING_CIRCUMFERENCE}
-          strokeDashoffset={RING_CIRCUMFERENCE * (1 - percent / 100)}
-          className="transition-[stroke-dashoffset] duration-500"
-        />
-      </svg>
-      <span className="absolute inset-0 grid place-items-center text-lg font-semibold tabular-nums text-slate-900">{percent}%</span>
-    </div>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-subtle px-2.5 py-1 text-xs font-medium text-ink-2">
+      {icon}
+      {children}
+    </span>
   )
 }
 
-function QueueLine({ item, index, onOpen }) {
-  const { question } = item
+function ProgressCard({ stats }) {
   return (
-    <li>
-      <button
-        type="button"
-        onClick={() => onOpen(question.id)}
-        className="group flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left transition-colors hover:bg-slate-50"
-      >
-        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-semibold tabular-nums text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-700">
-          {index + 1}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-slate-800 group-hover:text-indigo-700">{question.problem}</span>
-          <span className="mt-0.5 block truncate text-xs text-slate-500">
-            {topicName(question.topic)} · {item.label}
-          </span>
-        </span>
-        <span className="hidden sm:inline-flex">
-          <TierBadge tier={question.tier} />
-        </span>
-        <DifficultyLabel difficulty={question.difficulty} />
-      </button>
-    </li>
-  )
-}
+    <section className={CARD} aria-labelledby="progress-heading">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="progress-heading" className="text-sm font-medium text-ink-2">
+            Problems solved
+          </h2>
+          <p className="mt-1 flex items-baseline gap-1.5">
+            <span className="text-4xl font-semibold tabular-nums tracking-tight text-ink">{stats.solved}</span>
+            <span className="text-lg tabular-nums text-ink-3">/ {stats.total}</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Chip icon={<FlameIcon className="h-3.5 w-3.5 text-medium" />}>
+            {stats.streak > 0 ? `${stats.streak}-day streak` : 'Solve one today to start a streak'}
+          </Chip>
+          <Chip icon={<CalendarIcon className="h-3.5 w-3.5 text-ink-3" />}>{stats.thisWeek} this week</Chip>
+        </div>
+      </div>
 
-function PhaseLine({ item, isCurrent, onSelect }) {
-  const percent = item.coreTotal ? Math.round((item.coreDone / item.coreTotal) * 100) : 0
-  const complete = item.coreTotal > 0 && item.coreDone === item.coreTotal
+      <ProgressBar value={stats.solved} total={stats.total} label="Overall progress" className="mt-5 h-2" />
 
-  return (
-    <li>
-      <button
-        type="button"
-        onClick={() => onSelect(item.phase)}
-        aria-current={isCurrent ? 'step' : undefined}
-        className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-slate-50"
-      >
-        <span
-          className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold ${
-            complete ? 'bg-emerald-100 text-emerald-700' : isCurrent ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
-          }`}
-        >
-          {complete ? '✓' : item.phase}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="flex items-baseline justify-between gap-2">
-            <span className={`truncate text-sm font-medium group-hover:text-indigo-700 ${isCurrent ? 'text-slate-900' : 'text-slate-600'}`}>{item.name}</span>
-            <span className="shrink-0 text-xs tabular-nums text-slate-500">
-              {item.coreDone}/{item.coreTotal}
-            </span>
-          </span>
-          <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-            <span className={`block h-full rounded-full ${complete ? 'bg-emerald-500' : 'bg-indigo-500'}`} style={{ width: `${percent}%` }} />
-          </span>
-        </span>
-      </button>
-    </li>
-  )
-}
-
-function Stat({ label, value }) {
-  return (
-    <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
-      <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-900">{value}</dd>
-    </div>
-  )
-}
-
-const CARD_CLASS = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6'
-
-export default function Overview({ metrics, queue, onStartSession, onBrowseProblems, onSelectPhase, onOpenQuestion }) {
-  const isNew = metrics.done === 0 && metrics.attempted === 0 && metrics.review === 0
-  const hasCarryOver = queue.some((item) => item.priority < 3)
-  const currentPhase = metrics.phaseStats.find((phase) => phase.coreDone < phase.coreTotal)
-
-  return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">{isNew ? 'Let’s get started' : 'Welcome back'}</h1>
-        <p className="mt-1.5 text-sm text-slate-500 sm:text-base">
-          {isNew
-            ? `Start with the Core track: ${metrics.coreTotal} problems that cover every pattern, in ${metrics.phaseStats.length} phases.`
-            : currentPhase
-              ? `You’re in Phase ${currentPhase.phase}, ${currentPhase.name}. Here’s what to work on next.`
-              : `The Core track is done. Time for Depth practice on your weaker patterns.`}
-        </p>
-      </header>
-
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-3">
-        <section className={`${CARD_CLASS} min-w-0 lg:col-span-2`} aria-labelledby="session-heading">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h2 id="session-heading" className="text-base font-semibold text-slate-900">
-                Today’s session
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {queue.length > 0
-                  ? `${queue.length} ${queue.length === 1 ? 'problem' : 'problems'} · about ${queue.length * MINUTES_PER_PROBLEM} minutes`
-                  : 'Nothing queued right now'}
-              </p>
+      <dl className="mt-6 grid grid-cols-3 gap-4 sm:gap-6">
+        {DIFFICULTIES.map((level) => {
+          const counts = stats.difficulties[level]
+          return (
+            <div key={level}>
+              <dt className={`text-xs font-semibold ${DIFFICULTY_TEXT[level]}`}>{level}</dt>
+              <dd className="mt-1 text-sm tabular-nums text-ink-3">
+                <span className="font-semibold text-ink">{counts.solved}</span> / {counts.total}
+              </dd>
+              <ProgressBar value={counts.solved} total={counts.total} className="mt-2 h-1" barClassName={DIFFICULTY_BAR[level]} />
             </div>
-            {queue.length > 0 && (
-              <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                {hasCarryOver ? 'Revision first' : queue[0].label}
-              </span>
-            )}
-          </div>
+          )
+        })}
+      </dl>
+    </section>
+  )
+}
 
-          {queue.length > 0 ? (
-            <ol className="-mx-2 mt-4 divide-y divide-slate-100">
-              {queue.map((item, index) => (
-                <QueueLine key={item.question.id} item={item} index={index} onOpen={onOpenQuestion} />
-              ))}
-            </ol>
-          ) : (
-            <div className="mt-6 rounded-xl bg-emerald-50 px-4 py-6 text-center">
-              <p className="font-medium text-emerald-800">You’re all caught up.</p>
-              <p className="mt-1 text-sm text-emerald-700/80">Every problem is solved with solid confidence. Great work.</p>
-            </div>
-          )}
+function UpNextCard({ upNext, progress, onSolve, onToggleBookmark, onOpenQuestion, onBrowse }) {
+  return (
+    <section className={CARD} aria-labelledby="up-next-heading">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 id="up-next-heading" className="text-base font-semibold text-ink">
+            Up next
+          </h2>
+          <p className="mt-0.5 text-sm text-ink-3">Core problems first, in study order. Tick each one when it’s done.</p>
+        </div>
+        <button type="button" onClick={onBrowse} className="shrink-0 rounded-md text-sm font-medium text-brand-strong hover:underline">
+          All problems
+        </button>
+      </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-5">
-            {queue.length > 0 && (
+      {upNext.length > 0 ? (
+        <ul className="-mx-5 mt-4 divide-y divide-line/70 border-t border-line sm:-mx-6">
+          {upNext.map((question) => (
+            <ProblemRow
+              key={question.id}
+              question={question}
+              solved={false}
+              bookmarked={progress[question.id]?.bookmarked === true}
+              link={progress[question.id]?.link ?? question.link}
+              meta={`${topicName(question.topic)} · ${question.pattern}`}
+              onToggleSolved={onSolve}
+              onToggleBookmark={onToggleBookmark}
+              onOpen={onOpenQuestion}
+            />
+          ))}
+        </ul>
+      ) : (
+        <div className="mt-5 rounded-xl bg-brand-soft px-4 py-8 text-center">
+          <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-brand text-brand-contrast">
+            <CheckIcon className="h-5 w-5" />
+          </span>
+          <p className="mt-3 font-semibold text-ink">Every problem is solved</p>
+          <p className="mt-1 text-sm text-ink-2">Revisit your saved problems to keep them fresh.</p>
+        </div>
+      )}
+    </section>
+  )
+}
+
+function StudyPlanCard({ phaseStats, currentPhase, onSelectPhase }) {
+  return (
+    <section className={CARD} aria-labelledby="plan-heading">
+      <h2 id="plan-heading" className="text-base font-semibold text-ink">
+        Study plan
+      </h2>
+      <p className="mt-0.5 text-sm text-ink-3">Six phases, in order. Each builds on the last.</p>
+      <ol className="-mx-2 mt-4 space-y-0.5">
+        {phaseStats.map((phase) => {
+          const current = phase.phase === currentPhase
+          return (
+            <li key={phase.phase}>
               <button
                 type="button"
-                onClick={onStartSession}
-                className="inline-flex h-10 items-center gap-2 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
+                onClick={() => onSelectPhase(phase.phase)}
+                aria-current={current ? 'step' : undefined}
+                className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-subtle/70"
               >
-                Start session
-                <span aria-hidden="true">→</span>
+                <PhaseBadge number={phase.phase} complete={phase.solved === phase.total} current={current} />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className={`truncate text-sm group-hover:text-ink ${current ? 'font-semibold text-ink' : 'font-medium text-ink-2'}`}>
+                      {phase.name}
+                    </span>
+                    <span className="shrink-0 text-xs tabular-nums text-ink-3">
+                      {phase.solved}/{phase.total}
+                    </span>
+                  </span>
+                  <ProgressBar value={phase.solved} total={phase.total} className="mt-1.5 h-1" />
+                </span>
               </button>
-            )}
-            <button
-              type="button"
-              onClick={onBrowseProblems}
-              className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              Browse all problems
-            </button>
-          </div>
-        </section>
+            </li>
+          )
+        })}
+      </ol>
+    </section>
+  )
+}
 
-        <div className="flex min-w-0 flex-col gap-6">
-          <section className={CARD_CLASS} aria-label="Progress">
-            <div className="flex items-center gap-5">
-              <ProgressRing percent={metrics.corePercent} />
-              <div>
-                <p className="text-2xl font-semibold tabular-nums tracking-tight text-slate-900">
-                  {metrics.coreDone}
-                  <span className="text-base font-normal text-slate-400">/{metrics.coreTotal}</span>
-                </p>
-                <p className="text-sm text-slate-500">Core problems solved</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  {metrics.done} of {metrics.total} overall
-                </p>
-              </div>
-            </div>
-            <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-slate-100 pt-5">
-              <Stat label="In progress" value={metrics.attempted} />
-              <Stat label="To review" value={metrics.review} />
-              <Stat label="Confidence" value={metrics.averageConfidence ? `${metrics.averageConfidence}/5` : '—'} />
-            </dl>
-          </section>
+function SavedCard({ savedPreview, savedCount, progress, onOpenQuestion, onShowSaved }) {
+  return (
+    <section className={CARD} aria-labelledby="saved-heading">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 id="saved-heading" className="text-base font-semibold text-ink">
+            Saved for revision
+          </h2>
+          <p className="mt-0.5 text-sm text-ink-3">{savedCount > 0 ? `${savedCount} saved` : 'Nothing saved yet'}</p>
+        </div>
+        {savedCount > 0 && (
+          <button type="button" onClick={onShowSaved} className="shrink-0 rounded-md text-sm font-medium text-brand-strong hover:underline">
+            See all
+          </button>
+        )}
+      </div>
 
-          <section className={CARD_CLASS} aria-labelledby="plan-heading">
-            <h2 id="plan-heading" className="text-base font-semibold text-slate-900">
-              Study plan
-            </h2>
-            <p className="mt-1 text-sm text-slate-500">Core problems by phase. Go in order: each phase builds on the last.</p>
-            <ol className="-mx-2 mt-3">
-              {metrics.phaseStats.map((phase) => (
-                <PhaseLine key={phase.phase} item={phase} isCurrent={phase === currentPhase} onSelect={onSelectPhase} />
-              ))}
-            </ol>
-          </section>
+      {savedPreview.length > 0 ? (
+        <ul className="-mx-5 mt-4 divide-y divide-line/70 border-t border-line sm:-mx-6">
+          {savedPreview.map((question) => (
+            <li key={question.id}>
+              <button
+                type="button"
+                onClick={() => onOpenQuestion(question.id)}
+                className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6"
+              >
+                <BookmarkIcon filled className="h-4 w-4 shrink-0 text-mark" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                  <span className="block truncate text-xs text-ink-3">{topicName(question.topic)}</span>
+                </span>
+                {progress[question.id]?.solved && <CheckIcon className="h-4 w-4 shrink-0 text-brand" />}
+                <DifficultyPill difficulty={question.difficulty} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-4 rounded-xl border border-dashed border-line px-4 py-5 text-center text-sm leading-6 text-ink-3">
+          Tap the <BookmarkIcon className="inline h-3.5 w-3.5 align-[-2px]" /> on a tricky problem and it will wait for you here.
+        </p>
+      )}
+    </section>
+  )
+}
+
+export default function Overview({
+  stats,
+  upNext,
+  savedPreview,
+  currentPhase,
+  progress,
+  onSolve,
+  onToggleBookmark,
+  onOpenQuestion,
+  onContinue,
+  onSelectPhase,
+  onShowSaved,
+  onBrowse,
+}) {
+  const isNew = stats.solved === 0
+
+  let headline = 'You finished the sheet'
+  let subline = 'Every problem is solved. Keep your saved problems fresh.'
+  if (isNew) {
+    headline = 'Let’s start your DSA sheet'
+    subline = `${stats.total} problems in ${stats.phaseStats.length} phases. Begin with Phase 1 and tick problems off as you solve them.`
+  } else if (currentPhase) {
+    headline = `Phase ${currentPhase.phase}: ${currentPhase.name}`
+    subline = `${currentPhase.solved} of ${currentPhase.total} solved in this phase. Keep going.`
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-ink-3">{greeting()}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{headline}</h1>
+          <p className="mt-1.5 max-w-xl text-sm text-ink-2 sm:text-base">{subline}</p>
+        </div>
+        {upNext.length > 0 && (
+          <button
+            type="button"
+            onClick={onContinue}
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-brand px-5 text-sm font-semibold text-brand-contrast shadow-sm transition-colors hover:bg-brand-strong"
+          >
+            {isNew ? 'Start practicing' : 'Continue practicing'}
+            <ArrowRightIcon />
+          </button>
+        )}
+      </header>
+
+      <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-3">
+        <div className="flex min-w-0 flex-col gap-5 lg:col-span-2">
+          <ProgressCard stats={stats} />
+          <UpNextCard
+            upNext={upNext}
+            progress={progress}
+            onSolve={onSolve}
+            onToggleBookmark={onToggleBookmark}
+            onOpenQuestion={onOpenQuestion}
+            onBrowse={onBrowse}
+          />
+        </div>
+        <div className="flex min-w-0 flex-col gap-5">
+          <StudyPlanCard phaseStats={stats.phaseStats} currentPhase={currentPhase?.phase} onSelectPhase={onSelectPhase} />
+          <SavedCard savedPreview={savedPreview} savedCount={stats.saved} progress={progress} onOpenQuestion={onOpenQuestion} onShowSaved={onShowSaved} />
         </div>
       </div>
     </div>

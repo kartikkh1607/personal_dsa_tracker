@@ -3,25 +3,87 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light palette: warm neutrals, one green for progress, and one hue per
+     difficulty. Text tokens keep at least 4.5:1 contrast on the surface. */
+  :root {
+    color-scheme: light;
+    --canvas: 248 248 247;
+    --surface: 255 255 255;
+    --subtle: 241 241 239;
+    --line: 229 229 226;
+    --ink: 23 23 22;
+    --ink-2: 82 82 78;
+    --ink-3: 113 113 108;
+    --brand: 4 120 87;
+    --brand-strong: 6 95 70;
+    --brand-soft: 230 246 239;
+    --brand-contrast: 255 255 255;
+    --easy: 15 118 110;
+    --medium: 180 83 9;
+    --hard: 190 18 60;
+    --mark: 124 58 237;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --canvas: 12 12 11;
+    --surface: 22 22 21;
+    --subtle: 35 35 33;
+    --line: 46 46 43;
+    --ink: 240 240 237;
+    --ink-2: 190 190 184;
+    --ink-3: 142 142 136;
+    --brand: 52 211 153;
+    --brand-strong: 110 231 183;
+    --brand-soft: 16 52 40;
+    --brand-contrast: 3 32 22;
+    --easy: 45 212 191;
+    --medium: 251 191 36;
+    --hard: 251 113 133;
+    --mark: 167 139 250;
+  }
+
+  /* Follow the system setting unless the user picked a theme explicitly. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      color-scheme: dark;
+      --canvas: 12 12 11;
+      --surface: 22 22 21;
+      --subtle: 35 35 33;
+      --line: 46 46 43;
+      --ink: 240 240 237;
+      --ink-2: 190 190 184;
+      --ink-3: 142 142 136;
+      --brand: 52 211 153;
+      --brand-strong: 110 231 183;
+      --brand-soft: 16 52 40;
+      --brand-contrast: 3 32 22;
+      --easy: 45 212 191;
+      --medium: 251 191 36;
+      --hard: 251 113 133;
+      --mark: 167 139 250;
+    }
+  }
+
   body {
-    background: #f8fafc;
+    background: rgb(var(--canvas));
+    color: rgb(var(--ink));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   /* Keyboard focus stays obvious; mouse clicks don't leave a ring behind. */
   :focus-visible {
-    outline: 2px solid #4f46e5;
+    outline: 2px solid rgb(var(--brand));
     outline-offset: 2px;
   }
 
   ::selection {
-    background: #c7d2fe;
-    color: #1e1b4b;
+    background: rgb(var(--brand) / 0.22);
   }
 
   * {
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-color: rgb(var(--line)) transparent;
     scrollbar-width: thin;
   }
 

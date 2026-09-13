@@ -1,121 +1,117 @@
-import { CONFIDENCE_LEVELS, DIFFICULTY_STYLES, STATUS_STYLES, STATUSES, TIER_STYLES } from '../constants.js'
+import { DIFFICULTY_PILL } from '../constants.js'
+import { BookmarkIcon, CheckIcon, ExternalIcon, SearchIcon } from './icons.jsx'
 
-export function DifficultyLabel({ difficulty }) {
-  const style = DIFFICULTY_STYLES[difficulty]
+// The one way to record progress: a round tick. The button is larger than the
+// circle (negative margin keeps layout tight) so it's easy to hit on touch.
+export function SolvedCheck({ solved, problem, onToggle }) {
   return (
-    <span className={`inline-flex shrink-0 items-center gap-1.5 text-xs font-medium ${style.text}`}>
-      <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={solved}
+      aria-label={`Solved: ${problem}`}
+      title={solved ? 'Solved. Click to undo' : 'Mark as solved'}
+      onClick={onToggle}
+      className="group/check -m-2 grid h-10 w-10 shrink-0 place-items-center rounded-full"
+    >
+      <span
+        className={`grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] transition-[background-color,border-color,color,transform] duration-200 group-active/check:scale-90 ${
+          solved
+            ? 'border-brand bg-brand text-brand-contrast'
+            : 'border-ink-3/50 bg-surface text-transparent group-hover/check:border-brand group-hover/check:text-brand/50'
+        }`}
+      >
+        <CheckIcon className="h-3 w-3" strokeWidth={2.6} />
+      </span>
+    </button>
+  )
+}
+
+export function BookmarkButton({ bookmarked, problem, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={bookmarked}
+      aria-label={`Save for revision: ${problem}`}
+      title={bookmarked ? 'Saved for revision. Click to remove' : 'Save for revision'}
+      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-colors hover:bg-subtle ${
+        bookmarked ? 'text-mark' : 'text-ink-3/60 hover:text-ink'
+      }`}
+    >
+      <BookmarkIcon filled={bookmarked} />
+    </button>
+  )
+}
+
+export function DifficultyPill({ difficulty }) {
+  return (
+    <span className={`inline-flex h-5 shrink-0 items-center rounded-md px-1.5 text-[11px] font-semibold ${DIFFICULTY_PILL[difficulty]}`}>
       {difficulty}
     </span>
   )
 }
 
-export function TierBadge({ tier }) {
-  return (
-    <span
-      title={`${tier} tier`}
-      className={`inline-flex shrink-0 items-center rounded px-1.5 py-px text-[11px] font-medium ring-1 ring-inset ${TIER_STYLES[tier]}`}
-    >
-      {tier}
-    </span>
-  )
-}
+// Unverified entries (GeeksforGeeks IDs change over time) open a web search
+// instead of the problem page, and say so.
+export function ProblemLink({ href, verified, platform, problem, variant = 'row', className = '' }) {
+  const action = verified ? `Open on ${platform}` : `Search ${platform}`
+  const icon = verified ? <ExternalIcon /> : <SearchIcon />
 
-// Unverified entries (GeeksforGeeks IDs change over time) link to a web search
-// instead of the problem page, so the button says so.
-export function LinkButton({ link, problem, label, verified = true, prominent = false }) {
-  const text = label ?? (prominent ? (verified ? 'Open problem' : 'Find problem') : 'Open')
+  if (variant === 'primary') {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-semibold text-brand-contrast shadow-sm transition-colors hover:bg-brand-strong ${className}`}
+      >
+        {action}
+        {icon}
+      </a>
+    )
+  }
 
   return (
     <a
-      href={link}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      title={verified ? `Open ${problem} in a new tab` : `Search the web for ${problem}`}
-      onClick={(event) => event.stopPropagation()}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg border font-medium transition-colors ${
-        prominent
-          ? 'border-indigo-600 bg-indigo-600 px-4 py-2.5 text-sm text-white shadow-sm hover:bg-indigo-700'
-          : 'border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700'
-      }`}
+      aria-label={`${action}: ${problem}`}
+      title={action}
+      className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
     >
-      {text}
-      {verified ? (
-        <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-          <path d="M4.5 2h5.5v5.5M10 2 4 8M8 10H2V4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 14 14" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <circle cx="6" cy="6" r="4" />
-          <path d="M9 9l3.5 3.5" strokeLinecap="round" />
-        </svg>
-      )}
+      <span className="hidden lg:inline">{platform}</span>
+      {icon}
     </a>
   )
 }
 
-export function StatusSelect({ id, problem, status, onChange }) {
+export function ProgressBar({ value, total, label, className = 'h-1.5', barClassName = 'bg-brand' }) {
+  const percent = total ? (value / total) * 100 : 0
+  const a11y = label
+    ? { role: 'progressbar', 'aria-label': label, 'aria-valuemin': 0, 'aria-valuemax': total, 'aria-valuenow': value }
+    : { 'aria-hidden': true }
+
   return (
-    <span
-      onClick={(event) => event.stopPropagation()}
-      className={`relative inline-flex shrink-0 items-center rounded-full border font-medium transition-colors focus-within:ring-2 focus-within:ring-indigo-500/40 ${STATUS_STYLES[status]}`}
-    >
-      <select
-        value={status}
-        onChange={(event) => onChange(id, 'status', event.target.value)}
-        aria-label={`Status for ${problem}`}
-        className="cursor-pointer appearance-none bg-transparent py-1 pl-3 pr-7 text-xs font-medium focus:outline-none"
-      >
-        {STATUSES.map((option) => (
-          <option key={option} value={option} className="bg-white text-slate-900">
-            {option}
-          </option>
-        ))}
-      </select>
-      <svg
-        viewBox="0 0 12 12"
-        className="pointer-events-none absolute right-2.5 h-2.5 w-2.5 opacity-70"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        aria-hidden="true"
-      >
-        <path d="M3 4.5 6 7.5 9 4.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </span>
+    <div className={`overflow-hidden rounded-full bg-subtle ${className}`} {...a11y}>
+      <div className={`h-full rounded-full transition-[width] duration-500 ${barClassName}`} style={{ width: `${percent}%` }} />
+    </div>
   )
 }
 
-// A 1-5 rating, blank by default. Clicking the active dot clears it. Each dot
-// sits in a larger button so it is still easy to hit on touch screens.
-export function ConfidenceDots({ id, problem, confidence, onChange }) {
-  const value = Number(confidence) || 0
-
+export function PhaseBadge({ number, complete, current }) {
   return (
-    <span className="inline-flex shrink-0 items-center" role="group" aria-label={`Confidence for ${problem}`} onClick={(event) => event.stopPropagation()}>
-      {CONFIDENCE_LEVELS.map((level) => {
-        const filled = Number(level) <= value
-        const isActive = value === Number(level)
-        return (
-          <button
-            key={level}
-            type="button"
-            aria-label={`Confidence ${level} of 5`}
-            aria-pressed={isActive}
-            title={isActive ? 'Click to clear' : `Confidence ${level} of 5`}
-            onClick={() => onChange(id, 'confidence', isActive ? '' : level)}
-            className="group/dot grid h-6 w-5 place-items-center rounded-full"
-          >
-            <span
-              className={`h-3 w-3 rounded-full border transition-[transform,border-color,background-color] duration-150 group-active/dot:scale-90 ${
-                filled
-                  ? 'border-indigo-500 bg-indigo-500'
-                  : 'border-slate-300 bg-white group-hover/dot:border-indigo-400 group-hover/dot:bg-indigo-100'
-              }`}
-            />
-          </button>
-        )
-      })}
+    <span
+      className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold tabular-nums ${
+        complete
+          ? 'bg-brand text-brand-contrast'
+          : current
+            ? 'bg-brand-soft text-brand-strong ring-1 ring-inset ring-brand/40'
+            : 'bg-subtle text-ink-3'
+      }`}
+    >
+      {complete ? <CheckIcon className="h-3 w-3" strokeWidth={2.6} /> : number}
     </span>
   )
 }

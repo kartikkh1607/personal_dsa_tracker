@@ -1,72 +1,48 @@
-import { DIFFICULTIES, STATUSES, TIERS } from '../constants.js'
+import { DIFFICULTIES } from '../constants.js'
+import { ProgressBar } from './QuestionControls.jsx'
+import { SearchIcon } from './icons.jsx'
 
 export const ALL = 'All'
 
-export const FOCUS_MODES = [
+export const SHOW_OPTIONS = [
   { value: 'all', label: 'All' },
-  { value: 'unsolved', label: 'Unsolved' },
-  { value: 'review', label: 'Needs review' },
+  { value: 'unsolved', label: 'To do' },
+  { value: 'solved', label: 'Solved' },
+  { value: 'saved', label: 'Saved' },
 ]
-
-export const SORT_OPTIONS = [
-  { value: 'sheet', label: 'Sheet order' },
-  { value: 'difficulty', label: 'Easiest first' },
-  { value: 'confidence', label: 'Lowest confidence' },
-  { value: 'name', label: 'Name (A–Z)' },
-]
-
-const SELECT_CLASS =
-  'h-9 rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-sm text-slate-700 transition-colors hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20'
 
 export default function Filters({
+  eyebrow,
   title,
   solvedCount,
-  topicTotal,
-  tier,
-  onTierChange,
-  difficulty,
-  onDifficultyChange,
-  status,
-  onStatusChange,
+  total,
   search,
   onSearchChange,
   searchInputRef,
-  focusMode,
-  onFocusModeChange,
-  sortBy,
-  onSortByChange,
-  visibleCount,
+  show,
+  onShowChange,
+  difficulty,
+  onDifficultyChange,
+  coreOnly,
+  onCoreOnlyChange,
   isFiltered,
   onClearFilters,
 }) {
   return (
-    <div className="shrink-0 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <div className="flex items-baseline gap-2.5">
-          <h1 className="text-lg font-semibold tracking-tight text-slate-900">{title}</h1>
-          <span className="text-sm tabular-nums text-slate-500" aria-live="polite">
-            {visibleCount} {visibleCount === 1 ? 'problem' : 'problems'}
-          </span>
-        </div>
-        <p className="text-sm text-slate-500">
-          <span className="font-medium tabular-nums text-slate-900">{solvedCount}</span> of{' '}
-          <span className="tabular-nums">{topicTotal}</span> solved
+    <div className="shrink-0 border-b border-line bg-surface px-5 pb-4 pt-5 sm:px-6">
+      <p className="text-xs font-medium text-ink-3">{eyebrow}</p>
+      <div className="mt-0.5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+        <h1 className="text-xl font-semibold tracking-tight text-ink">{title}</h1>
+        <p className="text-sm text-ink-3">
+          <span className="font-semibold tabular-nums text-ink">{solvedCount}</span>
+          <span className="tabular-nums"> / {total}</span> solved
         </p>
       </div>
+      <ProgressBar value={solvedCount} total={total} label={`${title} progress`} className="mt-3 h-1.5" />
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <div className="relative w-full sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:flex-1">
-          <svg
-            viewBox="0 0 14 14"
-            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            aria-hidden="true"
-          >
-            <circle cx="6" cy="6" r="4" />
-            <path d="M9 9l3.5 3.5" strokeLinecap="round" />
-          </svg>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="relative w-full sm:w-auto sm:min-w-[11rem] sm:max-w-xs sm:flex-1">
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-3" />
           <input
             ref={searchInputRef}
             type="search"
@@ -74,44 +50,40 @@ export default function Filters({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search problems"
             aria-label="Search problems or patterns"
-            className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 text-sm text-slate-700 transition-colors placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="h-9 w-full rounded-lg border border-line bg-canvas pl-9 pr-9 text-sm text-ink transition-colors placeholder:text-ink-3 hover:border-ink-3/40 focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20"
           />
           {search === '' && (
-            <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-slate-200 bg-slate-50 px-1.5 font-sans text-[11px] text-slate-400 sm:block">
+            <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-line bg-surface px-1.5 font-sans text-[11px] text-ink-3 sm:block">
               /
             </kbd>
           )}
         </div>
 
-        <div className="inline-flex h-9 items-center rounded-lg bg-slate-100 p-1" role="group" aria-label="Show">
-          {FOCUS_MODES.map((mode) => {
-            const active = focusMode === mode.value
+        <div role="group" aria-label="Show" className="grid h-9 w-full grid-cols-4 items-center rounded-lg bg-subtle p-1 sm:inline-grid sm:w-auto">
+          {SHOW_OPTIONS.map((option) => {
+            const active = show === option.value
             return (
               <button
-                key={mode.value}
+                key={option.value}
                 type="button"
-                onClick={() => onFocusModeChange(mode.value)}
+                onClick={() => onShowChange(option.value)}
                 aria-pressed={active}
                 className={`h-7 rounded-md px-3 text-sm font-medium transition-colors ${
-                  active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  active ? 'bg-surface text-ink shadow-sm' : 'text-ink-3 hover:text-ink'
                 }`}
               >
-                {mode.label}
+                {option.label}
               </button>
             )
           })}
         </div>
 
-        <select value={tier} onChange={(event) => onTierChange(event.target.value)} aria-label="Filter by tier" className={SELECT_CLASS}>
-          <option value={ALL}>Any tier</option>
-          {TIERS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-
-        <select value={difficulty} onChange={(event) => onDifficultyChange(event.target.value)} aria-label="Filter by difficulty" className={SELECT_CLASS}>
+        <select
+          value={difficulty}
+          onChange={(event) => onDifficultyChange(event.target.value)}
+          aria-label="Filter by difficulty"
+          className="h-9 rounded-lg border border-line bg-surface pl-3 pr-8 text-sm text-ink-2 transition-colors hover:border-ink-3/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+        >
           <option value={ALL}>Any difficulty</option>
           {DIFFICULTIES.map((option) => (
             <option key={option} value={option}>
@@ -120,30 +92,29 @@ export default function Filters({
           ))}
         </select>
 
-        <select value={status} onChange={(event) => onStatusChange(event.target.value)} aria-label="Filter by status" className={SELECT_CLASS}>
-          <option value={ALL}>Any status</option>
-          {STATUSES.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-
-        <select value={sortBy} onChange={(event) => onSortByChange(event.target.value)} aria-label="Sort problems" className={SELECT_CLASS}>
-          {SORT_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={coreOnly}
+          onClick={() => onCoreOnlyChange(!coreOnly)}
+          title="Core: two problems per pattern, the main track of the sheet"
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-ink-2 transition-colors hover:border-ink-3/40 hover:text-ink"
+        >
+          <span className={`relative h-4 w-7 rounded-full transition-colors ${coreOnly ? 'bg-brand' : 'bg-ink-3/30'}`} aria-hidden="true">
+            <span
+              className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${coreOnly ? 'translate-x-3.5' : 'translate-x-0.5'}`}
+            />
+          </span>
+          Core only
+        </button>
 
         {isFiltered && (
           <button
             type="button"
             onClick={onClearFilters}
-            className="h-9 rounded-lg px-2.5 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-800"
+            className="h-9 rounded-lg px-2.5 text-sm font-medium text-brand-strong transition-colors hover:bg-brand-soft"
           >
-            Clear filters
+            Clear
           </button>
         )}
       </div>

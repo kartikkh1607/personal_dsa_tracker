@@ -1,35 +1,20 @@
-export const STATUSES = ['Not Started', 'Attempted', 'Solved', 'Mastered', 'Revisit']
-
-export const DEFAULT_STATUS = 'Not Started'
-
-// "Done" means Solved or Mastered - used everywhere progress is counted.
-export const DONE_STATUSES = ['Solved', 'Mastered']
-
-export const CONFIDENCE_LEVELS = ['1', '2', '3', '4', '5']
-
 export const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
+
+export const DIFFICULTY_PILL = {
+  Easy: 'bg-easy/10 text-easy',
+  Medium: 'bg-medium/10 text-medium',
+  Hard: 'bg-hard/10 text-hard',
+}
+
+export const DIFFICULTY_TEXT = { Easy: 'text-easy', Medium: 'text-medium', Hard: 'text-hard' }
+
+export const DIFFICULTY_BAR = { Easy: 'bg-easy', Medium: 'bg-medium', Hard: 'bg-hard' }
 
 // Core covers every pattern and is the real target; Depth adds reps on shaky
 // patterns; Stretch (Hard + Advanced DS) waits until Core is mostly done.
 export const TIERS = ['Core', 'Depth', 'Stretch']
 
 export const TIER_RANK = { Core: 0, Depth: 1, Stretch: 2 }
-
-export const TIER_STYLES = {
-  Core: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
-  Depth: 'bg-slate-100 text-slate-600 ring-slate-200',
-  Stretch: 'bg-violet-50 text-violet-700 ring-violet-200',
-}
-
-export function isDone(status) {
-  return DONE_STATUSES.includes(status)
-}
-
-// A problem needs review when it was flagged for revision, or solved with a
-// low (1-3) confidence rating. `confidence` is a number, 0 meaning unrated.
-export function needsReview(status, confidence) {
-  return status === 'Revisit' || (isDone(status) && confidence > 0 && confidence <= 3)
-}
 
 // Topic strings carry their sheet order, e.g. "06. Binary Search".
 export function splitTopic(topic) {
@@ -39,21 +24,4 @@ export function splitTopic(topic) {
 
 export function topicName(topic) {
   return splitTopic(topic).name
-}
-
-// Each status gets its own colour so a long table can be scanned at a glance.
-export const STATUS_STYLES = {
-  'Not Started': 'border-slate-200 bg-slate-50 text-slate-600',
-  Attempted: 'border-amber-200 bg-amber-50 text-amber-700',
-  Solved: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  Mastered: 'border-indigo-200 bg-indigo-50 text-indigo-700',
-  Revisit: 'border-rose-200 bg-rose-50 text-rose-700',
-}
-
-// Difficulty keeps the green / amber / red scale, shown as a dot plus a label
-// so it never reads as the same kind of control as the status pill.
-export const DIFFICULTY_STYLES = {
-  Easy: { text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  Medium: { text: 'text-amber-700', dot: 'bg-amber-500' },
-  Hard: { text: 'text-rose-700', dot: 'bg-rose-500' },
 }

@@ -1,3 +1,7 @@
+// Colours are semantic tokens backed by CSS variables (see src/index.css), so
+// every component reads the same palette and dark mode is a variable swap.
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
@@ -5,6 +9,18 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
+      colors: {
+        canvas: token('canvas'),
+        surface: token('surface'),
+        subtle: token('subtle'),
+        line: token('line'),
+        ink: { DEFAULT: token('ink'), 2: token('ink-2'), 3: token('ink-3') },
+        brand: { DEFAULT: token('brand'), strong: token('brand-strong'), soft: token('brand-soft'), contrast: token('brand-contrast') },
+        easy: token('easy'),
+        medium: token('medium'),
+        hard: token('hard'),
+        mark: token('mark'),
       },
       keyframes: {
         'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
