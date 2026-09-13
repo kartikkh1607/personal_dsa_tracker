@@ -9,8 +9,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Print+1+to+N+using+Recursion",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/print-1-to-n-without-using-loops3621/1",
+    "linkVerified": true
   },
   {
     "id": 2,
@@ -22,8 +22,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Sum+of+First+N+Natural+Numbers",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/reverse-coding2452/1",
+    "linkVerified": true
   },
   {
     "id": 3,
@@ -35,8 +35,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Factorial+of+a+Number",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/factorial5739/1",
+    "linkVerified": true
   },
   {
     "id": 4,
@@ -61,8 +61,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Reverse+an+Array+using+Recursion",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/reverse-an-array/1",
+    "linkVerified": true
   },
   {
     "id": 6,
@@ -139,8 +139,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Merge+Sort",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/merge-sort/1",
+    "linkVerified": true
   },
   {
     "id": 12,
@@ -152,8 +152,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Quick+Sort",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/quick-sort/1",
+    "linkVerified": true
   },
   {
     "id": 13,
@@ -165,8 +165,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Count+Inversions",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 14,
@@ -945,8 +945,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Longest+Sub-Array+with+Sum+K",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/longest-sub-array-with-sum-k0809/1",
+    "linkVerified": true
   },
   {
     "id": 74,
@@ -1335,8 +1335,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Floor+in+a+Sorted+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/floor-in-a-sorted-array-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 104,
@@ -1491,8 +1491,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Search+in+Infinite+Sorted+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/find-position-element-sorted-array-infinite-numbers/",
+    "linkVerified": true
   },
   {
     "id": 116,
@@ -1556,8 +1556,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Median+in+a+Row-wise+Sorted+Matrix",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/1",
+    "linkVerified": true
   },
   {
     "id": 121,
@@ -1582,8 +1582,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+K-th+Element+of+Two+Sorted+Arrays",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array1317/1",
+    "linkVerified": true
   },
   {
     "id": 123,
@@ -1738,8 +1738,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Minimize+Max+Distance+to+Gas+Station",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimize-max-distance-to-gas-station/1",
+    "linkVerified": true
   },
   {
     "id": 135,
@@ -2037,8 +2037,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Longest+Prefix+Suffix+%28KMP%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/longest-prefix-suffix2527/1",
+    "linkVerified": true
   },
   {
     "id": 158,
@@ -2050,8 +2050,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Z+Algorithm+for+Pattern+Searching",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/search-pattern-z-algorithm--141631/1",
+    "linkVerified": true
   },
   {
     "id": 159,
@@ -2063,8 +2063,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Rabin-Karp+Algorithm",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/search-pattern-rabin-karp-algorithm--141631/1",
+    "linkVerified": true
   },
   {
     "id": 160,
@@ -2830,8 +2830,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Flattening+a+Linked+List",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/flattening-a-linked-list/1",
+    "linkVerified": true
   },
   {
     "id": 219,
@@ -2999,8 +2999,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Infix+to+Postfix+Conversion",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/infix-to-postfix-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 232,
@@ -3077,8 +3077,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+The+Celebrity+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/the-celebrity-problem/1",
+    "linkVerified": true
   },
   {
     "id": 238,
@@ -3389,8 +3389,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Minimum+Cost+of+Ropes",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimum-cost-of-ropes-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 262,
@@ -3688,8 +3688,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+N+Meetings+in+One+Room",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 285,
@@ -3701,8 +3701,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Minimum+Platforms",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 286,
@@ -3714,8 +3714,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Job+Sequencing+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 287,
@@ -3740,8 +3740,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Shortest+Job+First",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/shortest-job-first/1",
+    "linkVerified": true
   },
   {
     "id": 289,
@@ -3818,8 +3818,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Subset+Sum",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
+    "linkVerified": true
   },
   {
     "id": 295,
@@ -4000,8 +4000,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Rat+in+a+Maze+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/rat-in-a-maze-problem/1",
+    "linkVerified": true
   },
   {
     "id": 309,
@@ -4078,8 +4078,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+M-Coloring+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 315,
@@ -4156,8 +4156,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Morris+Inorder+Traversal",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/inorder-traversal/1",
+    "linkVerified": true
   },
   {
     "id": 321,
@@ -4260,8 +4260,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Top+View+of+Binary+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1",
+    "linkVerified": true
   },
   {
     "id": 329,
@@ -4273,8 +4273,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Bottom+View+of+Binary+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1",
+    "linkVerified": true
   },
   {
     "id": 330,
@@ -4286,8 +4286,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Boundary+Traversal+of+Binary+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1",
+    "linkVerified": true
   },
   {
     "id": 331,
@@ -4767,8 +4767,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Inorder+Successor+in+BST",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/inorder-successor-in-bst/1",
+    "linkVerified": true
   },
   {
     "id": 368,
@@ -4780,8 +4780,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Largest+BST+in+a+Binary+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/largest-bst/1",
+    "linkVerified": true
   },
   {
     "id": 369,
@@ -4832,8 +4832,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Implement+Trie+II+%28count+prefixes%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/count-the-number-of-words-with-given-prefix-using-trie/",
+    "linkVerified": true
   },
   {
     "id": 373,
@@ -4910,8 +4910,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Count+Distinct+Substrings+using+Trie",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/count-of-distinct-substrings/1",
+    "linkVerified": true
   },
   {
     "id": 379,
@@ -5040,8 +5040,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Number+of+Distinct+Islands",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/number-of-distinct-islands/1",
+    "linkVerified": true
   },
   {
     "id": 389,
@@ -5144,8 +5144,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Minimum+Multiplications+to+Reach+End",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1",
+    "linkVerified": true
   },
   {
     "id": 397,
@@ -5261,8 +5261,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Alien+Dictionary",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/alien-dictionary/1",
+    "linkVerified": true
   },
   {
     "id": 406,
@@ -5404,8 +5404,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Floyd+Warshall+Algorithm",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1",
+    "linkVerified": true
   },
   {
     "id": 417,
@@ -5443,8 +5443,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Kruskal%27s+Algorithm",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimum-spanning-tree-kruskals-algorithm/1",
+    "linkVerified": true
   },
   {
     "id": 420,
@@ -5469,8 +5469,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Disjoint+Set+%28Union+by+Rank+%26+Path+Compression%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/disjoint-set-union-find/1",
+    "linkVerified": true
   },
   {
     "id": 422,
@@ -5560,8 +5560,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Number+of+Islands+II",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/number-of-islands/1",
+    "linkVerified": true
   },
   {
     "id": 429,
@@ -5586,8 +5586,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Articulation+Point+in+a+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/articulation-point2616/1",
+    "linkVerified": true
   },
   {
     "id": 431,
@@ -5599,8 +5599,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Strongly+Connected+Components+%28Kosaraju%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1",
+    "linkVerified": true
   },
   {
     "id": 432,
@@ -5625,8 +5625,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Graph+Valid+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/is-it-a-tree/1",
+    "linkVerified": true
   },
   {
     "id": 434,
@@ -5677,8 +5677,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Frog+Jump",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/geek-jump/1",
+    "linkVerified": true
   },
   {
     "id": 438,
@@ -5716,8 +5716,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Maximum+Sum+of+Non-Adjacent+Elements",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/max-sum-without-adjacents2430/1",
+    "linkVerified": true
   },
   {
     "id": 441,
@@ -5924,8 +5924,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Count+Subsets+with+Sum+K",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1",
+    "linkVerified": true
   },
   {
     "id": 457,
@@ -5937,8 +5937,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Minimum+Subset+Sum+Difference",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/minimum-sum-partition3317/1",
+    "linkVerified": true
   },
   {
     "id": 458,
@@ -5963,8 +5963,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Unbounded+Knapsack",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1",
+    "linkVerified": true
   },
   {
     "id": 460,
@@ -5976,8 +5976,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Rod+Cutting",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/rod-cutting0840/1",
+    "linkVerified": true
   },
   {
     "id": 461,
@@ -6106,8 +6106,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Maximum+Sum+Increasing+Subsequence",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1",
+    "linkVerified": true
   },
   {
     "id": 471,
@@ -6119,8 +6119,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Longest+Bitonic+Subsequence",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/1",
+    "linkVerified": true
   },
   {
     "id": 472,
@@ -6145,8 +6145,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Longest+Common+Substring",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/longest-common-substring1452/1",
+    "linkVerified": true
   },
   {
     "id": 474,
@@ -6340,8 +6340,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Matrix+Chain+Multiplication",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1",
+    "linkVerified": true
   },
   {
     "id": 489,
@@ -6405,8 +6405,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Boolean+Parenthesization",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/boolean-parenthesization5610/1",
+    "linkVerified": true
   },
   {
     "id": 494,
@@ -6522,8 +6522,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Travelling+Salesman+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/travelling-salesman-problem2732/1",
+    "linkVerified": true
   },
   {
     "id": 503,
@@ -6613,8 +6613,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Swap+Two+Numbers+Without+Temp+Variable",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/swap-the-numbers/1",
+    "linkVerified": true
   },
   {
     "id": 510,
@@ -6717,8 +6717,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Find+XOR+of+Numbers+from+1+to+N",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/find-xor-of-numbers-from-l-to-r/1",
+    "linkVerified": true
   },
   {
     "id": 518,
@@ -6795,8 +6795,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Count+Total+Set+Bits+from+1+to+N",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/count-total-set-bits-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 524,
@@ -6808,8 +6808,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Sieve+of+Eratosthenes",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/sieve-of-eratosthenes5242/1",
+    "linkVerified": true
   },
   {
     "id": 525,
@@ -6834,8 +6834,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Prime+Factorization+using+Smallest+Prime+Factor",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/prime-factorization-using-sieve/1",
+    "linkVerified": true
   },
   {
     "id": 527,
@@ -6847,8 +6847,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+GCD+using+Euclidean+Algorithm",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/gcd-of-two-numbers3459/1",
+    "linkVerified": true
   },
   {
     "id": 528,
@@ -6860,8 +6860,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+LCM+and+GCD",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/lcm-and-gcd4516/1",
+    "linkVerified": true
   },
   {
     "id": 529,
@@ -6873,8 +6873,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Modular+Exponentiation+for+Large+Numbers",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/modular-exponentiation-for-large-numbers5537/1",
+    "linkVerified": true
   },
   {
     "id": 530,
@@ -6886,8 +6886,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+nCr+mod+p",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/ncr1019/1",
+    "linkVerified": true
   },
   {
     "id": 531,
@@ -7003,8 +7003,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Nth+Catalan+Number",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/nth-catalan-number0817/1",
+    "linkVerified": true
   },
   {
     "id": 540,
@@ -7016,8 +7016,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Josephus+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/josephus-problem/1",
+    "linkVerified": true
   },
   {
     "id": 541,
@@ -7081,8 +7081,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Meeting+Rooms",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/attend-all-meetings/1",
+    "linkVerified": true
   },
   {
     "id": 546,
@@ -7107,8 +7107,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Maximum+CPU+Load",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/maximum-cpu-load-from-the-given-list-of-jobs/",
+    "linkVerified": true
   },
   {
     "id": 548,
@@ -7328,8 +7328,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Range+Minimum+Query+%28Segment+Tree%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/range-minimum-query/1",
+    "linkVerified": true
   },
   {
     "id": 565,
@@ -7341,8 +7341,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Segment+Tree+with+Lazy+Propagation",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/lazy-propagation-in-segment-tree/",
+    "linkVerified": true
   },
   {
     "id": 566,
@@ -7354,8 +7354,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Binary+Indexed+Tree+%28Fenwick+Tree%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/binary-indexed-tree-or-fenwick-tree-2/",
+    "linkVerified": true
   },
   {
     "id": 567,
@@ -7393,8 +7393,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Count+of+Range+Sum+%28BIT+approach%29",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/count-the-number-of-subarrays/1",
+    "linkVerified": true
   },
   {
     "id": 570,
@@ -7406,7 +7406,7 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Range+Minimum+Query+using+Sparse+Table",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/range-minimum-query/1",
+    "linkVerified": true
   }
 ]
