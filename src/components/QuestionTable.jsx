@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { isDone, topicName } from '../constants.js'
-import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect } from './QuestionControls.jsx'
+import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect, TierBadge } from './QuestionControls.jsx'
 
 // Memoised on primitives, so changing one row's status re-renders that row only
 // rather than all 570.
@@ -24,7 +24,10 @@ const Row = memo(function Row({ question, status, confidence, showTopic, onChang
         </p>
       </td>
       <td className="px-3 py-3">
-        <DifficultyLabel difficulty={question.difficulty} />
+        <div className="flex flex-col items-start gap-1">
+          <DifficultyLabel difficulty={question.difficulty} />
+          <TierBadge tier={question.tier} />
+        </div>
       </td>
       <td className="px-3 py-3">
         <StatusSelect id={question.id} problem={question.problem} status={status} onChange={onChange} />
@@ -33,7 +36,7 @@ const Row = memo(function Row({ question, status, confidence, showTopic, onChang
         <ConfidenceDots id={question.id} problem={question.problem} confidence={confidence} onChange={onChange} />
       </td>
       <td className="py-3 pl-3 pr-6 text-right">
-        <LinkButton link={question.link} problem={question.problem} label={question.platform} />
+        <LinkButton link={question.link} problem={question.problem} label={question.platform} verified={question.linkVerified} />
       </td>
     </tr>
   )
@@ -42,7 +45,7 @@ const Row = memo(function Row({ question, status, confidence, showTopic, onChang
 const COLUMNS = [
   { label: '#', className: 'pl-6 pr-2' },
   { label: 'Problem', className: 'px-3' },
-  { label: 'Difficulty', className: 'px-3' },
+  { label: 'Level', className: 'px-3' },
   { label: 'Status', className: 'px-3' },
   { label: 'Confidence', className: 'px-3' },
   { label: 'Practice', className: 'pl-3 pr-6 text-right' },

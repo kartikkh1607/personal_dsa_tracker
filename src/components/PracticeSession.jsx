@@ -1,24 +1,33 @@
 import { useState } from 'react'
-import { isDone, topicName } from '../constants.js'
+import { topicName } from '../constants.js'
 import { getConfidence, getStatus } from '../progress.js'
-import { ConfidenceDots, DifficultyLabel, LinkButton } from './QuestionControls.jsx'
+import { ConfidenceDots, DifficultyLabel, LinkButton, TierBadge } from './QuestionControls.jsx'
 
+// Outcomes use the sheet's status definitions, so the app and the Excel sheet
+// mean the same thing: Mastered = clean solve, Solved = needed a hint,
+// Attempted = could not finish.
 const OUTCOMES = [
   {
-    status: 'Solved',
-    label: 'Solved it',
+    status: 'Mastered',
+    label: 'Solved cleanly',
+    summary: 'Solved cleanly',
+    count: 'text-emerald-600',
     idle: 'hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700',
     active: 'border-emerald-300 bg-emerald-50 text-emerald-700',
   },
   {
-    status: 'Attempted',
-    label: 'Needed a hint',
+    status: 'Solved',
+    label: 'Solved with a hint',
+    summary: 'With a hint',
+    count: 'text-amber-600',
     idle: 'hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700',
     active: 'border-amber-300 bg-amber-50 text-amber-700',
   },
   {
-    status: 'Revisit',
-    label: 'Couldn’t solve',
+    status: 'Attempted',
+    label: 'Couldn’t finish',
+    summary: 'Couldn’t finish',
+    count: 'text-rose-600',
     idle: 'hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700',
     active: 'border-rose-300 bg-rose-50 text-rose-700',
   },
@@ -27,12 +36,6 @@ const OUTCOMES = [
 const SECONDARY_BUTTON = 'inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:pointer-events-none disabled:opacity-40'
 
 function SessionSummary({ questions, progress, canRestart, onRestart, onExit }) {
-  const counts = [
-    { label: 'Solved', value: questions.filter((q) => isDone(getStatus(progress, q.id))).length, className: 'text-emerald-600' },
-    { label: 'Needed a hint', value: questions.filter((q) => getStatus(progress, q.id) === 'Attempted').length, className: 'text-amber-600' },
-    { label: 'To revisit', value: questions.filter((q) => getStatus(progress, q.id) === 'Revisit').length, className: 'text-rose-600' },
-  ]
-
   return (
     <div className="mx-auto flex min-h-full w-full max-w-xl flex-col items-center justify-center px-4 py-16 text-center">
       <span className="grid h-14 w-14 place-items-center rounded-full bg-emerald-100 text-2xl text-emerald-600" aria-hidden="true">
@@ -42,10 +45,12 @@ function SessionSummary({ questions, progress, canRestart, onRestart, onExit }) 
       <p className="mt-2 text-slate-500">Nice work. Here’s how it went.</p>
 
       <dl className="mt-8 grid w-full grid-cols-3 gap-3">
-        {counts.map((count) => (
-          <div key={count.label} className="rounded-xl border border-slate-200 bg-white px-3 py-4">
-            <dd className={`text-2xl font-semibold tabular-nums ${count.className}`}>{count.value}</dd>
-            <dt className="mt-1 text-xs text-slate-500">{count.label}</dt>
+        {OUTCOMES.map((outcome) => (
+          <div key={outcome.status} className="rounded-xl border border-slate-200 bg-white px-3 py-4">
+            <dd className={`text-2xl font-semibold tabular-nums ${outcome.count}`}>
+              {questions.filter((q) => getStatus(progress, q.id) === outcome.status).length}
+            </dd>
+            <dt className="mt-1 text-xs text-slate-500">{outcome.summary}</dt>
           </div>
         ))}
       </dl>
@@ -110,10 +115,13 @@ export default function PracticeSession({ questions, index, progress, canRestart
       </div>
 
       <section key={question.id} className="my-auto animate-fade-up py-10 sm:py-14">
-        <p className="text-sm font-medium text-indigo-600">{topicName(question.topic)}</p>
+        <p className="text-sm font-medium text-indigo-600">
+          Phase {question.phase} · {topicName(question.topic)}
+        </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{question.problem}</h1>
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-slate-500">
           <DifficultyLabel difficulty={question.difficulty} />
+          <TierBadge tier={question.tier} />
           <span className="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true" />
           <span>{question.pattern}</span>
           <span className="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true" />
@@ -121,12 +129,12 @@ export default function PracticeSession({ questions, index, progress, canRestart
         </div>
 
         <div className="mt-8">
-          <LinkButton link={question.link} problem={question.problem} prominent />
+          <LinkButton link={question.link} problem={question.problem} verified={question.linkVerified} prominent />
         </div>
 
         <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <p className="font-medium text-slate-900">How did it go?</p>
-          <p className="mt-1 text-sm text-slate-500">Recording an outcome moves you on to the next problem.</p>
+          <p className="mt-1 text-sm text-slate-500">Be honest. It decides what comes back for revision.</p>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
             {OUTCOMES.map((outcome) => (
               <button

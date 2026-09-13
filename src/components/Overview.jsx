@@ -1,5 +1,5 @@
 import { topicName } from '../constants.js'
-import { DifficultyLabel } from './QuestionControls.jsx'
+import { DifficultyLabel, TierBadge } from './QuestionControls.jsx'
 
 const MINUTES_PER_PROBLEM = 15
 const RING_RADIUS = 34
@@ -7,7 +7,7 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS
 
 function ProgressRing({ percent }) {
   return (
-    <div className="relative h-24 w-24 shrink-0" role="img" aria-label={`${percent}% complete`}>
+    <div className="relative h-24 w-24 shrink-0" role="img" aria-label={`${percent}% of the Core track complete`}>
       <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
         <circle cx="40" cy="40" r={RING_RADIUS} fill="none" stroke="#e2e8f0" strokeWidth="7" />
         <circle
@@ -46,26 +46,45 @@ function QueueLine({ item, index, onOpen }) {
             {topicName(question.topic)} · {item.label}
           </span>
         </span>
+        <span className="hidden sm:inline-flex">
+          <TierBadge tier={question.tier} />
+        </span>
         <DifficultyLabel difficulty={question.difficulty} />
       </button>
     </li>
   )
 }
 
-function TopicLine({ item, onSelect }) {
-  const percent = item.total ? Math.round((item.done / item.total) * 100) : 0
+function PhaseLine({ item, isCurrent, onSelect }) {
+  const percent = item.coreTotal ? Math.round((item.coreDone / item.coreTotal) * 100) : 0
+  const complete = item.coreTotal > 0 && item.coreDone === item.coreTotal
+
   return (
     <li>
       <button
         type="button"
-        onClick={() => onSelect(item.topic)}
+        onClick={() => onSelect(item.phase)}
+        aria-current={isCurrent ? 'step' : undefined}
         className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-slate-50"
       >
-        <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700 group-hover:text-indigo-700">{topicName(item.topic)}</span>
-        <span className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-          <span className="block h-full rounded-full bg-indigo-500" style={{ width: `${percent}%` }} />
+        <span
+          className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold ${
+            complete ? 'bg-emerald-100 text-emerald-700' : isCurrent ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+          }`}
+        >
+          {complete ? '✓' : item.phase}
         </span>
-        <span className="w-10 text-right text-xs tabular-nums text-slate-500">{percent}%</span>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-baseline justify-between gap-2">
+            <span className={`truncate text-sm font-medium group-hover:text-indigo-700 ${isCurrent ? 'text-slate-900' : 'text-slate-600'}`}>{item.name}</span>
+            <span className="shrink-0 text-xs tabular-nums text-slate-500">
+              {item.coreDone}/{item.coreTotal}
+            </span>
+          </span>
+          <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+            <span className={`block h-full rounded-full ${complete ? 'bg-emerald-500' : 'bg-indigo-500'}`} style={{ width: `${percent}%` }} />
+          </span>
+        </span>
       </button>
     </li>
   )
@@ -82,9 +101,10 @@ function Stat({ label, value }) {
 
 const CARD_CLASS = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6'
 
-export default function Overview({ metrics, queue, weakTopics, onStartSession, onBrowseProblems, onSelectTopic, onOpenQuestion }) {
+export default function Overview({ metrics, queue, onStartSession, onBrowseProblems, onSelectPhase, onOpenQuestion }) {
   const isNew = metrics.done === 0 && metrics.attempted === 0 && metrics.review === 0
   const hasCarryOver = queue.some((item) => item.priority < 3)
+  const currentPhase = metrics.phaseStats.find((phase) => phase.coreDone < phase.coreTotal)
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
@@ -92,8 +112,10 @@ export default function Overview({ metrics, queue, weakTopics, onStartSession, o
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">{isNew ? 'Let’s get started' : 'Welcome back'}</h1>
         <p className="mt-1.5 text-sm text-slate-500 sm:text-base">
           {isNew
-            ? `${metrics.total} problems across ${metrics.topicCount} topics — one short session at a time.`
-            : `You’ve solved ${metrics.done} of ${metrics.total} problems. Here’s what to work on next.`}
+            ? `Start with the Core track: ${metrics.coreTotal} problems that cover every pattern, in ${metrics.phaseStats.length} phases.`
+            : currentPhase
+              ? `You’re in Phase ${currentPhase.phase}, ${currentPhase.name}. Here’s what to work on next.`
+              : `The Core track is done. Time for Depth practice on your weaker patterns.`}
         </p>
       </header>
 
@@ -112,7 +134,7 @@ export default function Overview({ metrics, queue, weakTopics, onStartSession, o
             </div>
             {queue.length > 0 && (
               <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                {hasCarryOver ? 'Revision & in progress' : 'Next in the sheet'}
+                {hasCarryOver ? 'Revision first' : queue[0].label}
               </span>
             )}
           </div>
@@ -151,13 +173,19 @@ export default function Overview({ metrics, queue, weakTopics, onStartSession, o
           </div>
         </section>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6">
           <section className={CARD_CLASS} aria-label="Progress">
             <div className="flex items-center gap-5">
-              <ProgressRing percent={metrics.percent} />
+              <ProgressRing percent={metrics.corePercent} />
               <div>
-                <p className="text-2xl font-semibold tabular-nums tracking-tight text-slate-900">{metrics.done}</p>
-                <p className="text-sm text-slate-500">of {metrics.total} solved</p>
+                <p className="text-2xl font-semibold tabular-nums tracking-tight text-slate-900">
+                  {metrics.coreDone}
+                  <span className="text-base font-normal text-slate-400">/{metrics.coreTotal}</span>
+                </p>
+                <p className="text-sm text-slate-500">Core problems solved</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {metrics.done} of {metrics.total} overall
+                </p>
               </div>
             </div>
             <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-slate-100 pt-5">
@@ -167,23 +195,17 @@ export default function Overview({ metrics, queue, weakTopics, onStartSession, o
             </dl>
           </section>
 
-          {weakTopics.length > 0 && (
-            <section className={CARD_CLASS} aria-labelledby="topics-heading">
-              <div className="flex items-baseline justify-between gap-4">
-                <h2 id="topics-heading" className="text-base font-semibold text-slate-900">
-                  Topics to focus on
-                </h2>
-                <button type="button" onClick={onBrowseProblems} className="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800">
-                  See all
-                </button>
-              </div>
-              <ul className="-mx-2 mt-3">
-                {weakTopics.map((topic) => (
-                  <TopicLine key={topic.topic} item={topic} onSelect={onSelectTopic} />
-                ))}
-              </ul>
-            </section>
-          )}
+          <section className={CARD_CLASS} aria-labelledby="plan-heading">
+            <h2 id="plan-heading" className="text-base font-semibold text-slate-900">
+              Study plan
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">Core problems by phase. Go in order: each phase builds on the last.</p>
+            <ol className="-mx-2 mt-3">
+              {metrics.phaseStats.map((phase) => (
+                <PhaseLine key={phase.phase} item={phase} isCurrent={phase === currentPhase} onSelect={onSelectPhase} />
+              ))}
+            </ol>
+          </section>
         </div>
       </div>
     </div>

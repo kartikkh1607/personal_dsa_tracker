@@ -9,6 +9,18 @@ export const CONFIDENCE_LEVELS = ['1', '2', '3', '4', '5']
 
 export const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 
+// Core covers every pattern and is the real target; Depth adds reps on shaky
+// patterns; Stretch (Hard + Advanced DS) waits until Core is mostly done.
+export const TIERS = ['Core', 'Depth', 'Stretch']
+
+export const TIER_RANK = { Core: 0, Depth: 1, Stretch: 2 }
+
+export const TIER_STYLES = {
+  Core: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
+  Depth: 'bg-slate-100 text-slate-600 ring-slate-200',
+  Stretch: 'bg-violet-50 text-violet-700 ring-violet-200',
+}
+
 export function isDone(status) {
   return DONE_STATUSES.includes(status)
 }

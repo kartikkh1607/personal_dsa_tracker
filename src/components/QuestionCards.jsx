@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { isDone, topicName } from '../constants.js'
-import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect } from './QuestionControls.jsx'
+import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect, TierBadge } from './QuestionControls.jsx'
 
 const Card = memo(function Card({ question, status, confidence, showTopic, onChange, onOpen }) {
   const done = isDone(status)
@@ -15,13 +15,16 @@ const Card = memo(function Card({ question, status, confidence, showTopic, onCha
             {question.pattern}
           </span>
         </button>
-        <DifficultyLabel difficulty={question.difficulty} />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <DifficultyLabel difficulty={question.difficulty} />
+          <TierBadge tier={question.tier} />
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-slate-100 pt-3">
         <StatusSelect id={question.id} problem={question.problem} status={status} onChange={onChange} />
         <ConfidenceDots id={question.id} problem={question.problem} confidence={confidence} onChange={onChange} />
-        <LinkButton link={question.link} problem={question.problem} label={question.platform} />
+        <LinkButton link={question.link} problem={question.problem} label={question.platform} verified={question.linkVerified} />
       </div>
     </li>
   )

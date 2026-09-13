@@ -1,6 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import rawQuestions from './data/questions.json'
-import { DEFAULT_STATUS, isDone, needsReview } from './constants.js'
+import { DEFAULT_STATUS, TIER_RANK, isDone, needsReview } from './constants.js'
 import { getConfidence, getStatus } from './progress.js'
 import { loadProgress, sanitizeProgress, saveProgress } from './storage.js'
 import { useIsNarrow } from './useIsNarrow.js'
@@ -18,6 +18,10 @@ import Toast from './components/Toast.jsx'
 const TOPICS = [...new Set(rawQuestions.map((q) => q.topic))].sort((a, b) => a.localeCompare(b))
 const QUESTION_IDS = new Set(rawQuestions.map((question) => String(question.id)))
 const QUESTIONS_BY_ID = new Map(rawQuestions.map((question) => [question.id, question]))
+const TOPIC_PHASE = new Map(rawQuestions.map((q) => [q.topic, { phase: q.phase, phaseName: q.phaseName }]))
+const PHASES = [...new Map(rawQuestions.map((q) => [q.phase, q.phaseName]))]
+  .map(([phase, name]) => ({ phase, name }))
+  .sort((a, b) => a.phase - b.phase)
 const DIFFICULTY_ORDER = { Easy: 0, Medium: 1, Hard: 2 }
 
 if (rawQuestions.length !== 570 || TOPICS.length !== 23) {
@@ -26,11 +30,15 @@ if (rawQuestions.length !== 570 || TOPICS.length !== 23) {
 
 const WRITE_DELAY_MS = 400
 const SESSION_SIZE = 5
-const WEAK_TOPIC_COUNT = 5
 const RELATED_COUNT = 5
+const FRESH_LABELS = { Core: 'Core track', Depth: 'Depth practice', Stretch: 'Stretch goal' }
 
 function confidenceOf(progress, id) {
   return Number(getConfidence(progress, id)) || 0
+}
+
+function emptyCounts() {
+  return { total: 0, done: 0, coreTotal: 0, coreDone: 0 }
 }
 
 export default function App() {
@@ -43,6 +51,7 @@ export default function App() {
   const [toast, setToast] = useState(null)
 
   const [selectedTopic, setSelectedTopic] = useState(ALL_TOPICS)
+  const [tier, setTier] = useState(ALL)
   const [difficulty, setDifficulty] = useState(ALL)
   const [status, setStatus] = useState(ALL)
   const [search, setSearch] = useState('')
@@ -89,8 +98,11 @@ export default function App() {
   // Counting reads saved state through getStatus, so questions.json is never
   // copied or mutated and rows keep their original object identity.
   const stats = useMemo(() => {
-    const topics = new Map(TOPICS.map((topic) => [topic, { topic, total: 0, done: 0 }]))
-    let done = 0
+    const topics = new Map(TOPICS.map((topic) => [topic, { topic, ...TOPIC_PHASE.get(topic), ...emptyCounts() }]))
+    const phases = new Map(PHASES.map((phase) => [phase.phase, { ...phase, ...emptyCounts(), topics: [] }]))
+    for (const topic of topics.values()) phases.get(topic.phase).topics.push(topic)
+
+    const overall = emptyCounts()
     let attempted = 0
     let review = 0
     let confidenceTotal = 0
@@ -99,11 +111,16 @@ export default function App() {
     for (const question of rawQuestions) {
       const questionStatus = getStatus(progress, question.id)
       const confidence = confidenceOf(progress, question.id)
-      const topic = topics.get(question.topic)
-      topic.total++
-      if (isDone(questionStatus)) {
-        done++
-        topic.done++
+      const done = isDone(questionStatus)
+      const isCore = question.tier === 'Core'
+
+      for (const counts of [overall, topics.get(question.topic), phases.get(question.phase)]) {
+        counts.total++
+        if (done) counts.done++
+        if (isCore) {
+          counts.coreTotal++
+          if (done) counts.coreDone++
+        }
       }
       if (questionStatus === 'Attempted') attempted++
       if (needsReview(questionStatus, confidence)) review++
@@ -113,22 +130,22 @@ export default function App() {
       }
     }
 
-    const total = rawQuestions.length
     return {
-      total,
-      done,
+      ...overall,
       attempted,
       review,
       rated,
-      percent: total === 0 ? 0 : Math.round((done / total) * 100),
+      percent: overall.total === 0 ? 0 : Math.round((overall.done / overall.total) * 100),
+      corePercent: overall.coreTotal === 0 ? 0 : Math.round((overall.coreDone / overall.coreTotal) * 100),
       averageConfidence: rated ? (confidenceTotal / rated).toFixed(1) : '',
-      topicCount: TOPICS.length,
       topicStats: [...topics.values()],
+      phaseStats: [...phases.values()],
     }
   }, [progress])
 
-  // Revision first, then unfinished work, then shaky solves, then the next
-  // untouched problems in sheet order. Confidently solved problems never appear.
+  // Revision first, then unfinished work, then shaky solves. After that, new
+  // problems follow the sheet's plan: all of Core in phase order, then Depth,
+  // then Stretch. Confidently solved problems never appear.
   const queue = useMemo(() => {
     const ranked = []
     for (const question of rawQuestions) {
@@ -138,7 +155,7 @@ export default function App() {
       if (questionStatus === 'Revisit') entry = { priority: 0, label: 'Marked for revision' }
       else if (questionStatus === 'Attempted') entry = { priority: 1, label: 'Pick up where you left off' }
       else if (needsReview(questionStatus, confidence)) entry = { priority: 2, label: 'Build confidence' }
-      else if (!isDone(questionStatus)) entry = { priority: 3, label: 'Next in the sheet' }
+      else if (!isDone(questionStatus)) entry = { priority: 3 + TIER_RANK[question.tier], label: FRESH_LABELS[question.tier] }
       if (entry) ranked.push({ question, confidence, ...entry })
     }
     return ranked
@@ -146,20 +163,12 @@ export default function App() {
       .slice(0, SESSION_SIZE)
   }, [progress])
 
-  const weakTopics = useMemo(
-    () =>
-      stats.topicStats
-        .filter((topic) => topic.done < topic.total)
-        .sort((a, b) => a.done / a.total - b.done / b.total || a.topic.localeCompare(b.topic))
-        .slice(0, WEAK_TOPIC_COUNT),
-    [stats],
-  )
-
-  // Topic, difficulty, status, focus mode and search all combine.
+  // Topic, tier, difficulty, status, focus mode and search all combine.
   const visible = useMemo(() => {
     const term = deferredSearch.trim().toLowerCase()
     const filtered = rawQuestions.filter((question) => {
       if (selectedTopic !== ALL_TOPICS && question.topic !== selectedTopic) return false
+      if (tier !== ALL && question.tier !== tier) return false
       if (difficulty !== ALL && question.difficulty !== difficulty) return false
       if (term && !question.problem.toLowerCase().includes(term) && !question.pattern.toLowerCase().includes(term)) return false
       const questionStatus = getStatus(progress, question.id)
@@ -177,13 +186,13 @@ export default function App() {
       filtered.sort((a, b) => (confidenceOf(progress, a.id) || 6) - (confidenceOf(progress, b.id) || 6) || a.id - b.id)
     }
     return filtered
-  }, [progress, selectedTopic, difficulty, status, focusMode, sortBy, deferredSearch])
+  }, [progress, selectedTopic, tier, difficulty, status, focusMode, sortBy, deferredSearch])
 
   // A new filter starts the list from the top rather than mid-scroll.
   useEffect(() => {
     problemsScrollRef.current?.scrollTo({ top: 0 })
     listScrollRef.current?.scrollTo({ top: 0 })
-  }, [selectedTopic, difficulty, status, focusMode, sortBy, deferredSearch])
+  }, [selectedTopic, tier, difficulty, status, focusMode, sortBy, deferredSearch])
 
   // Stable identity keeps the memoised rows from re-rendering.
   const handleChange = useCallback((id, field, value) => {
@@ -206,9 +215,10 @@ export default function App() {
     return [...samePattern, ...rest].slice(0, RELATED_COUNT)
   }, [drawerQuestion])
 
-  const isFiltered = difficulty !== ALL || status !== ALL || search !== '' || focusMode !== 'all'
+  const isFiltered = tier !== ALL || difficulty !== ALL || status !== ALL || search !== '' || focusMode !== 'all'
 
   function clearFilters() {
+    setTier(ALL)
     setDifficulty(ALL)
     setStatus(ALL)
     setSearch('')
@@ -220,13 +230,18 @@ export default function App() {
     setView(nextView)
   }
 
-  function browseTopic(topic) {
-    setSelectedTopic(topic)
+  function browseAll() {
+    setSelectedTopic(ALL_TOPICS)
     changeView('problems')
   }
 
-  function browseAll() {
-    setSelectedTopic(ALL_TOPICS)
+  // Opens the phase at its first topic with unsolved Core problems.
+  function browsePhase(phaseNumber) {
+    const phase = stats.phaseStats.find((item) => item.phase === phaseNumber)
+    const topic = phase.topics.find((item) => item.coreDone < item.coreTotal) ?? phase.topics[0]
+    clearFilters()
+    setTier('Core')
+    setSelectedTopic(topic.topic)
     changeView('problems')
   }
 
@@ -310,7 +325,7 @@ export default function App() {
       // Narrow screens scroll the whole page; wider ones scroll only the list.
       <div ref={problemsScrollRef} className="min-h-0 flex-1 overflow-y-auto md:flex md:overflow-hidden">
         <Sidebar
-          topicStats={stats.topicStats}
+          phaseStats={stats.phaseStats}
           overall={stats}
           selectedTopic={selectedTopic}
           onSelectTopic={setSelectedTopic}
@@ -322,6 +337,8 @@ export default function App() {
             title={selectedTopic === ALL_TOPICS ? 'All problems' : selectedTopic.replace(/^\d+\.\s*/, '')}
             solvedCount={selectedStats.done}
             topicTotal={selectedStats.total}
+            tier={tier}
+            onTierChange={setTier}
             difficulty={difficulty}
             onDifficultyChange={setDifficulty}
             status={status}
@@ -368,10 +385,9 @@ export default function App() {
         <Overview
           metrics={stats}
           queue={queue}
-          weakTopics={weakTopics}
           onStartSession={startSession}
           onBrowseProblems={browseAll}
-          onSelectTopic={browseTopic}
+          onSelectPhase={browsePhase}
           onOpenQuestion={openQuestion}
         />
       </main>

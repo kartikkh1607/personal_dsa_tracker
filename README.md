@@ -37,6 +37,19 @@ npm run preview   # serve the built dist/ locally
 
 Press <kbd>/</kbd> anywhere to jump to search. Click any problem to open its details.
 
+**Tiers and phases** come from the sheet. `Core` (295 problems, two per pattern) is the real
+target, `Depth` adds reps on shaky patterns, and `Stretch` (Hard + Advanced DS) waits until Core
+is mostly done. Topics are grouped into six phases, studied in order. The "Today's session" queue
+follows that plan: revision items first, then Core problems phase by phase, then Depth, then
+Stretch. The Overview's study plan tracks Core progress per phase.
+
+**Statuses** match the Excel sheet: `Mastered` = solved cleanly, `Solved` = needed a hint,
+`Attempted` = could not finish, `Revisit` = solved once but it faded.
+
+**Links.** Entries with `linkVerified: false` open a web search, because GeeksforGeeks problem
+URLs change over time. When you find the real page, paste its URL into the Excel sheet and
+`questions.json`.
+
 **"Done"** means status is `Solved` or `Mastered`. That single rule (`isDone` in
 `src/constants.js`) drives the top-bar count, the percentage, and every sidebar topic bar.
 

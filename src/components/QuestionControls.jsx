@@ -1,4 +1,4 @@
-import { CONFIDENCE_LEVELS, DIFFICULTY_STYLES, STATUS_STYLES, STATUSES } from '../constants.js'
+import { CONFIDENCE_LEVELS, DIFFICULTY_STYLES, STATUS_STYLES, STATUSES, TIER_STYLES } from '../constants.js'
 
 export function DifficultyLabel({ difficulty }) {
   const style = DIFFICULTY_STYLES[difficulty]
@@ -10,21 +10,28 @@ export function DifficultyLabel({ difficulty }) {
   )
 }
 
-// Some sheet entries have no direct problem page and link to a web search instead.
-function isSearchLink(link) {
-  return link.includes('google.com/search')
+export function TierBadge({ tier }) {
+  return (
+    <span
+      title={`${tier} tier`}
+      className={`inline-flex shrink-0 items-center rounded px-1.5 py-px text-[11px] font-medium ring-1 ring-inset ${TIER_STYLES[tier]}`}
+    >
+      {tier}
+    </span>
+  )
 }
 
-export function LinkButton({ link, problem, label, prominent = false }) {
-  const isSearch = isSearchLink(link)
-  const text = label ?? (prominent ? (isSearch ? 'Find problem' : 'Open problem') : 'Open')
+// Unverified entries (GeeksforGeeks IDs change over time) link to a web search
+// instead of the problem page, so the button says so.
+export function LinkButton({ link, problem, label, verified = true, prominent = false }) {
+  const text = label ?? (prominent ? (verified ? 'Open problem' : 'Find problem') : 'Open')
 
   return (
     <a
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      title={isSearch ? `Search the web for ${problem}` : `Open ${problem} in a new tab`}
+      title={verified ? `Open ${problem} in a new tab` : `Search the web for ${problem}`}
       onClick={(event) => event.stopPropagation()}
       className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg border font-medium transition-colors ${
         prominent
@@ -33,9 +40,16 @@ export function LinkButton({ link, problem, label, prominent = false }) {
       }`}
     >
       {text}
-      <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-        <path d="M4.5 2h5.5v5.5M10 2 4 8M8 10H2V4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      {verified ? (
+        <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+          <path d="M4.5 2h5.5v5.5M10 2 4 8M8 10H2V4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 14 14" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+          <circle cx="6" cy="6" r="4" />
+          <path d="M9 9l3.5 3.5" strokeLinecap="round" />
+        </svg>
+      )}
     </a>
   )
 }

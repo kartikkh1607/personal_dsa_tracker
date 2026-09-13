@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { topicName } from '../constants.js'
 import { getConfidence, getStatus } from '../progress.js'
-import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect } from './QuestionControls.jsx'
+import { ConfidenceDots, DifficultyLabel, LinkButton, StatusSelect, TierBadge } from './QuestionControls.jsx'
 
 export default function ProblemDetailDrawer({ question, progress, relatedQuestions, onChange, onSelectRelated, onClose }) {
   const closeButtonRef = useRef(null)
@@ -41,7 +41,7 @@ export default function ProblemDetailDrawer({ question, progress, relatedQuestio
       >
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 px-5 py-3 sm:px-6">
           <p className="truncate text-sm text-slate-500">
-            <span className="tabular-nums">#{question.id}</span> · {topicName(question.topic)}
+            <span className="tabular-nums">#{question.id}</span> · Phase {question.phase} · {topicName(question.topic)}
           </p>
           <button
             ref={closeButtonRef}
@@ -58,8 +58,9 @@ export default function ProblemDetailDrawer({ question, progress, relatedQuestio
           <h2 id="problem-detail-title" className="text-2xl font-semibold tracking-tight text-slate-900">
             {question.problem}
           </h2>
-          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-slate-500">
             <DifficultyLabel difficulty={question.difficulty} />
+            <TierBadge tier={question.tier} />
             <span className="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true" />
             <span>{question.pattern}</span>
             <span className="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true" />
@@ -67,7 +68,12 @@ export default function ProblemDetailDrawer({ question, progress, relatedQuestio
           </div>
 
           <div className="mt-6">
-            <LinkButton link={question.link} problem={question.problem} prominent />
+            <LinkButton link={question.link} problem={question.problem} verified={question.linkVerified} prominent />
+            {!question.linkVerified && (
+              <p className="mt-2.5 text-xs leading-5 text-slate-500">
+                {question.platform} problem URLs change over time, so this opens a search instead of a fixed link.
+              </p>
+            )}
           </div>
 
           <section className="mt-8 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
@@ -95,7 +101,9 @@ export default function ProblemDetailDrawer({ question, progress, relatedQuestio
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-medium text-slate-700 group-hover:text-indigo-700">{item.problem}</span>
-                        <span className="block truncate text-xs text-slate-500">{item.pattern}</span>
+                        <span className="block truncate text-xs text-slate-500">
+                          {item.tier} · {item.pattern}
+                        </span>
                       </span>
                       <DifficultyLabel difficulty={item.difficulty} />
                     </button>

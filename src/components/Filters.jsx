@@ -1,4 +1,4 @@
-import { DIFFICULTIES, STATUSES } from '../constants.js'
+import { DIFFICULTIES, STATUSES, TIERS } from '../constants.js'
 
 export const ALL = 'All'
 
@@ -22,6 +22,8 @@ export default function Filters({
   title,
   solvedCount,
   topicTotal,
+  tier,
+  onTierChange,
   difficulty,
   onDifficultyChange,
   status,
@@ -53,7 +55,7 @@ export default function Filters({
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <div className="relative w-full sm:w-60 lg:w-72">
+        <div className="relative w-full sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:flex-1">
           <svg
             viewBox="0 0 14 14"
             className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
@@ -70,7 +72,7 @@ export default function Filters({
             type="search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Search problems or patterns"
+            placeholder="Search problems"
             aria-label="Search problems or patterns"
             className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 text-sm text-slate-700 transition-colors placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
@@ -99,6 +101,15 @@ export default function Filters({
             )
           })}
         </div>
+
+        <select value={tier} onChange={(event) => onTierChange(event.target.value)} aria-label="Filter by tier" className={SELECT_CLASS}>
+          <option value={ALL}>Any tier</option>
+          {TIERS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
 
         <select value={difficulty} onChange={(event) => onDifficultyChange(event.target.value)} aria-label="Filter by difficulty" className={SELECT_CLASS}>
           <option value={ALL}>Any difficulty</option>

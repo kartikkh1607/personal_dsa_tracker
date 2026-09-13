@@ -40,7 +40,8 @@ function TopicButton({ number, label, done, total, isSelected, onClick }) {
   )
 }
 
-export default function Sidebar({ topicStats, overall, selectedTopic, onSelectTopic, isNarrow }) {
+// Topics are grouped under the sheet's six study phases, in study order.
+export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTopic, isNarrow }) {
   // Narrow screens: the topic list collapses into a dropdown.
   if (isNarrow) {
     return (
@@ -57,10 +58,14 @@ export default function Sidebar({ topicStats, overall, selectedTopic, onSelectTo
           <option value={ALL_TOPICS}>
             {ALL_TOPICS} ({overall.done}/{overall.total})
           </option>
-          {topicStats.map((topic) => (
-            <option key={topic.topic} value={topic.topic}>
-              {topic.topic} ({topic.done}/{topic.total})
-            </option>
+          {phaseStats.map((phase) => (
+            <optgroup key={phase.phase} label={`Phase ${phase.phase} · ${phase.name}`}>
+              {phase.topics.map((topic) => (
+                <option key={topic.topic} value={topic.topic}>
+                  {topic.topic} ({topic.done}/{topic.total})
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </div>
@@ -69,8 +74,7 @@ export default function Sidebar({ topicStats, overall, selectedTopic, onSelectTo
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white lg:w-72">
-      <p className="shrink-0 px-5 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Topics</p>
-      <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-4" aria-label="Topics">
+      <nav className="min-h-0 flex-1 overflow-y-auto px-2.5 pb-4 pt-3" aria-label="Topics">
         <TopicButton
           label={ALL_TOPICS}
           done={overall.done}
@@ -78,21 +82,29 @@ export default function Sidebar({ topicStats, overall, selectedTopic, onSelectTo
           isSelected={selectedTopic === ALL_TOPICS}
           onClick={() => onSelectTopic(ALL_TOPICS)}
         />
-        <div className="my-2 border-t border-slate-100" />
-        {topicStats.map((topic) => {
-          const { number, name } = splitTopic(topic.topic)
-          return (
-            <TopicButton
-              key={topic.topic}
-              number={number}
-              label={name}
-              done={topic.done}
-              total={topic.total}
-              isSelected={selectedTopic === topic.topic}
-              onClick={() => onSelectTopic(topic.topic)}
-            />
-          )
-        })}
+        {phaseStats.map((phase) => (
+          <div key={phase.phase} className="mt-4" role="group" aria-label={`Phase ${phase.phase}: ${phase.name}`}>
+            <p className="flex items-baseline justify-between gap-2 px-2.5 pb-1">
+              <span className="truncate text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                Phase {phase.phase} · {phase.name}
+              </span>
+            </p>
+            {phase.topics.map((topic) => {
+              const { number, name } = splitTopic(topic.topic)
+              return (
+                <TopicButton
+                  key={topic.topic}
+                  number={number}
+                  label={name}
+                  done={topic.done}
+                  total={topic.total}
+                  isSelected={selectedTopic === topic.topic}
+                  onClick={() => onSelectTopic(topic.topic)}
+                />
+              )
+            })}
+          </div>
+        ))}
       </nav>
     </aside>
   )
