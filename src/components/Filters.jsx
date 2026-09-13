@@ -1,15 +1,20 @@
 import { DIFFICULTIES } from '../constants.js'
 import { ProgressBar } from './QuestionControls.jsx'
-import { SearchIcon } from './icons.jsx'
+import { SearchIcon, ShuffleIcon } from './icons.jsx'
 
 export const ALL = 'All'
 
 export const SHOW_OPTIONS = [
   { value: 'all', label: 'All' },
-  { value: 'unsolved', label: 'To do' },
+  { value: 'todo', label: 'To do' },
   { value: 'solved', label: 'Solved' },
+  { value: 'review', label: 'Review' },
   { value: 'saved', label: 'Saved' },
 ]
+
+function Kbd({ children }) {
+  return <kbd className="rounded border border-line bg-canvas px-1.5 py-px font-sans text-[11px] text-ink-2">{children}</kbd>
+}
 
 export default function Filters({
   eyebrow,
@@ -21,12 +26,15 @@ export default function Filters({
   searchInputRef,
   show,
   onShowChange,
+  reviewCount,
   difficulty,
   onDifficultyChange,
   coreOnly,
   onCoreOnlyChange,
   isFiltered,
   onClearFilters,
+  onRandom,
+  canPickRandom,
 }) {
   return (
     <div className="shrink-0 border-b border-line bg-surface px-5 pb-4 pt-5 sm:px-6">
@@ -59,20 +67,26 @@ export default function Filters({
           )}
         </div>
 
-        <div role="group" aria-label="Show" className="grid h-9 w-full grid-cols-4 items-center rounded-lg bg-subtle p-1 sm:inline-grid sm:w-auto">
+        <div role="group" aria-label="Show" className="grid h-9 w-full grid-cols-5 items-center rounded-lg bg-subtle p-1 sm:inline-grid sm:w-auto">
           {SHOW_OPTIONS.map((option) => {
             const active = show === option.value
+            const count = option.value === 'review' && reviewCount > 0 ? reviewCount : null
             return (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => onShowChange(option.value)}
                 aria-pressed={active}
-                className={`h-7 rounded-md px-3 text-sm font-medium transition-colors ${
+                className={`inline-flex h-7 items-center justify-center gap-1 rounded-md px-1.5 text-sm font-medium transition-colors sm:px-3 ${
                   active ? 'bg-surface text-ink shadow-sm' : 'text-ink-3 hover:text-ink'
                 }`}
               >
                 {option.label}
+                {count !== null && (
+                  <span className="rounded bg-brand px-1 text-[10px] font-semibold leading-4 tabular-nums text-brand-contrast" aria-label={`${count} due`}>
+                    {count}
+                  </span>
+                )}
               </button>
             )
           })}
@@ -108,6 +122,17 @@ export default function Filters({
           Core only
         </button>
 
+        <button
+          type="button"
+          onClick={onRandom}
+          disabled={!canPickRandom}
+          title="Open a random unsolved problem from this list"
+          className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-ink-2 transition-colors hover:border-ink-3/40 hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+        >
+          <ShuffleIcon className="h-3.5 w-3.5" />
+          Random
+        </button>
+
         {isFiltered && (
           <button
             type="button"
@@ -118,6 +143,19 @@ export default function Filters({
           </button>
         )}
       </div>
+
+      <p className="mt-3 hidden items-center gap-1.5 text-xs text-ink-3 lg:flex">
+        <Kbd>j</Kbd>
+        <Kbd>k</Kbd> move
+        <span aria-hidden="true">·</span>
+        <Kbd>x</Kbd> tick
+        <span aria-hidden="true">·</span>
+        <Kbd>b</Kbd> save
+        <span aria-hidden="true">·</span>
+        <Kbd>Enter</Kbd> open
+        <span aria-hidden="true">·</span>
+        <Kbd>/</Kbd> search
+      </p>
     </div>
   )
 }

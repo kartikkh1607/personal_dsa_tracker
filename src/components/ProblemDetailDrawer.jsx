@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
 import { formatDate } from '../progress.js'
+import { isDue, nextReviewDate } from '../review.js'
 import { isValidUrl } from '../storage.js'
 import { DifficultyPill, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
 import { BookmarkIcon, CheckIcon } from './icons.jsx'
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const SWIPE_CLOSE_PX = 90
 
 // For search-link problems: lets the user paste the real URL once found, which
 // is what the Excel sheet asks for too.
@@ -67,22 +71,37 @@ function LinkFixer({ platform, customLink, onSave }) {
   )
 }
 
+function reviewStatus(entry, due) {
+  if (due) return <span className="font-semibold text-brand-strong">Due for review</span>
+  const next = nextReviewDate(entry)
+  if (next) return `Next review ${formatDate(next)}`
+  return entry.solvedAt ? 'All reviews done' : null
+}
+
 export default function ProblemDetailDrawer({
   question,
   progress,
+  today,
   relatedQuestions,
   onToggleSolved,
   onToggleBookmark,
+  onMarkReviewed,
   onNotesChange,
   onLinkChange,
   onSelectRelated,
   onClose,
 }) {
+  const dialogRef = useRef(null)
   const closeButtonRef = useRef(null)
+  const dragStartRef = useRef(null)
+  const [dragOffset, setDragOffset] = useState(0)
+
   const entry = progress[question.id] ?? {}
   const solved = entry.solved === true
   const bookmarked = entry.bookmarked === true
   const link = entry.link ?? question.link
+  const due = isDue(entry, today)
+  const review = solved ? reviewStatus(entry, due) : null
 
   // Return focus to whatever opened the drawer once it closes.
   useEffect(() => {
@@ -94,13 +113,47 @@ export default function ProblemDetailDrawer({
     closeButtonRef.current?.focus()
   }, [question.id])
 
+  // Escape closes; Tab and Shift+Tab cycle within the panel instead of
+  // wandering into the page hidden behind it.
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab' || !dialogRef.current) return
+      const focusable = [...dialogRef.current.querySelectorAll(FOCUSABLE)].filter((element) => element.getClientRects().length > 0)
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const inside = dialogRef.current.contains(document.activeElement)
+      if (event.shiftKey && (document.activeElement === first || !inside)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && (document.activeElement === last || !inside)) {
+        event.preventDefault()
+        first.focus()
+      }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
+
+  // On phones the panel is a bottom sheet: drag its top bar down to dismiss.
+  function handleTouchStart(event) {
+    if (!window.matchMedia('(max-width: 639px)').matches) return
+    dragStartRef.current = event.touches[0].clientY
+  }
+  function handleTouchMove(event) {
+    if (dragStartRef.current === null) return
+    setDragOffset(Math.max(0, event.touches[0].clientY - dragStartRef.current))
+  }
+  function handleTouchEnd() {
+    if (dragStartRef.current === null) return
+    dragStartRef.current = null
+    if (dragOffset > SWIPE_CLOSE_PX) onClose()
+    else setDragOffset(0)
+  }
 
   return (
     <div
@@ -109,25 +162,32 @@ export default function ProblemDetailDrawer({
       onMouseDown={onClose}
     >
       <aside
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="problem-detail-title"
-        className="flex max-h-[90dvh] w-full animate-sheet-up flex-col rounded-t-2xl border-line bg-surface shadow-2xl sm:max-h-none sm:w-[28rem] sm:animate-slide-in sm:rounded-none sm:border-l"
+        style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: 'none' } : undefined}
+        className="flex max-h-[90dvh] w-full animate-sheet-up flex-col rounded-t-2xl border-line bg-surface shadow-2xl transition-transform duration-200 sm:max-h-none sm:w-[28rem] sm:animate-slide-in sm:rounded-none sm:border-l"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-5 py-3 sm:px-6">
-          <p className="truncate text-sm text-ink-3">
-            Phase {question.phase} · {topicName(question.topic)}
-          </p>
-          <button
-            ref={closeButtonRef}
-            type="button"
-            onClick={onClose}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-xl leading-none text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
-            aria-label="Close problem details"
-          >
-            ×
-          </button>
+        <div className="shrink-0 touch-none sm:touch-auto" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+          <div className="flex justify-center pt-2 sm:hidden" aria-hidden="true">
+            <span className="h-1 w-10 rounded-full bg-line" />
+          </div>
+          <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3 sm:px-6">
+            <p className="truncate text-sm text-ink-3">
+              Phase {question.phase} · {topicName(question.topic)}
+            </p>
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={onClose}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-xl leading-none text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
+              aria-label="Close problem details"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 pt-6 sm:px-6">
@@ -177,7 +237,24 @@ export default function ProblemDetailDrawer({
               {bookmarked ? 'Saved' : 'Save'}
             </button>
           </div>
-          {solved && entry.solvedAt && <p className="mt-2 text-center text-xs text-ink-3">Solved on {formatDate(entry.solvedAt)}</p>}
+
+          {solved && (entry.solvedAt || review) && (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-subtle/70 px-3.5 py-2.5 text-xs text-ink-2">
+              <span>
+                {entry.solvedAt ? `Solved ${formatDate(entry.solvedAt)}` : 'Solved'}
+                {review && <> · {review}</>}
+              </span>
+              {due && (
+                <button
+                  type="button"
+                  onClick={() => onMarkReviewed(question.id)}
+                  className="h-7 shrink-0 rounded-md bg-brand px-2.5 font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
+                >
+                  Mark revised
+                </button>
+              )}
+            </div>
+          )}
 
           <label htmlFor="problem-notes" className="mt-8 block text-sm font-semibold text-ink">
             Notes

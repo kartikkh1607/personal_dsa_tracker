@@ -27,9 +27,10 @@ export function SolvedCheck({ solved, problem, onToggle }) {
   )
 }
 
-export function BookmarkButton({ bookmarked, problem, onToggle }) {
+export function BookmarkButton({ bookmarked, problem, onToggle, ...rest }) {
   return (
     <button
+      {...rest}
       type="button"
       onClick={onToggle}
       aria-pressed={bookmarked}

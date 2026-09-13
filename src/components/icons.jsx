@@ -75,6 +75,14 @@ export function SunIcon({ className = 'h-4 w-4' }) {
   )
 }
 
+export function ShuffleIcon({ className = 'h-4 w-4' }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M2 4.5h2.2c1.5 0 2.4.7 3.2 2l1.2 2c.8 1.3 1.7 2 3.2 2H14M2 11.5h2.2c1 0 1.7-.3 2.3-.9M11.8 2.5 14 4.5l-2.2 2M11.8 9.5l2.2 2-2.2 2M9.3 5.4c.6-.6 1.3-.9 2.3-.9H14" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export function MoonIcon({ className = 'h-4 w-4' }) {
   return (
     <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

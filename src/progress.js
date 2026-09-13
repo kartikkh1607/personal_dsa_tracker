@@ -1,6 +1,6 @@
 // Saved progress is a plain { [id]: entry } map, where an entry holds only what
-// the user has set: { solved, solvedAt, bookmarked, notes, link }. Problems with
-// no progress have no entry, so the static question list is never copied.
+// the user has set: { solved, solvedAt, reviewedAt, reviews, bookmarked, notes,
+// link }. Problems with no progress have no entry.
 
 // Merges a patch into one problem's entry. Empty fields (false, '' or
 // undefined) are dropped, and an entry with nothing left is removed.
@@ -15,18 +15,39 @@ export function applyPatch(progress, id, patch) {
   return next
 }
 
-// Local calendar date as YYYY-MM-DD, offset by whole days (-1 = yesterday).
-export function localDate(offsetDays = 0) {
-  const date = new Date()
-  date.setDate(date.getDate() + offsetDays)
+// Dates are local calendar days stored as YYYY-MM-DD strings, which also sort
+// and compare correctly as plain strings.
+export function isoFromDate(date) {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
   return `${date.getFullYear()}-${month}-${day}`
 }
 
-export function formatDate(isoDate) {
+export function dateFromIso(isoDate) {
   const [year, month, day] = isoDate.split('-').map(Number)
-  return new Date(year, month - 1, day).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(year, month - 1, day)
+}
+
+// Today's local date, offset by whole days (-1 = yesterday).
+export function localDate(offsetDays = 0) {
+  const date = new Date()
+  date.setDate(date.getDate() + offsetDays)
+  return isoFromDate(date)
+}
+
+export function addDays(isoDate, days) {
+  const date = dateFromIso(isoDate)
+  date.setDate(date.getDate() + days)
+  return isoFromDate(date)
+}
+
+// Rounded, so a daylight-saving change (a 23 or 25 hour day) still counts as one.
+export function daysBetween(fromIsoDate, toIsoDate) {
+  return Math.round((dateFromIso(toIsoDate) - dateFromIso(fromIsoDate)) / 86_400_000)
+}
+
+export function formatDate(isoDate) {
+  return dateFromIso(isoDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 // Consecutive days with at least one solve, ending today. A streak that ended
