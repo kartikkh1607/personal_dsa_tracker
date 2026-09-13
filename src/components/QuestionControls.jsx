@@ -3,24 +3,37 @@ import { CONFIDENCE_LEVELS, DIFFICULTY_STYLES, STATUS_STYLES, STATUSES } from '.
 export function DifficultyLabel({ difficulty }) {
   const style = DIFFICULTY_STYLES[difficulty]
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${style.text}`}>
+    <span className={`inline-flex shrink-0 items-center gap-1.5 text-xs font-medium ${style.text}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
       {difficulty}
     </span>
   )
 }
 
-export function LinkButton({ link, problem }) {
+// Some sheet entries have no direct problem page and link to a web search instead.
+function isSearchLink(link) {
+  return link.includes('google.com/search')
+}
+
+export function LinkButton({ link, problem, label, prominent = false }) {
+  const isSearch = isSearchLink(link)
+  const text = label ?? (prominent ? (isSearch ? 'Find problem' : 'Open problem') : 'Open')
+
   return (
     <a
       href={link}
       target="_blank"
-      rel="noopener"
-      title={`Open ${problem} in a new tab`}
-      className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+      rel="noopener noreferrer"
+      title={isSearch ? `Search the web for ${problem}` : `Open ${problem} in a new tab`}
+      onClick={(event) => event.stopPropagation()}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg border font-medium transition-colors ${
+        prominent
+          ? 'border-indigo-600 bg-indigo-600 px-4 py-2.5 text-sm text-white shadow-sm hover:bg-indigo-700'
+          : 'border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700'
+      }`}
     >
-      Open
-      <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6">
+      {text}
+      <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
         <path d="M4.5 2h5.5v5.5M10 2 4 8M8 10H2V4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </a>
@@ -30,7 +43,8 @@ export function LinkButton({ link, problem }) {
 export function StatusSelect({ id, problem, status, onChange }) {
   return (
     <span
-      className={`relative inline-flex items-center rounded-full border font-medium transition-colors ${STATUS_STYLES[status]}`}
+      onClick={(event) => event.stopPropagation()}
+      className={`relative inline-flex shrink-0 items-center rounded-full border font-medium transition-colors focus-within:ring-2 focus-within:ring-indigo-500/40 ${STATUS_STYLES[status]}`}
     >
       <select
         value={status}
@@ -50,6 +64,7 @@ export function StatusSelect({ id, problem, status, onChange }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
+        aria-hidden="true"
       >
         <path d="M3 4.5 6 7.5 9 4.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -57,29 +72,34 @@ export function StatusSelect({ id, problem, status, onChange }) {
   )
 }
 
-// Same values as before (1-5, blank by default) - just quicker to set than a
-// dropdown. Clicking the active dot clears the rating back to blank.
+// A 1-5 rating, blank by default. Clicking the active dot clears it. Each dot
+// sits in a larger button so it is still easy to hit on touch screens.
 export function ConfidenceDots({ id, problem, confidence, onChange }) {
   const value = Number(confidence) || 0
 
   return (
-    <span className="inline-flex items-center gap-1" role="group" aria-label={`Confidence for ${problem}`}>
+    <span className="inline-flex shrink-0 items-center" role="group" aria-label={`Confidence for ${problem}`} onClick={(event) => event.stopPropagation()}>
       {CONFIDENCE_LEVELS.map((level) => {
         const filled = Number(level) <= value
+        const isActive = value === Number(level)
         return (
           <button
             key={level}
             type="button"
             aria-label={`Confidence ${level} of 5`}
-            aria-pressed={filled}
-            title={value === Number(level) ? 'Click to clear' : `Confidence ${level}`}
-            onClick={() => onChange(id, 'confidence', value === Number(level) ? '' : level)}
-            className={`h-3.5 w-3.5 rounded-full border transition-colors ${
-              filled
-                ? 'border-indigo-500 bg-indigo-500'
-                : 'border-slate-300 bg-white hover:border-indigo-400 hover:bg-indigo-100'
-            }`}
-          />
+            aria-pressed={isActive}
+            title={isActive ? 'Click to clear' : `Confidence ${level} of 5`}
+            onClick={() => onChange(id, 'confidence', isActive ? '' : level)}
+            className="group/dot grid h-6 w-5 place-items-center rounded-full"
+          >
+            <span
+              className={`h-3 w-3 rounded-full border transition-[transform,border-color,background-color] duration-150 group-active/dot:scale-90 ${
+                filled
+                  ? 'border-indigo-500 bg-indigo-500'
+                  : 'border-slate-300 bg-white group-hover/dot:border-indigo-400 group-hover/dot:bg-indigo-100'
+              }`}
+            />
+          </button>
         )
       })}
     </span>

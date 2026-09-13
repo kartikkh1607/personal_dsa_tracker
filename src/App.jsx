@@ -1,19 +1,23 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import rawQuestions from './data/questions.json'
-import { DEFAULT_STATUS, isDone } from './constants.js'
+import { DEFAULT_STATUS, isDone, needsReview } from './constants.js'
 import { getConfidence, getStatus } from './progress.js'
 import { loadProgress, sanitizeProgress, saveProgress } from './storage.js'
 import { useIsNarrow } from './useIsNarrow.js'
 import TopBar from './components/TopBar.jsx'
 import Sidebar, { ALL_TOPICS } from './components/Sidebar.jsx'
 import Filters, { ALL } from './components/Filters.jsx'
-import Dashboard from './components/Dashboard.jsx'
+import Overview from './components/Overview.jsx'
+import PracticeSession from './components/PracticeSession.jsx'
+import ProblemDetailDrawer from './components/ProblemDetailDrawer.jsx'
 import QuestionTable from './components/QuestionTable.jsx'
 import QuestionCards from './components/QuestionCards.jsx'
+import Toast from './components/Toast.jsx'
 
 // Topics sort by their leading number, which is part of the topic string.
 const TOPICS = [...new Set(rawQuestions.map((q) => q.topic))].sort((a, b) => a.localeCompare(b))
 const QUESTION_IDS = new Set(rawQuestions.map((question) => String(question.id)))
+const QUESTIONS_BY_ID = new Map(rawQuestions.map((question) => [question.id, question]))
 const DIFFICULTY_ORDER = { Easy: 0, Medium: 1, Hard: 2 }
 
 if (rawQuestions.length !== 570 || TOPICS.length !== 23) {
@@ -21,39 +25,58 @@ if (rawQuestions.length !== 570 || TOPICS.length !== 23) {
 }
 
 const WRITE_DELAY_MS = 400
+const SESSION_SIZE = 5
+const WEAK_TOPIC_COUNT = 5
+const RELATED_COUNT = 5
+
+function confidenceOf(progress, id) {
+  return Number(getConfidence(progress, id)) || 0
+}
 
 export default function App() {
   // Saved state only - the static question list is never stored.
   const [progress, setProgress] = useState(() => loadProgress(QUESTION_IDS))
+
+  const [view, setView] = useState('overview')
+  const [session, setSession] = useState(null)
+  const [openQuestionId, setOpenQuestionId] = useState(null)
+  const [toast, setToast] = useState(null)
 
   const [selectedTopic, setSelectedTopic] = useState(ALL_TOPICS)
   const [difficulty, setDifficulty] = useState(ALL)
   const [status, setStatus] = useState(ALL)
   const [search, setSearch] = useState('')
   const [focusMode, setFocusMode] = useState('all')
-  const [sortBy, setSortBy] = useState('recommended')
+  const [sortBy, setSortBy] = useState('sheet')
 
   const isNarrow = useIsNarrow()
   const searchInputRef = useRef(null)
+  const problemsScrollRef = useRef(null)
+  const listScrollRef = useRef(null)
 
   // Typing stays responsive: the input updates on every keystroke, while
   // re-filtering the long list runs at a lower priority and catches up.
   const deferredSearch = useDeferredValue(search)
 
-  // A quick slash shortcut gets you straight back to searching, without
+  // "/" jumps to search from anywhere except an active session, without
   // stealing keystrokes when the user is already editing a form control.
   useEffect(() => {
     function handleKeyDown(event) {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || view === 'session') return
       const element = event.target
-      const isTyping = element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement
-      if (event.key === '/' && !isTyping) {
-        event.preventDefault()
-        searchInputRef.current?.focus()
-      }
+      const isTyping =
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLTextAreaElement ||
+        element instanceof HTMLSelectElement ||
+        element?.isContentEditable
+      if (isTyping) return
+      event.preventDefault()
+      setView('problems')
+      requestAnimationFrame(() => searchInputRef.current?.focus())
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [view])
 
   // Batch writes so a run of quick changes only hits localStorage once.
   const writeTimer = useRef(null)
@@ -65,28 +88,9 @@ export default function App() {
 
   // Counting reads saved state through getStatus, so questions.json is never
   // copied or mutated and rows keep their original object identity.
-  const overall = useMemo(() => {
+  const stats = useMemo(() => {
+    const topics = new Map(TOPICS.map((topic) => [topic, { topic, total: 0, done: 0 }]))
     let done = 0
-    for (const question of rawQuestions) {
-      if (isDone(getStatus(progress, question.id))) done++
-    }
-    return { total: rawQuestions.length, done }
-  }, [progress])
-
-  const fraction = overall.total === 0 ? 0 : overall.done / overall.total
-  const percent = Math.round(fraction * 100)
-
-  const topicStats = useMemo(() => {
-    const counts = new Map(TOPICS.map((topic) => [topic, { topic, total: 0, done: 0 }]))
-    for (const question of rawQuestions) {
-      const entry = counts.get(question.topic)
-      entry.total++
-      if (isDone(getStatus(progress, question.id))) entry.done++
-    }
-    return [...counts.values()]
-  }, [progress])
-
-  const practiceMetrics = useMemo(() => {
     let attempted = 0
     let review = 0
     let confidenceTotal = 0
@@ -94,45 +98,62 @@ export default function App() {
 
     for (const question of rawQuestions) {
       const questionStatus = getStatus(progress, question.id)
-      const confidence = Number(getConfidence(progress, question.id)) || 0
+      const confidence = confidenceOf(progress, question.id)
+      const topic = topics.get(question.topic)
+      topic.total++
+      if (isDone(questionStatus)) {
+        done++
+        topic.done++
+      }
       if (questionStatus === 'Attempted') attempted++
-      if (questionStatus === 'Revisit' || (isDone(questionStatus) && confidence > 0 && confidence <= 3)) review++
+      if (needsReview(questionStatus, confidence)) review++
       if (confidence > 0) {
         confidenceTotal += confidence
         rated++
       }
     }
 
+    const total = rawQuestions.length
     return {
-      ...overall,
-      percent,
+      total,
+      done,
       attempted,
       review,
       rated,
+      percent: total === 0 ? 0 : Math.round((done / total) * 100),
       averageConfidence: rated ? (confidenceTotal / rated).toFixed(1) : '',
+      topicCount: TOPICS.length,
+      topicStats: [...topics.values()],
     }
-  }, [overall, percent, progress])
-
-  const todayQueue = useMemo(() => {
-    const ranked = rawQuestions.map((question) => {
-      const questionStatus = getStatus(progress, question.id)
-      const confidence = Number(getConfidence(progress, question.id)) || 0
-      if (questionStatus === 'Revisit') return { question, priority: 0, label: 'Marked for revision', confidence }
-      if (questionStatus === 'Attempted') return { question, priority: 1, label: 'Continue where you left off', confidence }
-      if (isDone(questionStatus) && confidence > 0 && confidence <= 3) {
-        return { question, priority: 2, label: 'Build confidence', confidence }
-      }
-      return { question, priority: 3, label: 'Fresh start', confidence }
-    })
-
-    return ranked
-      .sort((a, b) => a.priority - b.priority || a.confidence - b.confidence || a.question.id - b.question.id)
-      .slice(0, 3)
   }, [progress])
 
-  const queueIds = useMemo(() => new Set(todayQueue.map((item) => item.question.id)), [todayQueue])
-  const queueIndex = useMemo(() => new Map(todayQueue.map((item, index) => [item.question.id, index])), [todayQueue])
-  const queueLabel = todayQueue[0]?.priority < 3 ? 'Picked from your revision and in-progress work.' : 'A gentle place to begin your first session.'
+  // Revision first, then unfinished work, then shaky solves, then the next
+  // untouched problems in sheet order. Confidently solved problems never appear.
+  const queue = useMemo(() => {
+    const ranked = []
+    for (const question of rawQuestions) {
+      const questionStatus = getStatus(progress, question.id)
+      const confidence = confidenceOf(progress, question.id)
+      let entry = null
+      if (questionStatus === 'Revisit') entry = { priority: 0, label: 'Marked for revision' }
+      else if (questionStatus === 'Attempted') entry = { priority: 1, label: 'Pick up where you left off' }
+      else if (needsReview(questionStatus, confidence)) entry = { priority: 2, label: 'Build confidence' }
+      else if (!isDone(questionStatus)) entry = { priority: 3, label: 'Next in the sheet' }
+      if (entry) ranked.push({ question, confidence, ...entry })
+    }
+    return ranked
+      .sort((a, b) => a.priority - b.priority || a.confidence - b.confidence || a.question.id - b.question.id)
+      .slice(0, SESSION_SIZE)
+  }, [progress])
+
+  const weakTopics = useMemo(
+    () =>
+      stats.topicStats
+        .filter((topic) => topic.done < topic.total)
+        .sort((a, b) => a.done / a.total - b.done / b.total || a.topic.localeCompare(b.topic))
+        .slice(0, WEAK_TOPIC_COUNT),
+    [stats],
+  )
 
   // Topic, difficulty, status, focus mode and search all combine.
   const visible = useMemo(() => {
@@ -140,29 +161,29 @@ export default function App() {
     const filtered = rawQuestions.filter((question) => {
       if (selectedTopic !== ALL_TOPICS && question.topic !== selectedTopic) return false
       if (difficulty !== ALL && question.difficulty !== difficulty) return false
-      if (status !== ALL && getStatus(progress, question.id) !== status) return false
-      if (term && !question.problem.toLowerCase().includes(term)) return false
+      if (term && !question.problem.toLowerCase().includes(term) && !question.pattern.toLowerCase().includes(term)) return false
       const questionStatus = getStatus(progress, question.id)
-      const confidence = Number(getConfidence(progress, question.id)) || 0
+      if (status !== ALL && questionStatus !== status) return false
       if (focusMode === 'unsolved' && isDone(questionStatus)) return false
-      if (focusMode === 'continue' && questionStatus !== 'Attempted') return false
-      if (focusMode === 'review' && questionStatus !== 'Revisit' && !(isDone(questionStatus) && confidence > 0 && confidence <= 3)) return false
-      if (focusMode === 'recommended' && !queueIds.has(question.id)) return false
+      if (focusMode === 'review' && !needsReview(questionStatus, confidenceOf(progress, question.id))) return false
       return true
     })
 
-    return [...filtered].sort((a, b) => {
-      if (sortBy === 'topic') return a.topic.localeCompare(b.topic) || a.id - b.id
-      if (sortBy === 'difficulty') return DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty] || a.id - b.id
-      if (sortBy === 'confidence') {
-        const aConfidence = Number(getConfidence(progress, a.id)) || 6
-        const bConfidence = Number(getConfidence(progress, b.id)) || 6
-        return aConfidence - bConfidence || a.id - b.id
-      }
-      if (sortBy === 'name') return a.problem.localeCompare(b.problem)
-      return (queueIndex.get(a.id) ?? 99_999) - (queueIndex.get(b.id) ?? 99_999) || a.id - b.id
-    })
-  }, [progress, selectedTopic, difficulty, status, focusMode, sortBy, deferredSearch, queueIds, queueIndex])
+    // The sheet is already in order; filter() returned a fresh array to sort.
+    if (sortBy === 'difficulty') filtered.sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty] || a.id - b.id)
+    if (sortBy === 'name') filtered.sort((a, b) => a.problem.localeCompare(b.problem))
+    if (sortBy === 'confidence') {
+      // Unrated problems go last.
+      filtered.sort((a, b) => (confidenceOf(progress, a.id) || 6) - (confidenceOf(progress, b.id) || 6) || a.id - b.id)
+    }
+    return filtered
+  }, [progress, selectedTopic, difficulty, status, focusMode, sortBy, deferredSearch])
+
+  // A new filter starts the list from the top rather than mid-scroll.
+  useEffect(() => {
+    problemsScrollRef.current?.scrollTo({ top: 0 })
+    listScrollRef.current?.scrollTo({ top: 0 })
+  }, [selectedTopic, difficulty, status, focusMode, sortBy, deferredSearch])
 
   // Stable identity keeps the memoised rows from re-rendering.
   const handleChange = useCallback((id, field, value) => {
@@ -172,22 +193,56 @@ export default function App() {
     })
   }, [])
 
-  const isFiltered = selectedTopic !== ALL_TOPICS || difficulty !== ALL || status !== ALL || search !== '' || focusMode !== 'all'
+  const openQuestion = useCallback((id) => setOpenQuestionId(id), [])
+  const closeQuestion = useCallback(() => setOpenQuestionId(null), [])
+  const dismissToast = useCallback(() => setToast(null), [])
+
+  const drawerQuestion = openQuestionId == null ? null : QUESTIONS_BY_ID.get(openQuestionId)
+  const relatedQuestions = useMemo(() => {
+    if (!drawerQuestion) return []
+    const others = rawQuestions.filter((q) => q.id !== drawerQuestion.id && q.topic === drawerQuestion.topic)
+    const samePattern = others.filter((q) => q.pattern === drawerQuestion.pattern)
+    const rest = others.filter((q) => q.pattern !== drawerQuestion.pattern)
+    return [...samePattern, ...rest].slice(0, RELATED_COUNT)
+  }, [drawerQuestion])
+
+  const isFiltered = difficulty !== ALL || status !== ALL || search !== '' || focusMode !== 'all'
 
   function clearFilters() {
-    setSelectedTopic(ALL_TOPICS)
     setDifficulty(ALL)
     setStatus(ALL)
     setSearch('')
     setFocusMode('all')
   }
 
-  function openQueue() {
+  function changeView(nextView) {
+    setSession(null)
+    setView(nextView)
+  }
+
+  function browseTopic(topic) {
+    setSelectedTopic(topic)
+    changeView('problems')
+  }
+
+  function browseAll() {
     setSelectedTopic(ALL_TOPICS)
-    setDifficulty(ALL)
-    setStatus(ALL)
-    setSearch('')
-    setFocusMode('recommended')
+    changeView('problems')
+  }
+
+  function startSession() {
+    if (queue.length === 0) return
+    // Freeze the list: marking problems reorders the live queue mid-session.
+    setSession({ ids: queue.map((item) => item.question.id), index: 0, startedAt: Date.now() })
+    setView('session')
+  }
+
+  const advanceSession = useCallback((step) => {
+    setSession((current) => current && { ...current, index: Math.min(Math.max(current.index + step, 0), current.ids.length - 1) })
+  }, [])
+
+  function showToast(message, tone = 'info') {
+    setToast({ message, tone, id: Date.now() })
   }
 
   function handleExport() {
@@ -195,47 +250,78 @@ export default function App() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'dsa-progress.json'
+    a.download = `dsa-progress-${new Date().toISOString().slice(0, 10)}.json`
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(url)
+    a.remove()
+    // Revoking straight away can cancel the download in some browsers.
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    showToast('Progress exported.')
   }
 
   async function handleImport(file) {
+    let safeProgress = null
     try {
-      const parsed = JSON.parse(await file.text())
-      const safeProgress = sanitizeProgress(parsed, QUESTION_IDS)
-      if (safeProgress === null) throw new Error('invalid progress')
-      setProgress(safeProgress)
+      safeProgress = sanitizeProgress(JSON.parse(await file.text()), QUESTION_IDS)
     } catch {
-      alert('That file is not a valid progress export.')
+      // Unreadable JSON is reported below, same as an invalid shape.
     }
+    if (safeProgress === null) {
+      showToast('That file is not a valid progress export.', 'error')
+      return
+    }
+
+    const count = Object.keys(safeProgress).length
+    const hasProgress = Object.keys(progress).length > 0
+    if (hasProgress && !window.confirm(`Replace your current progress with the ${count} entries in "${file.name}"? This can't be undone.`)) return
+
+    setProgress(safeProgress)
+    showToast(`Imported progress for ${count} ${count === 1 ? 'problem' : 'problems'}.`)
   }
 
-  const listProps = { questions: visible, progress, onChange: handleChange }
+  const selectedStats = selectedTopic === ALL_TOPICS ? stats : stats.topicStats.find((topic) => topic.topic === selectedTopic)
+  const listProps = {
+    questions: visible,
+    progress,
+    showTopic: selectedTopic === ALL_TOPICS,
+    onChange: handleChange,
+    onOpen: openQuestion,
+  }
 
-  return (
-    <div className="flex h-screen flex-col bg-slate-50 font-sans text-slate-900">
-      <TopBar
-        total={overall.total}
-        done={overall.done}
-        percent={percent}
-        fraction={fraction}
-        onExport={handleExport}
-        onImport={handleImport}
-      />
-
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+  let content
+  if (view === 'session' && session) {
+    content = (
+      <main className="min-h-0 flex-1 overflow-y-auto">
+        <PracticeSession
+          key={session.startedAt}
+          questions={session.ids.map((id) => QUESTIONS_BY_ID.get(id))}
+          index={session.index}
+          progress={progress}
+          canRestart={queue.length > 0}
+          onAdvance={advanceSession}
+          onChange={handleChange}
+          onRestart={startSession}
+          onExit={() => changeView('overview')}
+        />
+      </main>
+    )
+  } else if (view === 'problems') {
+    content = (
+      // Narrow screens scroll the whole page; wider ones scroll only the list.
+      <div ref={problemsScrollRef} className="min-h-0 flex-1 overflow-y-auto md:flex md:overflow-hidden">
         <Sidebar
-          topicStats={topicStats}
-          overall={overall}
+          topicStats={stats.topicStats}
+          overall={stats}
           selectedTopic={selectedTopic}
           onSelectTopic={setSelectedTopic}
           isNarrow={isNarrow}
         />
 
-        <main className="flex min-h-0 flex-1 flex-col">
-          <Dashboard metrics={practiceMetrics} queue={todayQueue} queueLabel={queueLabel} onOpenQueue={openQueue} />
+        <main className="md:flex md:min-h-0 md:flex-1 md:flex-col">
           <Filters
+            title={selectedTopic === ALL_TOPICS ? 'All problems' : selectedTopic.replace(/^\d+\.\s*/, '')}
+            solvedCount={selectedStats.done}
+            topicTotal={selectedStats.total}
             difficulty={difficulty}
             onDifficultyChange={setDifficulty}
             status={status}
@@ -248,22 +334,24 @@ export default function App() {
             sortBy={sortBy}
             onSortByChange={setSortBy}
             visibleCount={visible.length}
-            totalCount={overall.total}
             isFiltered={isFiltered}
             onClearFilters={clearFilters}
           />
 
-          <div className="min-h-0 flex-1 overflow-auto">
+          <div ref={listScrollRef} className="md:min-h-0 md:flex-1 md:overflow-auto">
             {visible.length === 0 ? (
-              <div className="px-6 py-16 text-center">
-                <p className="text-sm font-medium text-slate-600">No questions match these filters.</p>
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-3 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
-                >
-                  Clear filters
-                </button>
+              <div className="px-6 py-20 text-center">
+                <p className="font-medium text-slate-700">No problems match these filters.</p>
+                <p className="mt-1 text-sm text-slate-500">Try a different search or loosen a filter.</p>
+                {isFiltered && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-4 h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
+                  >
+                    Clear filters
+                  </button>
+                )}
               </div>
             ) : isNarrow ? (
               <QuestionCards {...listProps} />
@@ -273,6 +361,49 @@ export default function App() {
           </div>
         </main>
       </div>
+    )
+  } else {
+    content = (
+      <main className="min-h-0 flex-1 overflow-y-auto">
+        <Overview
+          metrics={stats}
+          queue={queue}
+          weakTopics={weakTopics}
+          onStartSession={startSession}
+          onBrowseProblems={browseAll}
+          onSelectTopic={browseTopic}
+          onOpenQuestion={openQuestion}
+        />
+      </main>
+    )
+  }
+
+  return (
+    <div className="flex h-dvh flex-col bg-slate-50 font-sans text-slate-900">
+      <TopBar
+        view={view === 'session' ? 'overview' : view}
+        onViewChange={changeView}
+        done={stats.done}
+        total={stats.total}
+        percent={stats.percent}
+        onExport={handleExport}
+        onImport={handleImport}
+      />
+
+      {content}
+
+      {drawerQuestion && (
+        <ProblemDetailDrawer
+          question={drawerQuestion}
+          progress={progress}
+          relatedQuestions={relatedQuestions}
+          onChange={handleChange}
+          onSelectRelated={openQuestion}
+          onClose={closeQuestion}
+        />
+      )}
+
+      {toast && <Toast key={toast.id} toast={toast} onDismiss={dismissToast} />}
     </div>
   )
 }

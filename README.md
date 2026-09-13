@@ -28,9 +28,14 @@ npm run preview   # serve the built dist/ locally
 | `src/progress.js` | Reads status/confidence out of the saved-progress map. |
 | `src/storage.js` | Loads and saves progress under the single key `dsa-tracker-progress`. |
 | `src/useIsNarrow.js` | Picks the table or the card layout, so only one is ever rendered. |
-| `src/App.jsx` | State, counting, filtering, export/import. |
+| `src/App.jsx` | State, counting, the "next up" queue, filtering, export/import. |
+| `src/components/Overview.jsx` | Home view: today's session, overall progress, topics to focus on. |
+| `src/components/PracticeSession.jsx` | One-problem-at-a-time session with outcome buttons and a summary. |
+| `src/components/ProblemDetailDrawer.jsx` | Side panel (bottom sheet on phones) with a problem's details and related problems. |
 | `src/components/QuestionControls.jsx` | Status pill, confidence dots, difficulty label, link button. |
-| `src/components/` | `TopBar`, `Sidebar`, `Filters`, `QuestionTable`, `QuestionCards`. |
+| `src/components/` | `TopBar`, `Sidebar`, `Filters`, `QuestionTable`, `QuestionCards`, `Toast`. |
+
+Press <kbd>/</kbd> anywhere to jump to search. Click any problem to open its details.
 
 **"Done"** means status is `Solved` or `Mastered`. That single rule (`isDone` in
 `src/constants.js`) drives the top-bar count, the percentage, and every sidebar topic bar.

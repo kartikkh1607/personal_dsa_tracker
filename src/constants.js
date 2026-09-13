@@ -13,9 +13,25 @@ export function isDone(status) {
   return DONE_STATUSES.includes(status)
 }
 
+// A problem needs review when it was flagged for revision, or solved with a
+// low (1-3) confidence rating. `confidence` is a number, 0 meaning unrated.
+export function needsReview(status, confidence) {
+  return status === 'Revisit' || (isDone(status) && confidence > 0 && confidence <= 3)
+}
+
+// Topic strings carry their sheet order, e.g. "06. Binary Search".
+export function splitTopic(topic) {
+  const match = topic.match(/^(\d+)\.\s*(.*)$/)
+  return match ? { number: match[1], name: match[2] } : { number: '', name: topic }
+}
+
+export function topicName(topic) {
+  return splitTopic(topic).name
+}
+
 // Each status gets its own colour so a long table can be scanned at a glance.
 export const STATUS_STYLES = {
-  'Not Started': 'border-slate-200 bg-slate-50 text-slate-500',
+  'Not Started': 'border-slate-200 bg-slate-50 text-slate-600',
   Attempted: 'border-amber-200 bg-amber-50 text-amber-700',
   Solved: 'border-emerald-200 bg-emerald-50 text-emerald-700',
   Mastered: 'border-indigo-200 bg-indigo-50 text-indigo-700',
