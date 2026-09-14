@@ -8,7 +8,7 @@ export function groupId(key) {
 }
 
 // One row layout for every screen size. Memoised on primitives, so ticking a
-// problem re-renders that row only rather than all 570. The data-* hooks are
+// problem re-renders that row only rather than all 922. The data-* hooks are
 // what the j/k/x/b keyboard shortcuts look for.
 export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, due, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
   return (

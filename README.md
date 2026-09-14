@@ -1,6 +1,6 @@
 # DSA Practice Tracker
 
-A personal tracker for 570 DSA problems across 23 topics and 6 study phases. Your progress is
+A personal tracker for 922 DSA problems across 23 topics and 6 study phases. Your progress is
 saved in the browser's localStorage; the question list itself is static data. It works offline
 and can be installed as an app on your phone or computer.
 
@@ -33,7 +33,7 @@ npm run lint      # ESLint
   from the same topic. On a phone, swipe the panel down to close it.
 - **Home** shows what's due, what to solve next, your progress and activity, the study plan,
   and pattern coverage.
-- **Patterns** lists all 165 patterns in the sheet, so you can find the ones you haven't touched.
+- **Patterns** lists all 168 patterns in the sheet, so you can find the ones you haven't touched.
 - **Random** opens a random unsolved problem from the current list.
 - The page, topic and filters are in the URL, so refresh, Back and bookmarks keep your place.
   The app also reopens wherever you left off.
@@ -41,9 +41,10 @@ npm run lint      # ESLint
 **Keyboard:** <kbd>/</kbd> search · <kbd>j</kbd>/<kbd>k</kbd> move between problems ·
 <kbd>x</kbd> tick · <kbd>b</kbd> bookmark · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close.
 
-**Tiers and phases** come from the Excel sheet. `Core` (295 problems, two per pattern) is the
-real target, `Depth` adds reps on shaky patterns, and `Stretch` (Hard + Advanced DS) can wait.
-"Up next" follows that plan: every Core problem phase by phase, then Depth, then Stretch.
+**Tiers, phases and steps** come from the Excel sheet. `Core` (373 problems) covers every
+pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's
+id is its step on the sheet's study path: within each phase, Core, then Depth, then Stretch.
+"Up next" follows those steps.
 
 **Links.** Entries with `linkVerified: false` open a web search, because GeeksforGeeks problem
 URLs change over time. When you find the real page, use **Paste the real link** in the problem
@@ -58,9 +59,12 @@ when you haven't backed up in 14 days. From the **⋯** menu:
 - **Import backup** restores from that file. This replaces current progress, so export first
   if you have anything you want to keep. An unreadable file is rejected and leaves your
   existing progress untouched.
-- **Export for Excel** downloads a CSV in the Master tab's column order (`#` through `Notes`).
-  Rows line up by `#`, so you can paste its Status, Last Revised and Notes columns into
+- **Export for Excel** downloads a CSV in the Master tab's column order (`Step` through `Notes`).
+  Rows line up by `Step`, so you can paste its Status, Last Revised and Notes columns into
   `DSA_Master_Sheet.xlsx`.
+
+Backups made before the sheet grew to 922 problems use the old problem numbers. Importing one
+moves each entry onto the right problem automatically.
 
 Use export/import to move progress between devices, or between your local copy and a
 deployed one.
@@ -69,7 +73,8 @@ deployed one.
 
 | File | Purpose |
 | --- | --- |
-| `src/data/questions.json` | The 570 questions. Read-only source data - never written to. |
+| `src/data/questions.json` | The 922 questions. Read-only source data - never written to. |
+| `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
 | `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
@@ -87,7 +92,8 @@ deployed one.
 { "1": { "solved": true, "solvedAt": "2026-09-13", "reviewedAt": "2026-09-20", "reviews": 1, "bookmarked": true, "notes": "two pointers" } }
 ```
 
-Updating `questions.json` never wipes your progress. Writes are debounced by 400 ms so a burst
+Updating `questions.json` never wipes your progress. Progress saved under the old ids is moved to
+the new ids once, on first load; the original is kept under `dsa-tracker-progress-before-v3`. Writes are debounced by 400 ms so a burst
 of edits results in a single write. Progress saved by older versions of the app (with statuses
 and confidence) is migrated on load: Solved or Mastered become ticked, and Revisit or a low
 confidence become bookmarks.

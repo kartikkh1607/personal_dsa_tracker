@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { topicName } from '../constants.js'
+import Credit from './Credit.jsx'
 import { ProgressBar } from './QuestionControls.jsx'
 import { CheckIcon, ChevronIcon, SearchIcon } from './icons.jsx'
 
@@ -138,6 +139,8 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
           </section>
         ))}
       </div>
+
+      <Credit />
     </div>
   )
 }

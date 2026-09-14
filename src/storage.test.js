@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { needsBackupReminder, sanitizeProgress } from './storage.js'
+import legacyIds from './data/legacyIds.json'
+import questions from './data/questions.json'
+import { DATA_VERSION, needsBackupReminder, progressFromBackup, remapLegacyIds, sanitizeProgress } from './storage.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
 
@@ -46,6 +48,32 @@ describe('sanitizeProgress', () => {
   it('rejects files with no recognisable entries for known problems', () => {
     expect(sanitizeProgress({ 999: { solved: true } }, IDS)).toBeNull()
     expect(sanitizeProgress({ 1: { score: 10 } }, IDS)).toBeNull()
+  })
+})
+
+describe('old question ids', () => {
+  it('moves progress onto the renumbered ids', () => {
+    expect(remapLegacyIds({ 1: { solved: true }, 2: { notes: 'x' }, 9: { solved: true } }, { 1: 10, 2: 20 })).toEqual({ 10: { solved: true }, 20: { notes: 'x' } })
+  })
+
+  it('maps every old id to a distinct existing problem', () => {
+    const ids = new Set(questions.map((question) => question.id))
+    const targets = Object.values(legacyIds)
+    expect(targets).toHaveLength(570)
+    expect(new Set(targets).size).toBe(570)
+    expect(targets.every((id) => ids.has(id))).toBe(true)
+  })
+
+  it('follows problems that moved or were renamed', () => {
+    const problem = (oldId) => questions.find((question) => question.id === legacyIds[oldId]).problem
+    expect(problem(15)).toBe('Majority Element')
+    expect(problem(351)).toBe('Lowest Common Ancestor of a BST')
+  })
+
+  it('reads versioned backups as-is and remaps older bare ones', () => {
+    const progress = { 11: { solved: true } }
+    expect(progressFromBackup({ version: DATA_VERSION, progress })).toBe(progress)
+    expect(progressFromBackup({ 15: { solved: true } })).toEqual({ [legacyIds[15]]: { solved: true } })
   })
 })
 

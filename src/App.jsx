@@ -1,6 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import rawQuestions from './data/questions.json'
-import { DIFFICULTIES, TIER_RANK, splitTopic, topicName } from './constants.js'
+import { DIFFICULTIES, splitTopic, topicName } from './constants.js'
 import { progressToCsv } from './csv.js'
 import { addDays, applyPatch, localDate, streakFrom } from './progress.js'
 import { isDue, nextReviewDate } from './review.js'
@@ -8,8 +8,10 @@ import { buildHash, initialRoute, parseHash, rememberRoute } from './route.js'
 import {
   BACKUP_KEY,
   BACKUP_SNOOZE_KEY,
+  DATA_VERSION,
   loadProgress,
   needsBackupReminder,
+  progressFromBackup,
   readLocal,
   sanitizeProgress,
   saveProgress,
@@ -25,6 +27,7 @@ import PatternsView from './components/PatternsView.jsx'
 import ProblemList, { groupId } from './components/ProblemList.jsx'
 import ProblemDetailDrawer from './components/ProblemDetailDrawer.jsx'
 import Toast from './components/Toast.jsx'
+import Credit from './components/Credit.jsx'
 
 // Topics sort by their leading number, which is part of the topic string.
 const TOPICS = [...new Set(rawQuestions.map((q) => q.topic))].sort((a, b) => a.localeCompare(b))
@@ -36,8 +39,8 @@ const PHASES = [...new Map(rawQuestions.map((q) => [q.phase, q.phaseName]))]
   .map(([phase, name]) => ({ phase, name }))
   .sort((a, b) => a.phase - b.phase)
 
-if (rawQuestions.length !== 570 || TOPICS.length !== 23) {
-  console.warn(`Expected 570 questions across 23 topics, got ${rawQuestions.length} across ${TOPICS.length}.`)
+if (rawQuestions.length !== 922 || TOPICS.length !== 23) {
+  console.warn(`Expected 922 questions across 23 topics, got ${rawQuestions.length} across ${TOPICS.length}.`)
 }
 
 const WRITE_DELAY_MS = 400
@@ -186,12 +189,13 @@ export default function App() {
     }
   }, [progress, today])
 
-  // The sheet's plan: every Core problem in phase order, then Depth, then Stretch.
+  // The sheet's study path: ids are its steps, so each phase's Core, Depth and
+  // Stretch problems come before the next phase.
   const upNext = useMemo(
     () =>
       rawQuestions
         .filter((question) => !progress[question.id]?.solved)
-        .sort((a, b) => TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.id - b.id)
+        .sort((a, b) => a.id - b.id)
         .slice(0, UP_NEXT_COUNT),
     [progress],
   )
@@ -382,7 +386,7 @@ export default function App() {
   }
 
   function handleExport() {
-    downloadFile(`dsa-progress-${today}.json`, JSON.stringify(progress, null, 2), 'application/json')
+    downloadFile(`dsa-progress-${today}.json`, JSON.stringify({ version: DATA_VERSION, progress }, null, 2), 'application/json')
     writeLocal(BACKUP_KEY, today)
     setLastBackup(today)
     showToast('Backup exported')
@@ -403,7 +407,7 @@ export default function App() {
   async function handleImport(file) {
     let safeProgress = null
     try {
-      safeProgress = sanitizeProgress(JSON.parse(await file.text()), QUESTION_IDS)
+      safeProgress = sanitizeProgress(progressFromBackup(JSON.parse(await file.text())), QUESTION_IDS)
     } catch {
       // Unreadable JSON is reported below, same as an invalid shape.
     }
@@ -495,6 +499,7 @@ export default function App() {
                 onOpen={openQuestion}
               />
             )}
+            <Credit className="pb-8" />
           </div>
         </main>
       </div>

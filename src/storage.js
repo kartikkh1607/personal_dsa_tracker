@@ -1,8 +1,14 @@
+import legacyIds from './data/legacyIds.json'
 import { daysBetween } from './progress.js'
 
 // All saved progress lives under this one localStorage key.
 // Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, link? } }
 export const STORAGE_KEY = 'dsa-tracker-progress'
+// Question ids were renumbered when the sheet grew from 570 problems to 922 in
+// study-path order. Progress saved without this version uses the old ids.
+export const DATA_VERSION_KEY = 'dsa-data-version'
+export const DATA_VERSION = 3
+const PRE_MIGRATION_KEY = 'dsa-tracker-progress-before-v3'
 export const BACKUP_KEY = 'dsa-last-backup'
 export const BACKUP_SNOOZE_KEY = 'dsa-backup-snoozed-until'
 export const BACKUP_REMIND_AFTER_DAYS = 14
@@ -69,11 +75,40 @@ export function sanitizeProgress(value, questionIds) {
   return recognised > 0 ? clean : null
 }
 
+// Moves entries saved under the old 570-problem ids onto the matching new ids.
+export function remapLegacyIds(value, idMap = legacyIds) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value
+  const remapped = {}
+  for (const [id, item] of Object.entries(value)) {
+    if (Object.hasOwn(idMap, id)) remapped[idMap[id]] = item
+  }
+  return remapped
+}
+
+// Backups are { version, progress } from v3 on; anything else is an older bare
+// progress object that still uses the old ids.
+export function progressFromBackup(value) {
+  if (value?.version === DATA_VERSION) return value.progress
+  return remapLegacyIds(value)
+}
+
 export function loadProgress(questionIds) {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return {}
-    return sanitizeProgress(JSON.parse(raw), questionIds) ?? {}
+    const isCurrent = localStorage.getItem(DATA_VERSION_KEY) === String(DATA_VERSION)
+    if (raw && isCurrent) return sanitizeProgress(JSON.parse(raw), questionIds) ?? {}
+
+    // First load since the renumbering: migrate once, keeping the original
+    // untouched under its own key, and save straight away so a quick close
+    // can't leave old-id progress marked as current.
+    let progress = {}
+    if (raw) {
+      localStorage.setItem(PRE_MIGRATION_KEY, raw)
+      progress = sanitizeProgress(remapLegacyIds(JSON.parse(raw)), questionIds) ?? {}
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
+    }
+    localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
+    return progress
   } catch {
     return {}
   }

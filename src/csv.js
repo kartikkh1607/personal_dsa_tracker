@@ -1,6 +1,25 @@
 // Exports progress in the Excel sheet's Master tab column order, so the Status,
-// Last Revised and Notes columns can be pasted straight into the workbook.
-const HEADERS = ['#', 'Topic', 'Pattern', 'Problem', 'Difficulty', 'Tier', 'Platform', 'Link', 'Status', 'Last Revised', 'Notes']
+// Last Revised and Notes columns can be pasted straight into the workbook. The
+// app doesn't track Confidence or Attempts, and the sheet calculates Next
+// Revision and Due? itself, so those columns stay blank.
+const HEADERS = [
+  'Step',
+  'Stage',
+  'Topic',
+  'Pattern',
+  'Problem',
+  'Difficulty',
+  'Tier',
+  'Platform',
+  'Link',
+  'Status',
+  'Confidence',
+  'Attempts',
+  'Last Revised',
+  'Next Revision',
+  'Due?',
+  'Notes',
+]
 
 // Spreadsheet apps run cells that start with these characters as formulas, so
 // user text like notes gets a leading apostrophe to keep it plain text.
@@ -22,7 +41,8 @@ export function progressToCsv(questions, progress) {
   const rows = questions.map((question) => {
     const entry = progress[question.id]
     return [
-      question.id,
+      question.step ?? question.id,
+      question.stage,
       question.topic,
       question.pattern,
       question.problem,
@@ -31,7 +51,11 @@ export function progressToCsv(questions, progress) {
       question.platform,
       entry?.link ?? question.link,
       sheetStatus(entry),
+      '',
+      '',
       entry?.reviewedAt ?? entry?.solvedAt ?? '',
+      '',
+      '',
       entry?.notes ?? '',
     ]
   })

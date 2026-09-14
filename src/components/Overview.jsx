@@ -4,6 +4,7 @@ import { REVIEW_INTERVALS } from '../review.js'
 import Heatmap from './Heatmap.jsx'
 import { ProblemRow } from './ProblemList.jsx'
 import { DifficultyPill, PhaseBadge, ProblemLink, ProgressBar } from './QuestionControls.jsx'
+import Credit from './Credit.jsx'
 import { ArrowRightIcon, BookmarkIcon, CalendarIcon, CheckIcon, FlameIcon } from './icons.jsx'
 
 const CARD = 'rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] sm:p-6'
@@ -119,7 +120,7 @@ function UpNextCard({ upNext, progress, onSolve, onToggleBookmark, onOpenQuestio
       <CardHeader
         id="up-next-heading"
         title="Up next"
-        subtitle="Core problems first, in study order. Tick each one when it’s done."
+        subtitle="The sheet’s study path, step by step. Tick each one when it’s done."
         action={<TextButton onClick={onBrowse}>All problems</TextButton>}
       />
 
@@ -373,6 +374,8 @@ export default function Overview({
           <SavedCard savedPreview={savedPreview} savedCount={stats.saved} progress={progress} onOpenQuestion={onOpenQuestion} onShowSaved={onShowSaved} />
         </div>
       </div>
+
+      <Credit />
     </div>
   )
 }
