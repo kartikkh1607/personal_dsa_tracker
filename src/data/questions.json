@@ -267,7 +267,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/remove-element/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 19,
@@ -282,7 +282,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/plus-one/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 20,
@@ -297,7 +297,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/third-maximum-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 21,
@@ -357,7 +357,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sort-array-by-parity-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 25,
@@ -387,7 +387,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/element-appearing-more-than-25-in-sorted-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 27,
@@ -402,7 +402,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/most-frequent-even-element/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 28,
@@ -417,7 +417,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-students-unable-to-eat-lunch/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 29,
@@ -477,7 +477,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-arithmetic-triplets/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 33,
@@ -552,7 +552,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/substrings-of-size-three-with-distinct-characters/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 38,
@@ -792,7 +792,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-population-year/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 54,
@@ -882,7 +882,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/rank-transform-of-an-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 60,
@@ -927,7 +927,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/height-checker/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 63,
@@ -942,7 +942,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sort-even-and-odd-indices-independently/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 64,
@@ -957,7 +957,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-balls-in-a-box/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 65,
@@ -1002,7 +1002,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/largest-perimeter-triangle/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 68,
@@ -1017,7 +1017,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-absolute-difference/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 69,
@@ -1257,7 +1257,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/partition-array-according-to-given-pivot/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 85,
@@ -1272,7 +1272,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-array-pairs-are-divisible-by-k/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 86,
@@ -1377,7 +1377,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/grumpy-bookstore-owner/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 93,
@@ -1512,7 +1512,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-occurrences-of-a-substring/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 102,
@@ -1542,7 +1542,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-subarrays-with-bounded-maximum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 104,
@@ -1557,7 +1557,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 105,
@@ -1572,7 +1572,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/jump-game-vi/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 106,
@@ -1587,7 +1587,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-operations-to-reduce-x-to-zero/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 107,
@@ -1602,7 +1602,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-nice-subarray/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 108,
@@ -1767,7 +1767,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/shifting-letters-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 119,
@@ -1782,7 +1782,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/k-radius-subarray-averages/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 120,
@@ -1797,7 +1797,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-ways-to-split-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 121,
@@ -1812,7 +1812,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-average-difference/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 122,
@@ -1827,7 +1827,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sum-of-absolute-differences-in-a-sorted-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 123,
@@ -1842,7 +1842,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/queries-on-a-permutation-with-key/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 124,
@@ -1887,7 +1887,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-time-difference/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 127,
@@ -1992,7 +1992,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/max-value-of-equation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 134,
@@ -2007,7 +2007,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/constrained-subsequence-sum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 135,
@@ -2022,7 +2022,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-subarrays-with-fixed-bounds/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 136,
@@ -2037,7 +2037,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-k-consecutive-bit-flips/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 137,
@@ -2052,7 +2052,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/reverse-pairs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 138,
@@ -2067,7 +2067,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 139,
@@ -2082,7 +2082,7 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-pairs-satisfying-inequality/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 140,
@@ -2142,7 +2142,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-n-and-its-double-exist/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 144,
@@ -2157,7 +2157,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-distance-value-between-two-arrays/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 145,
@@ -2172,7 +2172,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/arranging-coins/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 146,
@@ -2217,7 +2217,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-smallest-letter-greater-than-target/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 149,
@@ -2247,7 +2247,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/first-bad-version/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 151,
@@ -2292,7 +2292,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/valid-mountain-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 154,
@@ -2337,7 +2337,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/kth-missing-positive-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 157,
@@ -2532,7 +2532,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/reverse-words-in-a-string-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 170,
@@ -2562,7 +2562,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-resultant-array-after-removing-anagrams/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 172,
@@ -2622,7 +2622,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/verifying-an-alien-dictionary/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 176,
@@ -2697,7 +2697,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/robot-return-to-origin/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 181,
@@ -2802,7 +2802,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/unique-number-of-occurrences/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 188,
@@ -2847,7 +2847,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/distribute-candies/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 191,
@@ -2862,7 +2862,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-pairs-in-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 192,
@@ -2877,7 +2877,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-harmonious-subsequence/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 193,
@@ -2922,7 +2922,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-equivalent-domino-pairs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 196,
@@ -2937,7 +2937,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-every-row-and-column-contains-all-numbers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 197,
@@ -2967,7 +2967,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-it-is-a-straight-line/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 199,
@@ -3072,7 +3072,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/determine-whether-matrix-can-be-obtained-by-rotation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 206,
@@ -3087,7 +3087,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/lucky-numbers-in-a-matrix/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 207,
@@ -3102,7 +3102,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-matrix-is-x-matrix/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 208,
@@ -3117,7 +3117,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/special-positions-in-a-binary-matrix/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 209,
@@ -3147,7 +3147,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/flipping-an-image/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 211,
@@ -3207,7 +3207,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/image-smoother/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 215,
@@ -3222,7 +3222,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/convert-1d-array-into-2d-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 216,
@@ -3267,7 +3267,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/guess-number-higher-or-lower-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 219,
@@ -3312,7 +3312,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-a-peak-element-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 222,
@@ -3597,7 +3597,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-steps-to-make-two-strings-anagram/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 241,
@@ -3612,7 +3612,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/determine-if-two-strings-are-close/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 242,
@@ -3627,7 +3627,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-and-replace-pattern/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 243,
@@ -3642,7 +3642,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/bulls-and-cows/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 244,
@@ -3657,7 +3657,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/break-a-palindrome/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 245,
@@ -3672,7 +3672,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-palindrome-by-concatenating-two-letter-words/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 246,
@@ -3762,7 +3762,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/repeated-string-match/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 252,
@@ -3912,7 +3912,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-all-lonely-numbers-in-the-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 262,
@@ -3927,7 +3927,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/circular-array-loop/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 263,
@@ -3942,7 +3942,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/array-nesting/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 264,
@@ -3957,7 +3957,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-duplicate-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 265,
@@ -3972,7 +3972,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/linked-list-cycle-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 266,
@@ -3987,7 +3987,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-boomerangs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 267,
@@ -4002,7 +4002,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/detect-squares/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 268,
@@ -4032,7 +4032,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-lines-to-represent-a-line-chart/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 270,
@@ -4047,7 +4047,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/tuple-with-same-product/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 271,
@@ -4092,7 +4092,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/spiral-matrix-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 274,
@@ -4137,7 +4137,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/matrix-block-sum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 277,
@@ -4152,7 +4152,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-in-mountain-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 278,
@@ -4167,7 +4167,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/guess-the-word/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 279,
@@ -4287,7 +4287,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/kth-smallest-product-of-two-sorted-arrays/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 287,
@@ -4302,7 +4302,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-k-th-smallest-pair-distance/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 288,
@@ -4377,7 +4377,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 293,
@@ -4392,7 +4392,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/closest-subsequence-sum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 294,
@@ -4407,7 +4407,7 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/split-array-with-same-average/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 295,
@@ -4617,7 +4617,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/convert-binary-number-in-a-linked-list-to-integer/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 309,
@@ -4692,7 +4692,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 314,
@@ -5157,7 +5157,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/insertion-sort-list/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 345,
@@ -5172,7 +5172,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/merge-in-between-linked-lists/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 346,
@@ -5217,7 +5217,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/swapping-nodes-in-a-linked-list/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 349,
@@ -5307,7 +5307,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-front-middle-back-queue/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 355,
@@ -5322,7 +5322,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-circular-deque/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 356,
@@ -5337,7 +5337,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 357,
@@ -5577,7 +5577,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/kth-largest-sum-in-a-binary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 373,
@@ -5637,7 +5637,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/super-ugly-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 377,
@@ -5666,8 +5666,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/kth-smallest-prime-fraction/",
-    "linkVerified": false
+    "link": "https://leetcode.com/problems/k-th-smallest-prime-fraction/",
+    "linkVerified": true
   },
   {
     "id": 379,
@@ -5682,7 +5682,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/furthest-building-you-can-reach/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 380,
@@ -5772,7 +5772,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-a-number-container-system/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 386,
@@ -5786,8 +5786,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/sortracker/",
-    "linkVerified": false
+    "link": "https://leetcode.com/problems/sequentially-ordinal-rank-tracker/",
+    "linkVerified": true
   },
   {
     "id": 387,
@@ -5802,7 +5802,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/stock-price-fluctuation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 388,
@@ -5847,7 +5847,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-skiplist/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 391,
@@ -5907,7 +5907,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-atoms/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 395,
@@ -5967,7 +5967,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimize-deviation-in-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 399,
@@ -5982,7 +5982,7 @@
     "phaseName": "Linear DS",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-performance-of-a-team/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 400,
@@ -6057,7 +6057,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/array-partition/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 405,
@@ -6132,7 +6132,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 410,
@@ -6147,7 +6147,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-highest-altitude/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 411,
@@ -6162,7 +6162,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/split-a-string-in-balanced-strings/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 412,
@@ -6192,7 +6192,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/shortest-distance-to-a-character/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 414,
@@ -6207,7 +6207,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 415,
@@ -6252,7 +6252,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/can-place-flowers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 418,
@@ -6267,7 +6267,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 419,
@@ -6642,7 +6642,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/two-city-scheduling/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 444,
@@ -6657,7 +6657,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/advantage-shuffle/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 445,
@@ -6672,7 +6672,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-coins-you-can-get/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 446,
@@ -6717,7 +6717,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/broken-calculator/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 449,
@@ -6732,7 +6732,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/bag-of-tokens/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 450,
@@ -6747,7 +6747,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/push-dominoes/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 451,
@@ -6762,7 +6762,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-deletions-to-make-character-frequencies-unique/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 452,
@@ -6777,7 +6777,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/best-sightseeing-pair/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 453,
@@ -6792,7 +6792,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/check-if-a-string-can-break-another-string/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 454,
@@ -6807,7 +6807,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-swaps-to-make-the-string-balanced/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 455,
@@ -6822,7 +6822,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/jump-game-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 456,
@@ -6837,7 +6837,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/jump-game-vii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 457,
@@ -6852,7 +6852,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/reach-a-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 458,
@@ -6912,7 +6912,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/partition-array-into-disjoint-intervals/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 462,
@@ -6927,7 +6927,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/divide-players-into-teams-of-equal-skill/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 463,
@@ -6942,7 +6942,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/split-array-into-consecutive-subsequences/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 464,
@@ -6957,7 +6957,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/construct-string-with-repeat-limit/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 465,
@@ -6972,7 +6972,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/remove-duplicate-letters/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 466,
@@ -7002,7 +7002,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/letter-case-permutation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 468,
@@ -7017,7 +7017,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-number-of-maximum-bitwise-or-subsets/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 469,
@@ -7032,7 +7032,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/letter-tile-possibilities/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 470,
@@ -7107,7 +7107,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 475,
@@ -7122,7 +7122,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/all-possible-full-binary-trees/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 476,
@@ -7152,7 +7152,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/additive-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 478,
@@ -7167,7 +7167,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/split-array-into-fibonacci-sequence/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 479,
@@ -7182,7 +7182,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-length-of-a-concatenated-string-with-unique-characters/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 480,
@@ -7197,7 +7197,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/fair-distribution-of-cookies/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 481,
@@ -7212,7 +7212,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-numbers-with-unique-digits/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 482,
@@ -7227,7 +7227,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-sorted-vowel-strings/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 483,
@@ -7242,7 +7242,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-compatibility-score-sum/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 484,
@@ -7257,7 +7257,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/different-ways-to-add-parentheses/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 485,
@@ -7287,7 +7287,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-operations-to-make-array-continuous/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 487,
@@ -7302,7 +7302,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-non-overlapping-substrings/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 488,
@@ -7317,7 +7317,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-increments-on-subarrays-to-form-a-target-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 489,
@@ -7332,7 +7332,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/create-maximum-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 490,
@@ -7407,7 +7407,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/distribute-repeating-integers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 495,
@@ -7437,7 +7437,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-squareful-arrays/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 497,
@@ -7452,7 +7452,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/unique-paths-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 498,
@@ -7482,7 +7482,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/verbal-arithmetic-puzzle/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 500,
@@ -7512,7 +7512,7 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/24-game/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 502,
@@ -7572,7 +7572,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/n-ary-tree-preorder-traversal/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 506,
@@ -7617,7 +7617,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-depth-of-n-ary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 509,
@@ -7812,7 +7812,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-distance-between-bst-nodes/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 522,
@@ -7992,7 +7992,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-prefix-and-suffix-pairs-i/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 534,
@@ -8097,7 +8097,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-town-judge/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 541,
@@ -8112,7 +8112,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-center-of-star-graph/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 542,
@@ -8157,7 +8157,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-if-path-exists-in-graph/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 545,
@@ -8877,7 +8877,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 593,
@@ -8907,7 +8907,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/step-by-step-directions-from-a-binary-tree-node-to-another/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 595,
@@ -8967,7 +8967,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/serialize-and-deserialize-bst/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 599,
@@ -8982,7 +8982,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-duplicate-subtrees/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 600,
@@ -8997,7 +8997,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/construct-string-from-binary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 601,
@@ -9012,7 +9012,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 602,
@@ -9057,7 +9057,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/trim-a-binary-search-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 605,
@@ -9177,7 +9177,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/camelcase-matching/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 613,
@@ -9192,7 +9192,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-matching-subsequences/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 614,
@@ -9282,7 +9282,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/keys-and-rooms/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 620,
@@ -9387,7 +9387,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/as-far-from-land-as-possible/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 627,
@@ -9402,7 +9402,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/map-of-highest-peak/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 628,
@@ -9432,7 +9432,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-the-number-of-complete-components/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 630,
@@ -9447,7 +9447,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximal-network-rank/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 631,
@@ -9477,7 +9477,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/possible-bipartition/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 633,
@@ -9507,7 +9507,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/flower-planting-with-no-adjacent/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 635,
@@ -9567,7 +9567,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/snakes-and-ladders/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 639,
@@ -9612,7 +9612,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
     "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Parallel+Courses",
-    "linkVerified": true
+    "linkVerified": false
   },
   {
     "id": 642,
@@ -9762,7 +9762,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/course-schedule-iv/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 652,
@@ -9792,7 +9792,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-cost-to-convert-string-i/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 654,
@@ -9882,7 +9882,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-vertices-to-reach-all-nodes/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 660,
@@ -9897,7 +9897,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/all-paths-from-source-to-target/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 661,
@@ -9912,7 +9912,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 662,
@@ -9972,7 +9972,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/stream-of-characters/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 666,
@@ -9987,7 +9987,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/prefix-and-suffix-search/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 667,
@@ -10002,7 +10002,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sum-of-prefix-scores-of-strings/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 668,
@@ -10017,7 +10017,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/concatenated-words/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 669,
@@ -10032,7 +10032,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/palindrome-pairs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 670,
@@ -10047,7 +10047,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-xor-with-an-element-from-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 671,
@@ -10062,7 +10062,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-pairs-with-xor-in-a-range/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 672,
@@ -10077,7 +10077,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-genetic-difference-query/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 673,
@@ -10092,7 +10092,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/divide-nodes-into-the-maximum-number-of-groups/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 674,
@@ -10107,7 +10107,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-cycle-in-a-graph/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 675,
@@ -10122,7 +10122,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/shortest-cycle-in-a-graph/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 676,
@@ -10167,7 +10167,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-cost-to-make-at-least-one-valid-path-in-a-grid/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 679,
@@ -10182,7 +10182,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-obstacle-removal-to-reach-corner/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 680,
@@ -10197,7 +10197,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-moves-to-reach-target-with-rotations/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 681,
@@ -10272,7 +10272,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 686,
@@ -10302,7 +10302,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 688,
@@ -10317,7 +10317,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 689,
@@ -10332,7 +10332,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 690,
@@ -10362,7 +10362,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/redundant-connection-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 692,
@@ -10377,7 +10377,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/largest-color-value-in-a-directed-graph/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 693,
@@ -10407,7 +10407,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/valid-arrangement-of-pairs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 695,
@@ -10422,7 +10422,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/cracking-the-safe/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 696,
@@ -10437,7 +10437,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/kth-ancestor-of-a-tree-node/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 697,
@@ -10467,7 +10467,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/cycle-length-queries-in-a-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 699,
@@ -10482,7 +10482,7 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-edge-weight-equilibrium-queries-in-a-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 700,
@@ -10797,7 +10797,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/nim-game/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 721,
@@ -10962,7 +10962,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/complement-of-base-10-integer/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 732,
@@ -10977,7 +10977,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-complement/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 733,
@@ -11022,7 +11022,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 736,
@@ -11037,7 +11037,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sort-integers-by-the-number-of-1-bits/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 737,
@@ -11052,7 +11052,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/prime-number-of-set-bits-in-binary-representation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 738,
@@ -11142,7 +11142,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/self-dividing-numbers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 744,
@@ -11187,7 +11187,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-greatest-common-divisor-of-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 747,
@@ -11232,7 +11232,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/base-7/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 750,
@@ -11247,7 +11247,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/convert-a-number-to-hexadecimal/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 751,
@@ -11306,8 +11306,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/nth-tribonacci-number/",
-    "linkVerified": false
+    "link": "https://leetcode.com/problems/n-th-tribonacci-number/",
+    "linkVerified": true
   },
   {
     "id": 755,
@@ -11412,7 +11412,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/summary-ranges/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 762,
@@ -11592,7 +11592,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-parking-system/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 774,
@@ -12012,7 +12012,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-submatrices-with-all-ones/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 802,
@@ -12027,7 +12027,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/largest-plus-sign/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 803,
@@ -12042,7 +12042,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/largest-1-bordered-square/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 804,
@@ -12117,7 +12117,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/distribute-coins-in-binary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 809,
@@ -12132,7 +12132,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/stone-game-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 810,
@@ -12147,7 +12147,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/can-i-win/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 811,
@@ -12162,7 +12162,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/unique-binary-search-trees/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 812,
@@ -12342,7 +12342,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/concatenation-of-consecutive-binary-numbers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 824,
@@ -12372,7 +12372,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/bitwise-ors-of-subarrays/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 826,
@@ -12402,7 +12402,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/water-and-jug-problem/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 828,
@@ -12417,7 +12417,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/convert-to-base-2/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 829,
@@ -12462,7 +12462,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/closest-prime-numbers-in-range/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 832,
@@ -12477,7 +12477,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/arithmetic-slices/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 833,
@@ -12507,7 +12507,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-good-numbers/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 835,
@@ -12537,7 +12537,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/clumsy-factorial/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 837,
@@ -12567,7 +12567,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-winner-of-the-circular-game/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 839,
@@ -12582,7 +12582,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/bulb-switcher/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 840,
@@ -12627,7 +12627,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 843,
@@ -12642,7 +12642,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/the-number-of-the-smallest-unoccupied-chair/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 844,
@@ -12672,7 +12672,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/encode-and-decode-tinyurl/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 846,
@@ -12687,7 +12687,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-a-food-rating-system/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 847,
@@ -12702,7 +12702,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-memory-allocator/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 848,
@@ -12717,7 +12717,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-authentication-manager/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 849,
@@ -12747,7 +12747,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-an-atm-machine/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 851,
@@ -12762,7 +12762,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/implement-magic-dictionary/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 852,
@@ -12777,7 +12777,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/random-pick-with-weight/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 853,
@@ -12792,7 +12792,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/shuffle-an-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 854,
@@ -12807,7 +12807,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/linked-list-random-node/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 855,
@@ -12822,7 +12822,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/random-pick-index/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 856,
@@ -12852,7 +12852,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/range-frequency-queries/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 858,
@@ -12897,7 +12897,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/describe-the-painting/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 861,
@@ -13167,7 +13167,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-sum-bst-in-binary-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 879,
@@ -13182,7 +13182,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/sum-of-distances-in-tree/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 880,
@@ -13197,7 +13197,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/student-attendance-record-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 881,
@@ -13212,7 +13212,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-vowels-permutation/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 882,
@@ -13227,7 +13227,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-ways-to-wear-different-hats-to-each-other/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 883,
@@ -13242,7 +13242,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-cost-to-connect-two-groups-of-points/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 884,
@@ -13257,7 +13257,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/maximum-students-taking-exam/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 885,
@@ -13272,7 +13272,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-valid-words-for-each-puzzle/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 886,
@@ -13302,7 +13302,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/replace-non-coprime-numbers-in-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 888,
@@ -13317,7 +13317,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/nth-magical-number/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 889,
@@ -13332,7 +13332,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-same-bst/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 890,
@@ -13347,7 +13347,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 891,
@@ -13362,7 +13362,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/poor-pigs/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 892,
@@ -13392,7 +13392,7 @@
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
     "link": "https://www.google.com/search?q=site%3Ageeksforgeeks.org+Employee+Free+Time",
-    "linkVerified": true
+    "linkVerified": false
   },
   {
     "id": 894,
@@ -13407,7 +13407,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/my-calendar-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 895,
@@ -13422,7 +13422,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/meeting-rooms-iii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 896,
@@ -13437,7 +13437,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/range-module/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 897,
@@ -13452,7 +13452,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-integers-in-intervals/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 898,
@@ -13467,7 +13467,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/falling-squares/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 899,
@@ -13512,7 +13512,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-a-text-editor/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 902,
@@ -13527,7 +13527,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/design-movie-rental-system/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 903,
@@ -13542,7 +13542,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/insert-delete-getrandom-o1-duplicates-allowed/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 904,
@@ -13587,7 +13587,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/create-sorted-array-through-instructions/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 907,
@@ -13602,7 +13602,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/count-good-triplets-in-an-array/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 908,
@@ -13662,7 +13662,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/longest-increasing-subsequence-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 912,
@@ -13737,7 +13737,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/rectangle-area-ii/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 917,
@@ -13752,7 +13752,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/number-of-flowers-in-full-bloom/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 918,
@@ -13767,7 +13767,7 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a-garden/",
-    "linkVerified": false
+    "linkVerified": true
   },
   {
     "id": 919,
@@ -13827,6 +13827,6 @@
     "phaseName": "DP & Closers",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/contains-duplicate-iii/",
-    "linkVerified": false
+    "linkVerified": true
   }
 ]

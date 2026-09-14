@@ -9,9 +9,9 @@ import { BookmarkIcon, CheckIcon } from './icons.jsx'
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 const SWIPE_CLOSE_PX = 90
 
-// For search-link problems: lets the user paste the real URL once found, which
-// is what the Excel sheet asks for too.
-function LinkFixer({ platform, customLink, onSave }) {
+// For problems without a working link: lets the user paste the real URL once
+// found, which is what the Excel sheet asks for too.
+function LinkFixer({ customLink, onSave }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(customLink ?? '')
   const valid = isValidUrl(draft.trim())
@@ -63,7 +63,7 @@ function LinkFixer({ platform, customLink, onSave }) {
 
   return (
     <p className="mt-3 text-xs leading-5 text-ink-3">
-      {platform} URLs change over time, so this opens a search.{' '}
+      The direct link couldn’t be confirmed, so this searches Google.{' '}
       <button type="button" onClick={() => setEditing(true)} className="font-medium text-brand-strong hover:underline">
         Paste the real link
       </button>
@@ -210,7 +210,7 @@ export default function ProblemDetailDrawer({
             className="mt-6 w-full"
           />
           {!question.linkVerified && (
-            <LinkFixer key={question.id} platform={question.platform} customLink={entry.link} onSave={(url) => onLinkChange(question.id, url)} />
+            <LinkFixer key={question.id} customLink={entry.link} onSave={(url) => onLinkChange(question.id, url)} />
           )}
 
           <div className="mt-4 grid grid-cols-2 gap-2">

@@ -46,9 +46,11 @@ pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced D
 id is its step on the sheet's study path: within each phase, Core, then Depth, then Stretch.
 "Up next" follows those steps.
 
-**Links.** Entries with `linkVerified: false` open a web search, because GeeksforGeeks problem
-URLs change over time. When you find the real page, use **Paste the real link** in the problem
-details; the app remembers it.
+**Links.** A problem whose link works opens it directly; any other problem opens a Google search
+for its name. `npm run check-links` checks every link (LeetCode problems that exist and are free,
+GeeksforGeeks practice pages that load a real problem) and records the result as `linkVerified`,
+so re-run it after changing `questions.json`. When a search leads you to the real page, use
+**Paste the real link** in the problem details; the app remembers it and opens it directly.
 
 ## Backing up your progress
 

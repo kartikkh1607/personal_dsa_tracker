@@ -1,4 +1,5 @@
 import { DIFFICULTY_PILL } from '../constants.js'
+import { problemUrl } from '../links.js'
 import { BookmarkIcon, CheckIcon, ExternalIcon, SearchIcon } from './icons.jsx'
 
 // The one way to record progress: a round tick. The button is larger than the
@@ -53,16 +54,17 @@ export function DifficultyPill({ difficulty }) {
   )
 }
 
-// Unverified entries (GeeksforGeeks IDs change over time) open a web search
-// instead of the problem page, and say so.
+// Working links open the problem page; unconfirmed ones search Google for the
+// problem instead, and say so.
 export function ProblemLink({ href, verified, platform, problem, variant = 'row', className = '' }) {
-  const action = verified ? `Open on ${platform}` : `Search ${platform}`
+  const url = problemUrl({ link: href, verified, problem, platform })
+  const action = verified ? `Open on ${platform}` : 'Search on Google'
   const icon = verified ? <ExternalIcon /> : <SearchIcon />
 
   if (variant === 'primary') {
     return (
       <a
-        href={href}
+        href={url}
         target="_blank"
         rel="noopener noreferrer"
         className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-semibold text-brand-contrast shadow-sm transition-colors hover:bg-brand-strong ${className}`}
@@ -82,7 +84,7 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
       title={action}
       className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
     >
-      <span className="hidden lg:inline">{platform}</span>
+      <span className="hidden lg:inline">{verified ? platform : 'Google'}</span>
       {icon}
     </a>
   )
