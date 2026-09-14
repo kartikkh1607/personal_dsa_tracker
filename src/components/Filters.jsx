@@ -112,11 +112,19 @@ export default function Filters({
           aria-checked={coreOnly}
           onClick={() => onCoreOnlyChange(!coreOnly)}
           title="Core: two problems per pattern, the main track of the sheet"
-          className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-ink-2 transition-colors hover:border-ink-3/40 hover:text-ink"
+          className={`inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm transition-colors ${
+            coreOnly ? 'border-brand/40 bg-brand-soft font-medium text-brand-strong' : 'border-line bg-surface text-ink-2 hover:border-ink-3/40 hover:text-ink'
+          }`}
         >
-          <span className={`relative h-4 w-7 rounded-full transition-colors ${coreOnly ? 'bg-brand' : 'bg-ink-3/30'}`} aria-hidden="true">
+          {/* 36px track with a 1px border leaves 34px inside: the 14px knob sits 2px from either edge. */}
+          <span
+            className={`flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors ${coreOnly ? 'border-brand bg-brand' : 'border-ink-3/40 bg-subtle'}`}
+            aria-hidden="true"
+          >
             <span
-              className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${coreOnly ? 'translate-x-3.5' : 'translate-x-0.5'}`}
+              className={`h-3.5 w-3.5 rounded-full shadow-sm transition-[transform,background-color] duration-200 ${
+                coreOnly ? 'translate-x-[18px] bg-brand-contrast' : 'translate-x-[2px] bg-ink-3'
+              }`}
             />
           </span>
           Core only
