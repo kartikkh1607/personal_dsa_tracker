@@ -137,11 +137,37 @@ export default function App() {
 
   // Batch writes so a run of quick changes only hits localStorage once.
   const writeTimer = useRef(null)
+  const pendingWrite = useRef(null)
   useEffect(() => {
     clearTimeout(writeTimer.current)
-    writeTimer.current = setTimeout(() => saveProgress(progress), WRITE_DELAY_MS)
+    pendingWrite.current = progress
+    writeTimer.current = setTimeout(() => {
+      pendingWrite.current = null
+      saveProgress(progress)
+    }, WRITE_DELAY_MS)
     return () => clearTimeout(writeTimer.current)
   }, [progress])
+
+  // Closing or hiding the tab can beat the timer, so write any pending change
+  // straight away rather than losing the last tick.
+  useEffect(() => {
+    function flush() {
+      if (pendingWrite.current === null) return
+      clearTimeout(writeTimer.current)
+      saveProgress(pendingWrite.current)
+      pendingWrite.current = null
+    }
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'hidden') flush()
+    }
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      flush()
+      window.removeEventListener('pagehide', flush)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
 
   const stats = useMemo(() => {
     const topics = new Map(TOPICS.map((topic) => [topic, { topic, ...TOPIC_PHASE.get(topic), total: 0, solved: 0 }]))
