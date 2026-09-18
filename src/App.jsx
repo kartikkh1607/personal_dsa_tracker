@@ -2,7 +2,8 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import rawQuestions from './data/questions.json'
 import { DIFFICULTIES, splitTopic, topicName } from './constants.js'
 import { progressToCsv } from './csv.js'
-import { addDays, applyPatch, localDate, streakFrom } from './progress.js'
+import { cleanupOrphanImages, deleteImages, MAX_NOTE_IMAGES, requestPersistentStorage } from './images.js'
+import { addDays, applyPatch, hasNote, localDate, streakFrom } from './progress.js'
 import { isDue, nextReviewDate } from './review.js'
 import { buildHash, initialRoute, parseHash, rememberRoute } from './route.js'
 import {
@@ -98,7 +99,7 @@ export default function App() {
   const drawerPushedRef = useRef(false)
   const today = localDate()
 
-  const { view, show, core: coreOnly } = route
+  const { view, show, core: coreOnly, notes: notesOnly } = route
   const selectedTopic = (route.topic && TOPIC_BY_NUMBER.get(route.topic)) || ALL_TOPICS
   const difficulty = route.difficulty ?? ALL
   const search = route.q
@@ -248,10 +249,11 @@ export default function App() {
       if (show === 'solved' && !entry?.solved) return false
       if (show === 'review' && !isDue(entry, today)) return false
       if (show === 'saved' && !entry?.bookmarked) return false
+      if (notesOnly && !hasNote(entry)) return false
       if (term && !question.problem.toLowerCase().includes(term) && !question.pattern.toLowerCase().includes(term)) return false
       return true
     })
-  }, [progress, today, selectedTopic, difficulty, coreOnly, show, deferredSearch])
+  }, [progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, deferredSearch])
 
   // A single topic groups by pattern; all problems group by topic.
   const groupByPattern = selectedTopic !== ALL_TOPICS
@@ -271,13 +273,21 @@ export default function App() {
   useEffect(() => {
     problemsScrollRef.current?.scrollTo({ top: 0 })
     listScrollRef.current?.scrollTo({ top: 0 })
-  }, [selectedTopic, difficulty, coreOnly, show, deferredSearch])
+  }, [selectedTopic, difficulty, coreOnly, notesOnly, show, deferredSearch])
 
   // ...unless a pattern was picked on the Patterns page: then jump to it.
   useEffect(() => {
     if (view !== 'problems' || !route.pattern) return
     document.getElementById(groupId(route.pattern))?.scrollIntoView({ block: 'start' })
   }, [view, route.pattern, route.topic])
+
+  // Once per start-up: ask the browser to keep stored images, and remove
+  // images no saved note refers to (only old ones - see cleanupOrphanImages).
+  const startupProgress = useRef(progress)
+  useEffect(() => {
+    requestPersistentStorage()
+    cleanupOrphanImages(startupProgress.current)
+  }, [])
 
   // Stable identities keep the memoised rows from re-rendering.
   const toggleSolved = useCallback((id) => {
@@ -297,6 +307,21 @@ export default function App() {
   }, [])
   const changeNotes = useCallback((id, notes) => setProgress((prev) => applyPatch(prev, id, { notes })), [])
   const changeLink = useCallback((id, link) => setProgress((prev) => applyPatch(prev, id, { link })), [])
+  // The images are already stored by the time their ids arrive here.
+  const addNoteImages = useCallback((id, imageIds) => {
+    setProgress((prev) => applyPatch(prev, id, { images: [...(prev[id]?.images ?? []), ...imageIds].slice(0, MAX_NOTE_IMAGES) }))
+  }, [])
+  const removeNoteImage = useCallback((id, imageId) => {
+    setProgress((prev) => {
+      const images = (prev[id]?.images ?? []).filter((item) => item !== imageId)
+      return applyPatch(prev, id, { images: images.length > 0 ? images : undefined })
+    })
+    deleteImages([imageId])
+  }, [])
+  const clearNote = useCallback((id, imageIds) => {
+    setProgress((prev) => applyPatch(prev, id, { notes: undefined, images: undefined }))
+    deleteImages(imageIds)
+  }, [])
 
   const openQuestion = useCallback(
     (id) => {
@@ -378,10 +403,10 @@ export default function App() {
     return [...samePattern, ...rest].slice(0, RELATED_COUNT)
   }, [drawerQuestion])
 
-  const isFiltered = show !== 'all' || difficulty !== ALL || coreOnly || search !== ''
+  const isFiltered = show !== 'all' || difficulty !== ALL || coreOnly || notesOnly || search !== ''
 
   function clearFilters() {
-    navigate({ show: 'all', difficulty: null, core: false, q: '' }, { replace: true })
+    navigate({ show: 'all', difficulty: null, core: false, notes: false, q: '' }, { replace: true })
   }
 
   function goToProblems({ topic = null, show: nextShow = 'all', pattern = null } = {}) {
@@ -391,6 +416,7 @@ export default function App() {
       show: nextShow,
       difficulty: null,
       core: false,
+      notes: false,
       q: '',
       pattern,
       problem: null,
@@ -461,7 +487,7 @@ export default function App() {
   const header = topicStats
     ? { eyebrow: `Phase ${topicStats.phase} · ${topicStats.phaseName}`, title: topicName(selectedTopic), solved: topicStats.solved, total: topicStats.total }
     : { eyebrow: `${stats.phaseStats.length} phases · ${TOPICS.length} topics`, title: 'All problems', solved: stats.solved, total: stats.total }
-  const emptyState = EMPTY_STATES[search === '' && difficulty === ALL && !coreOnly ? show : 'all']
+  const emptyState = EMPTY_STATES[search === '' && difficulty === ALL && !coreOnly && !notesOnly ? show : 'all']
 
   let content
   if (view === 'problems') {
@@ -493,6 +519,8 @@ export default function App() {
             onDifficultyChange={(value) => navigate({ difficulty: value === ALL ? null : value }, { replace: true })}
             coreOnly={coreOnly}
             onCoreOnlyChange={(value) => navigate({ core: value }, { replace: true })}
+            notesOnly={notesOnly}
+            onNotesOnlyChange={(value) => navigate({ notes: value }, { replace: true })}
             isFiltered={isFiltered}
             onClearFilters={clearFilters}
             onRandom={pickRandom}
@@ -593,6 +621,9 @@ export default function App() {
           onToggleBookmark={toggleBookmark}
           onMarkReviewed={markReviewed}
           onNotesChange={changeNotes}
+          onAddImages={addNoteImages}
+          onRemoveImage={removeNoteImage}
+          onClearNote={clearNote}
           onLinkChange={changeLink}
           onSelectRelated={openQuestion}
           onClose={closeQuestion}

@@ -1,6 +1,6 @@
 // The page, topic, filters and open problem live in the URL hash, so refresh,
 // Back/Forward and bookmarks all keep your place. Example:
-//   #/problems?topic=06&show=todo&difficulty=Hard&core=1&q=sum&problem=120
+//   #/problems?topic=06&show=todo&difficulty=Hard&core=1&notes=1&q=sum&problem=120
 
 export const VIEWS = ['home', 'problems', 'patterns']
 export const SHOW_VALUES = ['all', 'todo', 'solved', 'review', 'saved']
@@ -13,6 +13,7 @@ export const DEFAULT_ROUTE = Object.freeze({
   show: 'all',
   difficulty: null,
   core: false,
+  notes: false, // only problems with a note
   q: '',
   pattern: null, // scrolls the topic's list to this pattern
   problem: null, // id of the problem open in the detail panel
@@ -31,6 +32,7 @@ export function parseHash(hash) {
     show: SHOW_VALUES.includes(params.get('show')) ? params.get('show') : 'all',
     difficulty: DIFFICULTY_VALUES.includes(params.get('difficulty')) ? params.get('difficulty') : null,
     core: params.get('core') === '1',
+    notes: params.get('notes') === '1',
     q: params.get('q') ?? '',
     pattern: params.get('pattern') || null,
     problem: Number.isInteger(problem) && problem > 0 ? problem : null,
@@ -46,6 +48,7 @@ export function buildHash(route) {
     if (route.show !== 'all') params.set('show', route.show)
     if (route.difficulty) params.set('difficulty', route.difficulty)
     if (route.core) params.set('core', '1')
+    if (route.notes) params.set('notes', '1')
     if (route.q) params.set('q', route.q)
     if (route.pattern) params.set('pattern', route.pattern)
   }

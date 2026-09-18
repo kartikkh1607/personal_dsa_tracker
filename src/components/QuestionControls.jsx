@@ -1,6 +1,19 @@
 import { DIFFICULTY_PILL } from '../constants.js'
 import { problemUrl } from '../links.js'
-import { BookmarkIcon, CheckIcon, ExternalIcon, SearchIcon } from './icons.jsx'
+import { BookmarkIcon, CheckIcon, ExternalIcon, NoteIcon, SearchIcon } from './icons.jsx'
+
+// Marks a problem that has a note: a faint green bar on the row's left edge
+// (NOTE_ACCENT) and a small icon after the name (NoteMark).
+export const NOTE_ACCENT = 'shadow-[inset_2px_0_0_rgb(var(--brand)/0.55)]'
+
+export function NoteMark() {
+  return (
+    <span title="Has notes" className="inline-flex shrink-0 text-brand">
+      <NoteIcon className="h-3.5 w-3.5" />
+      <span className="sr-only">(has notes)</span>
+    </span>
+  )
+}
 
 // The one way to record progress: a round tick. The button is larger than the
 // circle (negative margin keeps layout tight) so it's easy to hit on touch.

@@ -1,5 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { addDays, applyPatch, daysBetween, localDate, streakFrom } from './progress.js'
+import { addDays, applyPatch, daysBetween, hasNote, localDate, streakFrom } from './progress.js'
+
+describe('hasNote', () => {
+  it('counts real text or any image, but not blank text', () => {
+    expect(hasNote(undefined)).toBe(false)
+    expect(hasNote({ solved: true })).toBe(false)
+    expect(hasNote({ notes: '  \n\t ' })).toBe(false)
+    expect(hasNote({ notes: 'two pointers' })).toBe(true)
+    expect(hasNote({ notes: ' ', images: ['img_abc123def'] })).toBe(true)
+    expect(hasNote({ images: [] })).toBe(false)
+  })
+})
 
 describe('applyPatch', () => {
   it('adds fields and drops ones set to empty values', () => {

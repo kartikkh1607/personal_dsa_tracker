@@ -3,7 +3,7 @@ import { DEFAULT_ROUTE, buildHash, parseHash } from './route.js'
 
 describe('route hashes', () => {
   it('round-trips a fully filtered problems page', () => {
-    const route = { ...DEFAULT_ROUTE, view: 'problems', topic: '06', show: 'todo', difficulty: 'Hard', core: true, q: 'two sum', pattern: 'Two pointers', problem: 16 }
+    const route = { ...DEFAULT_ROUTE, view: 'problems', topic: '06', show: 'todo', difficulty: 'Hard', core: true, notes: true, q: 'two sum', pattern: 'Two pointers', problem: 16 }
     expect(parseHash(buildHash(route))).toEqual(route)
   })
 
@@ -17,7 +17,7 @@ describe('route hashes', () => {
   })
 
   it('falls back to defaults for unknown or malformed values', () => {
-    expect(parseHash('#/nowhere?show=weird&topic=abc&problem=-3&difficulty=Insane&core=yes')).toEqual(DEFAULT_ROUTE)
+    expect(parseHash('#/nowhere?show=weird&topic=abc&problem=-3&difficulty=Insane&core=yes&notes=true')).toEqual(DEFAULT_ROUTE)
     expect(parseHash('')).toEqual(DEFAULT_ROUTE)
   })
 })

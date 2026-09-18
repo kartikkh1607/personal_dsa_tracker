@@ -1,9 +1,9 @@
 import { DIFFICULTIES, DIFFICULTY_BAR, DIFFICULTY_TEXT, topicName } from '../constants.js'
-import { formatDate } from '../progress.js'
+import { formatDate, hasNote } from '../progress.js'
 import { REVIEW_INTERVALS } from '../review.js'
 import Heatmap from './Heatmap.jsx'
 import { ProblemRow } from './ProblemList.jsx'
-import { DifficultyPill, PhaseBadge, ProblemLink, ProgressBar } from './QuestionControls.jsx'
+import { DifficultyPill, NOTE_ACCENT, NoteMark, PhaseBadge, ProblemLink, ProgressBar } from './QuestionControls.jsx'
 import Credit from './Credit.jsx'
 import { ArrowRightIcon, BookmarkIcon, CalendarIcon, CheckIcon, FlameIcon } from './icons.jsx'
 
@@ -83,9 +83,12 @@ function ReviewCard({ reviewDue, progress, onReview, onOpenQuestion, onShowRevie
         {preview.map((question) => {
           const entry = progress[question.id]
           return (
-            <li key={question.id} className="flex items-center gap-3 px-5 py-3 sm:gap-4 sm:px-6">
+            <li key={question.id} className={`flex items-center gap-3 px-5 py-3 sm:gap-4 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
               <button type="button" onClick={() => onOpenQuestion(question.id)} className="group min-w-0 flex-1 text-left">
-                <span className="block truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                  {hasNote(entry) && <NoteMark />}
+                </span>
                 <span className="block truncate text-xs text-ink-3">
                   {topicName(question.topic)} · review {(entry.reviews ?? 0) + 1} of {REVIEW_INTERVALS.length}
                 </span>
@@ -133,6 +136,7 @@ function UpNextCard({ upNext, progress, onSolve, onToggleBookmark, onOpenQuestio
               solved={false}
               bookmarked={progress[question.id]?.bookmarked === true}
               due={false}
+              noted={hasNote(progress[question.id])}
               link={progress[question.id]?.link ?? question.link}
               meta={`${topicName(question.topic)} · ${question.pattern}`}
               onToggleSolved={onSolve}
@@ -274,11 +278,16 @@ function SavedCard({ savedPreview, savedCount, progress, onOpenQuestion, onShowS
               <button
                 type="button"
                 onClick={() => onOpenQuestion(question.id)}
-                className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6"
+                className={`group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6 ${
+                  hasNote(progress[question.id]) ? NOTE_ACCENT : ''
+                }`}
               >
                 <BookmarkIcon filled className="h-4 w-4 shrink-0 text-mark" />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                    {hasNote(progress[question.id]) && <NoteMark />}
+                  </span>
                   <span className="block truncate text-xs text-ink-3">{topicName(question.topic)}</span>
                 </span>
                 {progress[question.id]?.solved && <CheckIcon className="h-4 w-4 shrink-0 text-brand" />}

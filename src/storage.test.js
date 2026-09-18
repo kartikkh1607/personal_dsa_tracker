@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import legacyIds from './data/legacyIds.json'
 import questions from './data/questions.json'
+import { hasNote } from './progress.js'
 import { DATA_VERSION, needsBackupReminder, progressFromBackup, remapLegacyIds, sanitizeProgress } from './storage.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
@@ -48,6 +49,20 @@ describe('sanitizeProgress', () => {
   it('rejects files with no recognisable entries for known problems', () => {
     expect(sanitizeProgress({ 999: { solved: true } }, IDS)).toBeNull()
     expect(sanitizeProgress({ 1: { score: 10 } }, IDS)).toBeNull()
+  })
+
+  it('keeps note images even when the note text is empty or blank', () => {
+    const input = {
+      1: { notes: '   ', images: ['img_abc123def'] },
+      2: { images: ['img_abc123def', 'img_abc123def', 'img_zzz999yyy'] },
+    }
+    const clean = sanitizeProgress(input, IDS)
+    expect(clean).toEqual({ 1: { images: ['img_abc123def'] }, 2: { images: ['img_abc123def', 'img_zzz999yyy'] } })
+    expect(hasNote(clean[1])).toBe(true)
+  })
+
+  it('drops malformed image ids and empty image lists', () => {
+    expect(sanitizeProgress({ 1: { solved: true, images: ['../x', 42, 'img_'] }, 2: { images: 'img_abc123def' } }, IDS)).toEqual({ 1: { solved: true } })
   })
 })
 

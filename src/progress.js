@@ -1,6 +1,6 @@
 // Saved progress is a plain { [id]: entry } map, where an entry holds only what
 // the user has set: { solved, solvedAt, reviewedAt, reviews, bookmarked, notes,
-// link }. Problems with no progress have no entry.
+// images, link }. Problems with no progress have no entry.
 
 // Merges a patch into one problem's entry. Empty fields (false, '' or
 // undefined) are dropped, and an entry with nothing left is removed.
@@ -13,6 +13,11 @@ export function applyPatch(progress, id, patch) {
   if (Object.keys(entry).length === 0) delete next[id]
   else next[id] = entry
   return next
+}
+
+// A note counts once it has real text or at least one image.
+export function hasNote(entry) {
+  return Boolean(entry?.notes?.trim()) || (entry?.images?.length ?? 0) > 0
 }
 
 // Dates are local calendar days stored as YYYY-MM-DD strings, which also sort

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
-import { formatDate } from '../progress.js'
+import { isImageFile, MAX_NOTE_IMAGES, storeImages } from '../images.js'
+import { formatDate, hasNote } from '../progress.js'
 import { isDue, nextReviewDate } from '../review.js'
 import { isValidUrl } from '../storage.js'
-import { DifficultyPill, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
-import { BookmarkIcon, CheckIcon } from './icons.jsx'
+import NoteImages from './NoteImages.jsx'
+import { DifficultyPill, NOTE_ACCENT, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
+import { BookmarkIcon, CheckIcon, ImageIcon } from './icons.jsx'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 const SWIPE_CLOSE_PX = 90
@@ -71,6 +73,19 @@ function LinkFixer({ customLink, onSave }) {
   )
 }
 
+// Image files from a paste. Anything with real plain text stays a text paste,
+// even if an image comes along (copying cells from Excel does that). HTML is
+// ignored: "Copy image" in a browser often includes some alongside the image.
+function pastedImages(clipboard) {
+  if (!clipboard || clipboard.getData('text/plain').trim() !== '') return []
+  const files = [...clipboard.files].filter(isImageFile)
+  if (files.length > 0) return files
+  return [...clipboard.items]
+    .filter((item) => item.kind === 'file')
+    .map((item) => item.getAsFile())
+    .filter(isImageFile)
+}
+
 function reviewStatus(entry, due) {
   if (due) return <span className="font-semibold text-brand-strong">Due for review</span>
   const next = nextReviewDate(entry)
@@ -87,6 +102,9 @@ export default function ProblemDetailDrawer({
   onToggleBookmark,
   onMarkReviewed,
   onNotesChange,
+  onAddImages,
+  onRemoveImage,
+  onClearNote,
   onLinkChange,
   onSelectRelated,
   onClose,
@@ -95,6 +113,10 @@ export default function ProblemDetailDrawer({
   const closeButtonRef = useRef(null)
   const dragStartRef = useRef(null)
   const [dragOffset, setDragOffset] = useState(0)
+  const fileInputRef = useRef(null)
+  // Per problem, as the panel can switch problems while images still process.
+  const [attaching, setAttaching] = useState({})
+  const [imageError, setImageError] = useState(null)
 
   const entry = progress[question.id] ?? {}
   const solved = entry.solved === true
@@ -102,6 +124,48 @@ export default function ProblemDetailDrawer({
   const link = entry.link ?? question.link
   const due = isDue(entry, today)
   const review = solved ? reviewStatus(entry, due) : null
+  const imageIds = entry.images ?? []
+  const noted = hasNote(entry)
+  const attachingCount = attaching[question.id] ?? 0
+
+  async function attachImages(files) {
+    const questionId = question.id
+    const room = MAX_NOTE_IMAGES - imageIds.length - attachingCount
+    const picked = files.filter(isImageFile).slice(0, Math.max(room, 0))
+    if (picked.length < files.length) {
+      const message = room <= 0 ? `A note can hold up to ${MAX_NOTE_IMAGES} images.` : 'Some files weren’t images or didn’t fit, so they were skipped.'
+      setImageError({ questionId, message })
+    } else {
+      setImageError(null)
+    }
+    if (picked.length === 0) return
+
+    const track = (change) => setAttaching((prev) => ({ ...prev, [questionId]: (prev[questionId] ?? 0) + change }))
+    track(picked.length)
+    try {
+      const ids = await storeImages(picked)
+      if (ids.length > 0) onAddImages(questionId, ids)
+      if (ids.length < picked.length) setImageError({ questionId, message: 'Some images couldn’t be saved. Storage may be full or blocked.' })
+    } finally {
+      track(-picked.length)
+    }
+  }
+
+  function handlePaste(event) {
+    const files = pastedImages(event.clipboardData)
+    if (files.length === 0) return
+    event.preventDefault()
+    attachImages(files)
+  }
+
+  function handleDeleteImage(imageId) {
+    if (window.confirm('Delete this image? This can’t be undone.')) onRemoveImage(question.id, imageId)
+  }
+
+  function handleClearNote() {
+    const images = imageIds.length > 0 ? ` and its ${imageIds.length} ${imageIds.length === 1 ? 'image' : 'images'}` : ''
+    if (window.confirm(`Clear this note${images}? This can’t be undone.`)) onClearNote(question.id, imageIds)
+  }
 
   // Return focus to whatever opened the drawer once it closes.
   useEffect(() => {
@@ -263,21 +327,59 @@ export default function ProblemDetailDrawer({
             id="problem-notes"
             value={entry.notes ?? ''}
             onChange={(event) => onNotesChange(question.id, event.target.value)}
+            onPaste={handlePaste}
             rows={4}
-            placeholder="Approach, complexity, edge cases…"
+            placeholder="Approach, complexity, edge cases… Paste a screenshot to attach it."
             className="mt-2 w-full resize-y rounded-xl border border-line bg-canvas px-3 py-2.5 text-sm leading-6 text-ink placeholder:text-ink-3 focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20"
           />
-          <p className="mt-1 text-xs text-ink-3">Saved automatically in this browser.</p>
+          <NoteImages ids={imageIds} onDelete={handleDeleteImage} />
+          <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-ink-3">
+            <p aria-live="polite">{attachingCount > 0 ? 'Adding image…' : 'Saved automatically in this browser.'}</p>
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={(event) => {
+                  attachImages([...event.target.files])
+                  event.target.value = ''
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex h-7 items-center gap-1.5 font-medium text-brand-strong hover:underline"
+              >
+                <ImageIcon className="h-3.5 w-3.5" />
+                Add image
+              </button>
+              {noted && (
+                <button type="button" onClick={handleClearNote} className="h-7 font-medium text-ink-3 hover:text-hard hover:underline">
+                  Clear note
+                </button>
+              )}
+            </div>
+          </div>
+          {imageError?.questionId === question.id && (
+            <p role="alert" className="mt-1 text-xs text-hard">
+              {imageError.message}
+            </p>
+          )}
 
           {relatedQuestions.length > 0 && (
             <section className="mt-8">
               <h3 className="text-sm font-semibold text-ink">More in {topicName(question.topic)}</h3>
               <ul className="-mx-5 mt-2 divide-y divide-line/70 border-y border-line sm:-mx-6">
                 {relatedQuestions.map((item) => (
-                  <li key={item.id} className="flex items-center gap-3 px-5 py-2.5 sm:px-6">
+                  <li key={item.id} className={`flex items-center gap-3 px-5 py-2.5 sm:px-6 ${hasNote(progress[item.id]) ? NOTE_ACCENT : ''}`}>
                     <SolvedCheck solved={progress[item.id]?.solved === true} problem={item.problem} onToggle={() => onToggleSolved(item.id)} />
                     <button type="button" onClick={() => onSelectRelated(item.id)} className="group min-w-0 flex-1 text-left">
-                      <span className="block truncate text-sm font-medium text-ink group-hover:text-brand-strong">{item.problem}</span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{item.problem}</span>
+                        {hasNote(progress[item.id]) && <NoteMark />}
+                      </span>
                       <span className="block truncate text-xs text-ink-3">{item.pattern}</span>
                     </button>
                     <DifficultyPill difficulty={item.difficulty} />

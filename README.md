@@ -31,6 +31,11 @@ npm run lint      # ESLint
 - **Bookmark** tricky problems to save them. They collect on Home and under **Saved**.
 - **Click a problem** for its details: notes, the problem link, review dates, and more problems
   from the same topic. On a phone, swipe the panel down to close it.
+- **Images in notes.** Paste a screenshot into a note, or use **Add image**. Images are
+  shrunk to at most 1200px wide and shown as thumbnails under the note; click one to see it
+  full size. **Clear note** removes the text and its images.
+- Problems with a note get a small note icon and a green edge in every list. **Has notes** on the
+  Problems page shows only those.
 - **Home** shows what's due, what to solve next, your progress and activity, the study plan,
   and pattern coverage.
 - **Patterns** lists all 168 patterns in the sheet, so you can find the ones you haven't touched.
@@ -65,6 +70,12 @@ when you haven't backed up in 14 days. From the **⋯** menu:
   Rows line up by `Step`, so you can paste its Status, Last Revised and Notes columns into
   `DSA_Master_Sheet.xlsx`.
 
+Backups hold note text and image references but **not the images themselves**, which stay in
+this browser's IndexedDB. Importing a backup on another device keeps the text; its images show
+as "Image unavailable". On start-up, stored images that no note refers to are deleted once
+they're over 7 days old. So after importing an older backup, images that aren't in it will
+eventually be removed.
+
 Backups made before the sheet grew to 922 problems use the old problem numbers. Importing one
 moves each entry onto the right problem automatically.
 
@@ -83,9 +94,10 @@ deployed one.
 | `src/progress.js` | Updating progress entries, dates and streaks. |
 | `src/review.js` | The 7 / 30 / 90 day review schedule. |
 | `src/storage.js` | Loads, validates and saves progress; backup reminders. |
+| `src/images.js` | Compresses note images and stores them in IndexedDB; cleans up unused ones. |
 | `src/csv.js` | The Excel-ready CSV export. |
 | `src/theme.js`, `src/index.css` | Light / dark theme and the colour tokens every component uses. |
-| `src/components/` | `TopBar`, `Overview` (Home), `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `Heatmap`, `QuestionControls`, `Toast`, `icons`. |
+| `src/components/` | `TopBar`, `Overview` (Home), `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `icons`. |
 | `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. |
 
 **Persistence.** Only what you've set is stored, keyed by question id:

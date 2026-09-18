@@ -1,8 +1,10 @@
 import legacyIds from './data/legacyIds.json'
 import { daysBetween } from './progress.js'
+import { IMAGE_ID_PATTERN, MAX_NOTE_IMAGES } from './images.js'
 
 // All saved progress lives under this one localStorage key.
-// Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, link? } }
+// Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, images?, link? } }
+// images holds ids of note images; the images themselves are in IndexedDB (see images.js).
 export const STORAGE_KEY = 'dsa-tracker-progress'
 // Question ids were renumbered when the sheet grew from 570 problems to 922 in
 // study-path order. Progress saved without this version uses the old ids.
@@ -20,7 +22,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const URL_PATTERN = /^https?:\/\/\S+$/i
 const MAX_NOTES_LENGTH = 5000
 const MAX_REVIEWS = 10
-const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'link', 'status', 'confidence']
+const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'images', 'link', 'status', 'confidence']
 
 export function isValidUrl(value) {
   return URL_PATTERN.test(value)
@@ -48,6 +50,10 @@ function sanitizeEntry(item) {
     entry.bookmarked = true
   }
   if (typeof item.notes === 'string' && item.notes.trim() !== '') entry.notes = item.notes.slice(0, MAX_NOTES_LENGTH)
+  if (Array.isArray(item.images)) {
+    const images = [...new Set(item.images.filter((id) => typeof id === 'string' && IMAGE_ID_PATTERN.test(id)))].slice(0, MAX_NOTE_IMAGES)
+    if (images.length > 0) entry.images = images
+  }
   if (typeof item.link === 'string' && isValidUrl(item.link)) entry.link = item.link
 
   return entry

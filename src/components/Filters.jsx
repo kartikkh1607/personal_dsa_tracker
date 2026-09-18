@@ -12,6 +12,34 @@ export const SHOW_OPTIONS = [
   { value: 'saved', label: 'Saved' },
 ]
 
+function Switch({ checked, onChange, title, children }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      title={title}
+      className={`inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm transition-colors ${
+        checked ? 'border-brand/40 bg-brand-soft font-medium text-brand-strong' : 'border-line bg-surface text-ink-2 hover:border-ink-3/40 hover:text-ink'
+      }`}
+    >
+      {/* 36px track with a 1px border leaves 34px inside: the 14px knob sits 2px from either edge. */}
+      <span
+        className={`flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors ${checked ? 'border-brand bg-brand' : 'border-ink-3/40 bg-subtle'}`}
+        aria-hidden="true"
+      >
+        <span
+          className={`h-3.5 w-3.5 rounded-full shadow-sm transition-[transform,background-color] duration-200 ${
+            checked ? 'translate-x-[18px] bg-brand-contrast' : 'translate-x-[2px] bg-ink-3'
+          }`}
+        />
+      </span>
+      {children}
+    </button>
+  )
+}
+
 function Kbd({ children }) {
   return <kbd className="rounded border border-line bg-canvas px-1.5 py-px font-sans text-[11px] text-ink-2">{children}</kbd>
 }
@@ -31,6 +59,8 @@ export default function Filters({
   onDifficultyChange,
   coreOnly,
   onCoreOnlyChange,
+  notesOnly,
+  onNotesOnlyChange,
   isFiltered,
   onClearFilters,
   onRandom,
@@ -106,29 +136,13 @@ export default function Filters({
           ))}
         </select>
 
-        <button
-          type="button"
-          role="switch"
-          aria-checked={coreOnly}
-          onClick={() => onCoreOnlyChange(!coreOnly)}
-          title="Core: two problems per pattern, the main track of the sheet"
-          className={`inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm transition-colors ${
-            coreOnly ? 'border-brand/40 bg-brand-soft font-medium text-brand-strong' : 'border-line bg-surface text-ink-2 hover:border-ink-3/40 hover:text-ink'
-          }`}
-        >
-          {/* 36px track with a 1px border leaves 34px inside: the 14px knob sits 2px from either edge. */}
-          <span
-            className={`flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors ${coreOnly ? 'border-brand bg-brand' : 'border-ink-3/40 bg-subtle'}`}
-            aria-hidden="true"
-          >
-            <span
-              className={`h-3.5 w-3.5 rounded-full shadow-sm transition-[transform,background-color] duration-200 ${
-                coreOnly ? 'translate-x-[18px] bg-brand-contrast' : 'translate-x-[2px] bg-ink-3'
-              }`}
-            />
-          </span>
+        <Switch checked={coreOnly} onChange={onCoreOnlyChange} title="Core: two problems per pattern, the main track of the sheet">
           Core only
-        </button>
+        </Switch>
+
+        <Switch checked={notesOnly} onChange={onNotesOnlyChange} title="Only problems you've written a note on">
+          Has notes
+        </Switch>
 
         <button
           type="button"

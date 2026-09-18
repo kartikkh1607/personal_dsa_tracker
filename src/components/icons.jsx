@@ -90,3 +90,21 @@ export function MoonIcon({ className = 'h-4 w-4' }) {
     </svg>
   )
 }
+
+export function NoteIcon({ className = 'h-3.5 w-3.5' }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M3.5 2.5h9a1 1 0 0 1 1 1v6l-4 4h-6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zM13.5 9.5h-3a1 1 0 0 0-1 1v3M5.5 5.5h5M5.5 8h3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function ImageIcon({ className = 'h-3.5 w-3.5' }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <rect x="2.5" y="3" width="11" height="10" rx="1.5" />
+      <circle cx="6" cy="6.5" r="1" />
+      <path d="m2.5 11 3-3 2.5 2.5 2-2 3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
