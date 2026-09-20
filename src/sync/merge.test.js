@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { isLapsed, nextReviewDate } from '../review.js'
 import { entryFromRow, mergeProgress, mergeSummary, unionEntries } from './merge.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
@@ -256,12 +257,93 @@ describe('unionEntries', () => {
     expect(unionEntries({ bookmarked: true, reviews: 3 }, { notes: 'hm' })).toEqual({ bookmarked: true, notes: 'hm' })
   })
 
-  it('takes the highest review count and the latest review date', () => {
+  it('takes the highest review count and the latest review date when neither side kept a history', () => {
     const merged = unionEntries(
       { solved: true, solvedAt: '2026-08-01', reviews: 1, reviewedAt: '2026-08-08' },
       { solved: true, solvedAt: '2026-08-01', reviews: 3, reviewedAt: '2026-09-20' },
     )
     expect(merged).toMatchObject({ reviews: 3, reviewedAt: '2026-09-20' })
+  })
+
+  it('replays a lapse rather than resurrecting the count the other side still had', () => {
+    // This device failed the re-solve, which sends the problem back to the
+    // 3-day relearn step and clears the count. The cloud copy predates that
+    // failure and still has all three rungs. Keeping the larger count is what
+    // hurts: nothing is due past the last interval, so clearing the relearn
+    // step would retire the problem from review instead of restarting it.
+    const merged = unionEntries(
+      { solved: true, solvedAt: '2026-08-01', history: [{ date: '2026-09-18', result: 'struggled' }] },
+      {
+        solved: true,
+        solvedAt: '2026-08-01',
+        reviews: 3,
+        reviewedAt: '2026-09-10',
+        history: [
+          { date: '2026-08-08', result: 'got' },
+          { date: '2026-09-01', result: 'got' },
+          { date: '2026-09-10', result: 'got' },
+        ],
+      },
+    )
+    expect(merged.reviews).toBeUndefined()
+    expect(merged.reviewedAt).toBe('2026-09-18')
+    expect(isLapsed(merged)).toBe(true)
+    expect(nextReviewDate(merged)).toBe('2026-09-21')
+  })
+
+  it('re-earns the 7-day rung once the relearn step has been cleared', () => {
+    // The same lapse, this time already recovered on one side. Clearing a lapse
+    // is not a rung climbed, so the sequence resumes at 7 days, not 30.
+    const merged = unionEntries(
+      {
+        solved: true,
+        solvedAt: '2026-08-01',
+        history: [
+          { date: '2026-09-18', result: 'struggled' },
+          { date: '2026-09-20', result: 'got' },
+        ],
+      },
+      { solved: true, solvedAt: '2026-08-01', reviews: 2, reviewedAt: '2026-09-10', history: [{ date: '2026-09-10', result: 'got' }] },
+    )
+    expect(merged.reviews).toBeUndefined()
+    expect(merged.reviewedAt).toBe('2026-09-20')
+    expect(isLapsed(merged)).toBe(false)
+    expect(nextReviewDate(merged)).toBe('2026-09-27')
+  })
+
+  it('counts the rungs climbed since the last lapse', () => {
+    const merged = unionEntries(
+      {
+        solved: true,
+        solvedAt: '2026-08-01',
+        history: [
+          { date: '2026-08-08', result: 'got' },
+          { date: '2026-08-20', result: 'struggled' },
+        ],
+      },
+      {
+        solved: true,
+        solvedAt: '2026-08-01',
+        history: [
+          { date: '2026-08-23', result: 'got' },
+          { date: '2026-09-01', result: 'got' },
+          { date: '2026-10-01', result: 'got' },
+        ],
+      },
+    )
+    // got, struggled, got (clears the lapse), got, got -> two rungs.
+    expect(merged.reviews).toBe(2)
+    expect(merged.reviewedAt).toBe('2026-10-01')
+  })
+
+  it('stamps a union that had no stamp to inherit, and only then', () => {
+    const clock = '2026-09-20T10:00:00.000Z'
+    // Two entries from before sync existed: the merged version is this
+    // device's, made now, and says so.
+    expect(unionEntries({ solved: true }, { bookmarked: true }, clock).updatedAt).toBe(clock)
+    // A stamp either side already had still wins - the clock is the fallback,
+    // not a way to make this device's copy look newest.
+    expect(unionEntries({ solved: true, updatedAt: at('10') }, { bookmarked: true }, clock).updatedAt).toBe(at('10'))
   })
 
   it('keeps the newest updatedAt it can find', () => {

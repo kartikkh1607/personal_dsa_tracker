@@ -53,9 +53,32 @@ function mergeHistory(a = [], b = []) {
   return [...seen.values()].sort((x, y) => (x.date < y.date ? -1 : x.date > y.date ? 1 : 0)).slice(-MAX_HISTORY)
 }
 
+// The review count as the history implies it, replaying the rules recordReview
+// applies live: a struggle drops the count to zero, and the 'got' that clears
+// the resulting lapse re-earns the 7-day rung rather than climbing one.
+function reviewsFrom(history) {
+  let reviews = 0
+  let lapsed = false
+  for (const item of history) {
+    if (item.result === 'struggled') {
+      reviews = 0
+      lapsed = true
+      continue
+    }
+    if (!lapsed) reviews++
+    lapsed = false
+  }
+  return reviews
+}
+
 // Keeps whatever either side had. Used only when at least one side predates
 // sync, so there is no honest way to say which is newer.
-export function unionEntries(a = {}, b = {}) {
+//
+// `now` is this device's clock, and stamps the result when neither side had a
+// stamp to inherit. The union is a new version - this device made it, just now
+// - and saying so is what settles the entry: without a stamp the same two
+// sides would be unioned and pushed again on every round, for ever.
+export function unionEntries(a = {}, b = {}, now = null) {
   const entry = {}
 
   if (a.solved === true || b.solved === true) entry.solved = true
@@ -63,12 +86,29 @@ export function unionEntries(a = {}, b = {}) {
     // The earliest solve is when the work actually happened.
     const solvedAt = earlierDate(a.solvedAt, b.solvedAt)
     if (solvedAt) entry.solvedAt = solvedAt
-    const reviewedAt = laterDate(a.reviewedAt, b.reviewedAt)
-    if (reviewedAt) entry.reviewedAt = reviewedAt
-    const reviews = Math.max(a.reviews ?? 0, b.reviews ?? 0)
-    if (reviews > 0) entry.reviews = reviews
+
     const history = mergeHistory(a.history, b.history)
-    if (history.length > 0) entry.history = history
+    if (history.length > 0) {
+      entry.history = history
+      // reviews and reviewedAt are a running total of the history, so they are
+      // replayed from the merged list rather than taken as the larger of the
+      // two. Taking the larger resurrects a count a lapse had cleared: a device
+      // that struggled, putting the count back to zero, merged with one that
+      // had climbed to three would keep three - and the problem would then sit
+      // past the last of REVIEW_INTERVALS and never come up for review again.
+      // Replaying can only err towards reviewing something an extra time,
+      // which is the side of the trade worth landing on.
+      const reviews = reviewsFrom(history)
+      if (reviews > 0) entry.reviews = reviews
+      entry.reviewedAt = history[history.length - 1].date
+    } else {
+      // Nothing to replay. An entry from before reviews kept a history carries
+      // only the totals, so those are all there is to go on.
+      const reviewedAt = laterDate(a.reviewedAt, b.reviewedAt)
+      if (reviewedAt) entry.reviewedAt = reviewedAt
+      const reviews = Math.max(a.reviews ?? 0, b.reviews ?? 0)
+      if (reviews > 0) entry.reviews = reviews
+    }
   }
 
   if (a.bookmarked === true || b.bookmarked === true) entry.bookmarked = true
@@ -84,7 +124,7 @@ export function unionEntries(a = {}, b = {}) {
   const images = [...new Set([...(a.images ?? []), ...(b.images ?? [])])].slice(0, MAX_NOTE_IMAGES)
   if (images.length > 0) entry.images = images
 
-  const updatedAt = newer(isoOf(a.updatedAt), isoOf(b.updatedAt))
+  const updatedAt = newer(isoOf(a.updatedAt), isoOf(b.updatedAt)) ?? now
   if (updatedAt) entry.updatedAt = updatedAt
 
   return entry
@@ -92,7 +132,7 @@ export function unionEntries(a = {}, b = {}) {
 
 // Which version of one entry to keep, and where it came from.
 // Returns { entry, source } where source is 'local', 'cloud' or 'merged'.
-function pickEntry(localEntry, remoteEntry) {
+function pickEntry(localEntry, remoteEntry, now) {
   if (!localEntry) return { entry: remoteEntry, source: 'cloud' }
   if (!remoteEntry) return { entry: localEntry, source: 'local' }
 
@@ -107,7 +147,7 @@ function pickEntry(localEntry, remoteEntry) {
     return { entry: remoteEntry, source: 'cloud' }
   }
 
-  return { entry: unionEntries(localEntry, remoteEntry), source: 'merged' }
+  return { entry: unionEntries(localEntry, remoteEntry, now), source: 'merged' }
 }
 
 // A remote row as the app sees it. Rows that are malformed, or belong to a
@@ -142,11 +182,12 @@ function tombstoneTime(entry, deletedAt) {
  * tombstones { [id]: isoString }  entries deleted here, not yet confirmed
  * remote     [row]                rows from the progress table
  * questionIds Set<string>         ids this build knows about (optional)
+ * now        isoString            this device's clock, to stamp a union with
  *
  * Returns the merged progress, the merged tombstones, the rows this device
  * should push, the new pull cursor, and a summary for the UI.
  */
-export function mergeProgress({ local = {}, tombstones = {}, remote = [], questionIds = null } = {}) {
+export function mergeProgress({ local = {}, tombstones = {}, remote = [], questionIds = null, now = null } = {}) {
   const rows = new Map()
   let cursor = null
   for (const raw of remote) {
@@ -185,7 +226,7 @@ export function mergeProgress({ local = {}, tombstones = {}, remote = [], questi
       continue
     }
 
-    const { entry, source } = pickEntry(localEntry, remoteEntry)
+    const { entry, source } = pickEntry(localEntry, remoteEntry, now)
     if (!entry || Object.keys(entry).length === 0) continue
 
     progress[id] = entry
