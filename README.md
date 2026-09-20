@@ -26,8 +26,15 @@ npm run lint      # ESLint
 
 - **Tick** a problem when you've solved it. That is the only thing you have to track.
 - **Review.** Solved problems come back for review 7, 30 and 90 days after you solve them.
-  Re-solve one from scratch, then press **Revised**. Due reviews appear on Home and under the
-  **Review** filter.
+  Re-solve one from scratch, then say how it went:
+  - **Got it** moves the problem along the schedule to the next interval.
+  - **Struggled** sends it back for another go in **3 days**, restarts the schedule and
+    bookmarks it. Clearing that 3-day re-check with **Got it** re-earns the 7-day step, so a
+    failed review runs 3 → 7 → 30 → 90 rather than jumping months ahead.
+
+  Due reviews appear on Home and under the **Review** filter.
+- **Weak spots.** Problems you've struggled with twice or more collect in their own card on
+  Home, so the patterns that haven't landed are visible rather than buried.
 - **Bookmark** tricky problems to save them. They collect on Home and under **Saved**.
 - **Click a problem** for its details: notes, the problem link, review dates, and more problems
   from the same topic. On a phone, swipe the panel down to close it.
@@ -44,7 +51,11 @@ npm run lint      # ESLint
   The app also reopens wherever you left off.
 
 **Keyboard:** <kbd>/</kbd> search · <kbd>j</kbd>/<kbd>k</kbd> move between problems ·
-<kbd>x</kbd> tick · <kbd>b</kbd> bookmark · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close.
+<kbd>x</kbd> tick · <kbd>b</kbd> bookmark · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close ·
+<kbd>g</kbd> Got it · <kbd>s</kbd> Struggled.
+
+<kbd>g</kbd> and <kbd>s</kbd> work on the problem that's focused in the list and inside the
+open detail panel, and only when that problem is actually due for review.
 
 **Tiers, phases and steps** come from the Excel sheet. `Core` (373 problems) covers every
 pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's
@@ -92,7 +103,8 @@ deployed one.
 | `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
 | `src/progress.js` | Updating progress entries, dates and streaks. |
-| `src/review.js` | The 7 / 30 / 90 day review schedule. |
+| `src/review.js` | The 7 / 30 / 90 day review schedule, the 3-day relearn step, and weak-spot counting. |
+| `src/keyboard.js` | Shared keyboard helpers: what counts as typing, and the review keys. |
 | `src/storage.js` | Loads, validates and saves progress; backup reminders. |
 | `src/images.js` | Compresses note images and stores them in IndexedDB; cleans up unused ones. |
 | `src/csv.js` | The Excel-ready CSV export. |
@@ -103,8 +115,22 @@ deployed one.
 **Persistence.** Only what you've set is stored, keyed by question id:
 
 ```json
-{ "1": { "solved": true, "solvedAt": "2026-09-13", "reviewedAt": "2026-09-20", "reviews": 1, "bookmarked": true, "notes": "two pointers" } }
+{
+  "1": {
+    "solved": true,
+    "solvedAt": "2026-09-13",
+    "reviewedAt": "2026-09-20",
+    "reviews": 1,
+    "bookmarked": true,
+    "notes": "two pointers",
+    "history": [{ "date": "2026-09-20", "result": "got" }]
+  }
+}
 ```
+
+`history` records how each re-solve went (`got` or `struggled`), oldest first, keeping the last
+20. It drives the 3-day relearn step and the weak-spot list. Progress saved before it existed
+simply has no `history` and keeps working unchanged.
 
 Updating `questions.json` never wipes your progress. Progress saved under the old ids is moved to
 the new ids once, on first load; the original is kept under `dsa-tracker-progress-before-v3`. Writes are debounced by 400 ms so a burst

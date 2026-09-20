@@ -61,6 +61,51 @@ describe('sanitizeProgress', () => {
     expect(hasNote(clean[1])).toBe(true)
   })
 
+  it('keeps well formed review history and drops the items that are not', () => {
+    const input = {
+      1: {
+        solved: true,
+        solvedAt: '2026-09-01',
+        history: [
+          { date: '2026-09-08', result: 'got' },
+          { date: 'last tuesday', result: 'got' },
+          { date: '2026-09-11', result: 'nailed it' },
+          { date: '2026-09-15', result: 'struggled' },
+          null,
+          'got',
+          { result: 'got' },
+        ],
+      },
+    }
+    expect(sanitizeProgress(input, IDS)[1].history).toEqual([
+      { date: '2026-09-08', result: 'got' },
+      { date: '2026-09-15', result: 'struggled' },
+    ])
+  })
+
+  it('rejects history that is not an array, and drops an empty one', () => {
+    expect(sanitizeProgress({ 1: { solved: true, history: 'got' } }, IDS)).toEqual({ 1: { solved: true } })
+    expect(sanitizeProgress({ 1: { solved: true, history: [] } }, IDS)).toEqual({ 1: { solved: true } })
+    expect(sanitizeProgress({ 1: { solved: true, history: [{ date: 'nope', result: 'got' }] } }, IDS)).toEqual({ 1: { solved: true } })
+  })
+
+  it('caps stored history at the most recent 20 reviews', () => {
+    const history = Array.from({ length: 30 }, (_, index) => ({ date: `2026-09-${String(index + 1).padStart(2, '0')}`, result: 'got' }))
+    const clean = sanitizeProgress({ 1: { solved: true, history } }, IDS)
+    expect(clean[1].history).toHaveLength(20)
+    expect(clean[1].history[0].date).toBe('2026-09-11')
+    expect(clean[1].history.at(-1).date).toBe('2026-09-30')
+  })
+
+  it('does not keep review history on an unsolved problem', () => {
+    expect(sanitizeProgress({ 1: { bookmarked: true, history: [{ date: '2026-09-08', result: 'got' }] } }, IDS)).toEqual({ 1: { bookmarked: true } })
+  })
+
+  it('strips extra fields smuggled into a history item', () => {
+    const input = { 1: { solved: true, history: [{ date: '2026-09-08', result: 'got', note: '<script>', reviews: 99 }] } }
+    expect(sanitizeProgress(input, IDS)[1].history).toEqual([{ date: '2026-09-08', result: 'got' }])
+  })
+
   it('drops malformed image ids and empty image lists', () => {
     expect(sanitizeProgress({ 1: { solved: true, images: ['../x', 42, 'img_'] }, 2: { images: 'img_abc123def' } }, IDS)).toEqual({ 1: { solved: true } })
   })

@@ -1,6 +1,6 @@
 import { DIFFICULTIES, DIFFICULTY_BAR, DIFFICULTY_TEXT, topicName } from '../constants.js'
 import { formatDate, hasNote } from '../progress.js'
-import { REVIEW_INTERVALS } from '../review.js'
+import { isLapsed, REVIEW_INTERVALS, struggleCount } from '../review.js'
 import Heatmap from './Heatmap.jsx'
 import { ProblemRow } from './ProblemList.jsx'
 import { DifficultyPill, NOTE_ACCENT, NoteMark, PhaseBadge, ProblemLink, ProgressBar } from './QuestionControls.jsx'
@@ -9,6 +9,35 @@ import { ArrowRightIcon, BookmarkIcon, CalendarIcon, CheckIcon, FlameIcon } from
 
 const CARD = 'rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] sm:p-6'
 const REVIEW_PREVIEW_COUNT = 5
+
+// The two review outcomes sit side by side, so they read as one question -
+// "how did that go?" - rather than one button and an escape hatch. On a phone
+// they take their own full-width row below the problem, which keeps the name
+// readable and gives both a proper touch target.
+function ReviewActions({ onGotIt, onStruggled, problem, stacked = false }) {
+  const shape = stacked ? 'h-11 flex-1 text-sm' : 'h-8 px-2.5 text-xs sm:px-3'
+  return (
+    <div className={stacked ? 'flex gap-2' : 'flex shrink-0 items-center gap-1.5'}>
+      <button
+        type="button"
+        onClick={onGotIt}
+        aria-label={`Got it: ${problem}`}
+        className={`rounded-lg border border-line font-semibold text-ink transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong ${shape}`}
+      >
+        Got it
+      </button>
+      <button
+        type="button"
+        onClick={onStruggled}
+        aria-label={`Struggled with: ${problem}`}
+        title="Back in 3 days, and saved for revision"
+        className={`rounded-lg border border-line font-semibold text-ink-2 transition-colors hover:border-medium hover:bg-medium/10 hover:text-medium ${shape}`}
+      >
+        Struggled
+      </button>
+    </div>
+  )
+}
 
 function greeting() {
   const hour = new Date().getHours()
@@ -76,21 +105,26 @@ function ReviewCard({ reviewDue, progress, onReview, onOpenQuestion, onShowRevie
       <CardHeader
         id="review-heading"
         title={`Due for review · ${reviewDue.length}`}
-        subtitle="Re-solve each one from scratch, then mark it revised."
+        subtitle="Re-solve each one from scratch, then say how it went."
         action={reviewDue.length > preview.length && <TextButton onClick={onShowReview}>See all</TextButton>}
       />
       <ul className="-mx-5 mt-4 divide-y divide-line/70 border-t border-line sm:-mx-6">
         {preview.map((question) => {
           const entry = progress[question.id]
           return (
-            <li key={question.id} className={`flex items-center gap-3 px-5 py-3 sm:gap-4 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
+            <li key={question.id} className={`px-5 py-3 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
+              <div className="flex items-center gap-3 sm:gap-4">
               <button type="button" onClick={() => onOpenQuestion(question.id)} className="group min-w-0 flex-1 text-left">
                 <span className="flex items-center gap-1.5">
                   <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
                   {hasNote(entry) && <NoteMark />}
                 </span>
                 <span className="block truncate text-xs text-ink-3">
-                  {topicName(question.topic)} · review {(entry.reviews ?? 0) + 1} of {REVIEW_INTERVALS.length}
+                  {isLapsed(entry) ? (
+                    <span className="font-medium text-medium">Relearn · struggled last time</span>
+                  ) : (
+                    `${topicName(question.topic)} · review ${(entry.reviews ?? 0) + 1} of ${REVIEW_INTERVALS.length}`
+                  )}
                 </span>
               </button>
               <span className="hidden sm:inline-flex">
@@ -102,12 +136,65 @@ function ReviewCard({ reviewDue, progress, onReview, onOpenQuestion, onShowRevie
                 platform={question.platform}
                 problem={question.problem}
               />
+              <span className="hidden sm:inline-flex">
+                <ReviewActions
+                  problem={question.problem}
+                  onGotIt={() => onReview(question.id, 'got')}
+                  onStruggled={() => onReview(question.id, 'struggled')}
+                />
+              </span>
+              </div>
+              <div className="mt-2.5 sm:hidden">
+                <ReviewActions
+                  stacked
+                  problem={question.problem}
+                  onGotIt={() => onReview(question.id, 'got')}
+                  onStruggled={() => onReview(question.id, 'struggled')}
+                />
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
+// Problems you've failed to re-solve twice or more. This is the one signal the
+// tracker has that a pattern hasn't landed yet, so it says so plainly rather
+// than hiding it in a count.
+function WeakCard({ weakProblems, weakCount, progress, onOpenQuestion }) {
+  return (
+    <section className={`${CARD} border-medium/30`} aria-labelledby="weak-heading">
+      <CardHeader
+        id="weak-heading"
+        title={`Weak spots · ${weakCount}`}
+        subtitle="Struggled with these twice or more. Worth extra reps."
+      />
+      <ul className="-mx-5 mt-4 divide-y divide-line/70 border-t border-line sm:-mx-6">
+        {weakProblems.map((question) => {
+          const entry = progress[question.id]
+          const struggles = struggleCount(entry)
+          return (
+            <li key={question.id} className={hasNote(entry) ? NOTE_ACCENT : ''}>
               <button
                 type="button"
-                onClick={() => onReview(question.id)}
-                className="h-8 shrink-0 rounded-lg border border-line px-3 text-xs font-semibold text-ink transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong"
+                onClick={() => onOpenQuestion(question.id)}
+                className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6"
               >
-                Revised
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                    {hasNote(entry) && <NoteMark />}
+                  </span>
+                  <span className="block truncate text-xs text-ink-3">
+                    {topicName(question.topic)} · {question.pattern}
+                  </span>
+                </span>
+                <span className="shrink-0 rounded-md bg-medium/10 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-medium">
+                  {struggles}×
+                </span>
+                <DifficultyPill difficulty={question.difficulty} />
               </button>
             </li>
           )
@@ -310,6 +397,8 @@ export default function Overview({
   upNext,
   reviewDue,
   savedPreview,
+  weakProblems,
+  weakCount,
   currentPhase,
   progress,
   today,
@@ -367,6 +456,7 @@ export default function Overview({
           {reviewDue.length > 0 && (
             <ReviewCard reviewDue={reviewDue} progress={progress} onReview={onReview} onOpenQuestion={onOpenQuestion} onShowReview={onShowReview} />
           )}
+          {weakCount > 0 && <WeakCard weakProblems={weakProblems} weakCount={weakCount} progress={progress} onOpenQuestion={onOpenQuestion} />}
           <UpNextCard
             upNext={upNext}
             progress={progress}

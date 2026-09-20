@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
 import { isImageFile, MAX_NOTE_IMAGES, storeImages } from '../images.js'
 import { formatDate, hasNote } from '../progress.js'
-import { isDue, nextReviewDate } from '../review.js'
+import { isDue, isLapsed, nextReviewDate, struggleCount } from '../review.js'
+import { isTypingTarget, REVIEW_KEYS } from '../keyboard.js'
 import { isValidUrl } from '../storage.js'
 import NoteImages from './NoteImages.jsx'
 import { DifficultyPill, NOTE_ACCENT, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
@@ -93,6 +94,31 @@ function reviewStatus(entry, due) {
   return entry.solvedAt ? 'All reviews done' : null
 }
 
+// A one-line read on how the re-solves have gone, newest last. Ticks and
+// crosses carry the shape at a glance; the text says it for screen readers.
+function ReviewHistory({ history }) {
+  const struggles = struggleCount({ history })
+  return (
+    <p className="mt-2 flex flex-wrap items-center gap-1 text-xs text-ink-3">
+      <span className="mr-0.5">History</span>
+      {history.map((item) => (
+        <span
+          key={`${item.date}-${item.result}`}
+          title={`${item.result === 'got' ? 'Got it' : 'Struggled'} · ${formatDate(item.date)}`}
+          className={`grid h-4 w-4 place-items-center rounded-full text-[10px] font-bold ${
+            item.result === 'got' ? 'bg-brand-soft text-brand-strong' : 'bg-medium/15 text-medium'
+          }`}
+        >
+          {item.result === 'got' ? '✓' : '!'}
+        </span>
+      ))}
+      <span className="sr-only">
+        {history.length} reviews, {struggles} struggled
+      </span>
+    </p>
+  )
+}
+
 export default function ProblemDetailDrawer({
   question,
   progress,
@@ -100,7 +126,7 @@ export default function ProblemDetailDrawer({
   relatedQuestions,
   onToggleSolved,
   onToggleBookmark,
-  onMarkReviewed,
+  onReview,
   onNotesChange,
   onAddImages,
   onRemoveImage,
@@ -127,6 +153,7 @@ export default function ProblemDetailDrawer({
   const imageIds = entry.images ?? []
   const noted = hasNote(entry)
   const attachingCount = attaching[question.id] ?? 0
+  const history = entry.history ?? []
 
   async function attachImages(files) {
     const questionId = question.id
@@ -185,6 +212,13 @@ export default function ProblemDetailDrawer({
         onClose()
         return
       }
+      // g/s record the review without leaving the panel, but only when there is
+      // a review to record and the user isn't writing a note.
+      if (due && REVIEW_KEYS[event.key] && !isTypingTarget(event.target) && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault()
+        onReview(question.id, REVIEW_KEYS[event.key])
+        return
+      }
       if (event.key !== 'Tab' || !dialogRef.current) return
       const focusable = [...dialogRef.current.querySelectorAll(FOCUSABLE)].filter((element) => element.getClientRects().length > 0)
       if (focusable.length === 0) return
@@ -201,7 +235,7 @@ export default function ProblemDetailDrawer({
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
+  }, [onClose, due, onReview, question.id])
 
   // On phones the panel is a bottom sheet: drag its top bar down to dismiss.
   function handleTouchStart(event) {
@@ -303,19 +337,32 @@ export default function ProblemDetailDrawer({
           </div>
 
           {solved && (entry.solvedAt || review) && (
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-subtle/70 px-3.5 py-2.5 text-xs text-ink-2">
+            <div className="mt-3 rounded-xl bg-subtle/70 px-3.5 py-2.5 text-xs text-ink-2">
               <span>
                 {entry.solvedAt ? `Solved ${formatDate(entry.solvedAt)}` : 'Solved'}
                 {review && <> · {review}</>}
+                {isLapsed(entry) && !due && <> · relearning</>}
               </span>
+              {history.length > 0 && <ReviewHistory history={history} />}
               {due && (
-                <button
-                  type="button"
-                  onClick={() => onMarkReviewed(question.id)}
-                  className="h-7 shrink-0 rounded-md bg-brand px-2.5 font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
-                >
-                  Mark revised
-                </button>
+                <div className="mt-2.5 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onReview(question.id, 'got')}
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-brand px-2.5 text-xs font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
+                  >
+                    <CheckIcon className="h-3.5 w-3.5" />
+                    Got it
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onReview(question.id, 'struggled')}
+                    title="Back in 3 days, and saved for revision"
+                    className="inline-flex h-9 items-center justify-center rounded-lg border border-medium/40 bg-medium/10 px-2.5 text-xs font-semibold text-medium transition-colors hover:bg-medium/20"
+                  >
+                    Struggled
+                  </button>
+                </div>
               )}
             </div>
           )}

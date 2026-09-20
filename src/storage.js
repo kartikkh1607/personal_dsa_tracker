@@ -1,10 +1,12 @@
 import legacyIds from './data/legacyIds.json'
 import { daysBetween } from './progress.js'
 import { IMAGE_ID_PATTERN, MAX_NOTE_IMAGES } from './images.js'
+import { MAX_HISTORY, REVIEW_RESULTS } from './review.js'
 
 // All saved progress lives under this one localStorage key.
-// Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, images?, link? } }
+// Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, images?, link?, history? } }
 // images holds ids of note images; the images themselves are in IndexedDB (see images.js).
+// history holds recent review outcomes as [{ date, result }], oldest first.
 export const STORAGE_KEY = 'dsa-tracker-progress'
 // Question ids were renumbered when the sheet grew from 570 problems to 922 in
 // study-path order. Progress saved without this version uses the old ids.
@@ -22,7 +24,8 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 const URL_PATTERN = /^https?:\/\/\S+$/i
 const MAX_NOTES_LENGTH = 5000
 const MAX_REVIEWS = 10
-const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'images', 'link', 'status', 'confidence']
+const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'images', 'link', 'history', 'status', 'confidence']
+const RESULTS = new Set(REVIEW_RESULTS)
 
 export function isValidUrl(value) {
   return URL_PATTERN.test(value)
@@ -30,6 +33,17 @@ export function isValidUrl(value) {
 
 function isDate(value) {
   return typeof value === 'string' && DATE_PATTERN.test(value)
+}
+
+// Review history is user-supplied like everything else here: keep only well
+// formed { date, result } items, drop the rest rather than the whole list, and
+// hold on to the most recent MAX_HISTORY of them.
+function sanitizeHistory(value) {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((item) => item && typeof item === 'object' && isDate(item.date) && RESULTS.has(item.result))
+    .map((item) => ({ date: item.date, result: item.result }))
+    .slice(-MAX_HISTORY)
 }
 
 // Accepts the current entry shape and the older { status, confidence } shape.
@@ -45,6 +59,8 @@ function sanitizeEntry(item) {
     if (isDate(item.solvedAt)) entry.solvedAt = item.solvedAt
     if (isDate(item.reviewedAt)) entry.reviewedAt = item.reviewedAt
     if (Number.isInteger(item.reviews) && item.reviews > 0 && item.reviews <= MAX_REVIEWS) entry.reviews = item.reviews
+    const history = sanitizeHistory(item.history)
+    if (history.length > 0) entry.history = history
   }
   if (item.bookmarked === true || item.status === 'Revisit' || (legacyDone && legacyConfidence >= 1 && legacyConfidence <= 3)) {
     entry.bookmarked = true

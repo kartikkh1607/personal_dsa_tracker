@@ -4,7 +4,8 @@ import { DIFFICULTIES, splitTopic, topicName } from './constants.js'
 import { progressToCsv } from './csv.js'
 import { cleanupOrphanImages, deleteImages, MAX_NOTE_IMAGES, requestPersistentStorage } from './images.js'
 import { addDays, applyPatch, hasNote, localDate, streakFrom } from './progress.js'
-import { isDue, nextReviewDate } from './review.js'
+import { isDue, isWeak, nextReviewDate, recordReview, struggleCount } from './review.js'
+import { isTypingTarget, REVIEW_KEYS } from './keyboard.js'
 import { buildHash, initialRoute, parseHash, rememberRoute } from './route.js'
 import {
   BACKUP_KEY,
@@ -49,7 +50,8 @@ const UP_NEXT_COUNT = 5
 const SAVED_PREVIEW_COUNT = 5
 const RELATED_COUNT = 6
 const BACKUP_SNOOZE_DAYS = 7
-const ROW_SHORTCUT_KEYS = new Set(['j', 'k', 'x', 'b'])
+const ROW_SHORTCUT_KEYS = new Set(['j', 'k', 'x', 'b', 'g', 's'])
+const WEAK_PREVIEW_COUNT = 5
 
 const EMPTY_STATES = {
   all: { title: 'No problems match', body: 'Try a different search or clear the filters.' },
@@ -57,15 +59,6 @@ const EMPTY_STATES = {
   solved: { title: 'Nothing solved here yet', body: 'Tick a problem once you’ve solved it and it shows up here.' },
   review: { title: 'Nothing due for review', body: 'Solved problems come back for review 7, 30 and 90 days after you solve them.' },
   saved: { title: 'No saved problems here', body: 'Use the bookmark on any problem to save it for revision.' },
-}
-
-function isTypingTarget(element) {
-  return (
-    element instanceof HTMLInputElement ||
-    element instanceof HTMLTextAreaElement ||
-    element instanceof HTMLSelectElement ||
-    Boolean(element?.isContentEditable)
-  )
 }
 
 function downloadFile(filename, content, type) {
@@ -235,6 +228,15 @@ export default function App() {
     [progress, today],
   )
   const savedPreview = useMemo(() => rawQuestions.filter((question) => progress[question.id]?.bookmarked).slice(0, SAVED_PREVIEW_COUNT), [progress])
+  // Problems you've failed to re-solve at least twice: the ones actually worth
+  // more reps. Most-struggled first.
+  const weakProblems = useMemo(
+    () =>
+      rawQuestions
+        .filter((question) => isWeak(progress[question.id]))
+        .sort((a, b) => struggleCount(progress[b.id]) - struggleCount(progress[a.id]) || a.id - b.id),
+    [progress],
+  )
   const currentPhase = upNext.length > 0 ? stats.phaseStats.find((phase) => phase.phase === upNext[0].phase) : null
 
   // Topic, show, difficulty, Core-only and search all combine.
@@ -295,15 +297,19 @@ export default function App() {
       applyPatch(
         prev,
         id,
-        prev[id]?.solved ? { solved: false, solvedAt: undefined, reviewedAt: undefined, reviews: undefined } : { solved: true, solvedAt: localDate() },
+        prev[id]?.solved
+          ? { solved: false, solvedAt: undefined, reviewedAt: undefined, reviews: undefined, history: undefined }
+          : { solved: true, solvedAt: localDate() },
       ),
     )
   }, [])
   const toggleBookmark = useCallback((id) => {
     setProgress((prev) => applyPatch(prev, id, { bookmarked: !prev[id]?.bookmarked }))
   }, [])
-  const markReviewed = useCallback((id) => {
-    setProgress((prev) => applyPatch(prev, id, { reviews: (prev[id]?.reviews ?? 0) + 1, reviewedAt: localDate() }))
+  // How the re-solve went: 'got' advances the schedule, 'struggled' sends the
+  // problem back to the 3-day relearn step and saves it.
+  const reviewProblem = useCallback((id, result) => {
+    setProgress((prev) => applyPatch(prev, id, recordReview(prev[id], result, localDate())))
   }, [])
   const changeNotes = useCallback((id, notes) => setProgress((prev) => applyPatch(prev, id, { notes })), [])
   const changeLink = useCallback((id, link) => setProgress((prev) => applyPatch(prev, id, { link })), [])
@@ -365,8 +371,14 @@ export default function App() {
 
   const drawerOpen = drawerQuestion !== null
 
+  // g/s act on the focused row's saved entry, which changes constantly. Reading
+  // it from a ref keeps the listener itself stable.
+  const progressRef = useRef(progress)
+  progressRef.current = progress
+
   // Keyboard: "/" searches from anywhere. On the problems page, j/k move between
-  // rows, x ticks and b bookmarks the focused row, and Enter opens it.
+  // rows, x ticks and b bookmarks the focused row, Enter opens it, and g/s
+  // record a review outcome on a row that is due.
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) return
@@ -379,21 +391,33 @@ export default function App() {
       if (view !== 'problems' || drawerOpen || !ROW_SHORTCUT_KEYS.has(event.key)) return
       const rows = [...document.querySelectorAll('[data-problem-row]')]
       if (rows.length === 0) return
-      event.preventDefault()
       const current = rows.findIndex((row) => row.contains(document.activeElement))
       if (event.key === 'j' || event.key === 'k') {
+        event.preventDefault()
         const step = event.key === 'j' ? 1 : -1
         const next = current === -1 ? 0 : Math.min(Math.max(current + step, 0), rows.length - 1)
         const target = rows[next].querySelector('[data-row-open]')
         target?.focus()
         target?.scrollIntoView({ block: 'nearest' })
-      } else if (current !== -1) {
+        return
+      }
+      if (current === -1) return
+      if (event.key === 'x' || event.key === 'b') {
+        event.preventDefault()
         rows[current].querySelector(event.key === 'x' ? '[role="checkbox"]' : '[data-row-bookmark]')?.click()
+        return
+      }
+      // Reviewing only makes sense for a problem that is actually due, so g/s
+      // stay inert elsewhere rather than silently rescheduling something.
+      const id = Number(rows[current].dataset.questionId)
+      if (isDue(progressRef.current[id], localDate())) {
+        event.preventDefault()
+        reviewProblem(id, REVIEW_KEYS[event.key])
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [view, drawerOpen, navigate])
+  }, [view, drawerOpen, navigate, reviewProblem])
 
   const relatedQuestions = useMemo(() => {
     if (!drawerQuestion) return []
@@ -579,8 +603,14 @@ export default function App() {
           lastBackup={lastBackup}
           onBackupNow={handleExport}
           onSnoozeBackup={snoozeBackup}
+          weakProblems={weakProblems.slice(0, WEAK_PREVIEW_COUNT)}
+          weakCount={weakProblems.length}
           onSolve={(id) => withUndo(id, `Solved “${QUESTIONS_BY_ID.get(id).problem}”`, toggleSolved)}
-          onReview={(id) => withUndo(id, `Revised “${QUESTIONS_BY_ID.get(id).problem}”`, markReviewed)}
+          onReview={(id, result) =>
+            withUndo(id, result === 'got' ? `Reviewed “${QUESTIONS_BY_ID.get(id).problem}”` : `Back in 3 days: “${QUESTIONS_BY_ID.get(id).problem}”`, () =>
+              reviewProblem(id, result),
+            )
+          }
           onToggleBookmark={toggleBookmark}
           onOpenQuestion={openQuestion}
           onContinue={() => goToProblems({ topic: upNext[0].topic, show: 'todo' })}
@@ -619,7 +649,7 @@ export default function App() {
           relatedQuestions={relatedQuestions}
           onToggleSolved={toggleSolved}
           onToggleBookmark={toggleBookmark}
-          onMarkReviewed={markReviewed}
+          onReview={reviewProblem}
           onNotesChange={changeNotes}
           onAddImages={addNoteImages}
           onRemoveImage={removeNoteImage}

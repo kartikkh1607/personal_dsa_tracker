@@ -15,6 +15,7 @@ export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarke
   return (
     <li
       data-problem-row
+      data-question-id={question.id}
       className={`group flex scroll-mt-10 items-center gap-3 px-5 py-3 transition-colors focus-within:bg-subtle/50 hover:bg-subtle/50 sm:gap-4 sm:px-6 ${
         noted ? NOTE_ACCENT : ''
       }`}
