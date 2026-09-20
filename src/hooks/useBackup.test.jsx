@@ -29,11 +29,21 @@ describe('parseBackup', () => {
     expect(parseBackup(JSON.stringify({ version: DATA_VERSION, progress: { 999: { solved: true } } }), IDS)).toBeNull()
   })
 
-  it('treats an unversioned object of unknown ids as empty, not invalid', () => {
-    // Documents current behaviour rather than endorsing it: a bare object is
-    // read as a pre-v3 backup, its unknown ids drop out in the id remap, and an
-    // empty result is legitimate. See the note on import in the phase summary.
-    expect(parseBackup(JSON.stringify({ 999: { solved: true } }), IDS)).toEqual({})
+  it('refuses a file whose entries all drop out, rather than importing nothing', () => {
+    // A bare object is read as a pre-v3 backup and its unknown ids vanish in
+    // the id remap. Importing the empty result would wipe real progress while
+    // the prompt said "0 entries", so the file is rejected instead.
+    expect(parseBackup(JSON.stringify({ 999: { solved: true } }), IDS)).toBeNull()
+    expect(parseBackup(JSON.stringify({ 999: { solved: true }, 1000: { bookmarked: true } }), IDS)).toBeNull()
+  })
+
+  it('refuses a file whose entries are all unrecognisable shapes', () => {
+    expect(parseBackup(JSON.stringify({ 1: { score: 10 }, 2: { rating: 'x' } }), IDS)).toBeNull()
+  })
+
+  it('still accepts a file where only some entries survive', () => {
+    const file = JSON.stringify({ version: DATA_VERSION, progress: { 1: { solved: true }, 999: { solved: true } } })
+    expect(parseBackup(file, IDS)).toEqual({ 1: { solved: true } })
   })
 
   it('strips fields it does not recognise and keeps the rest', () => {
@@ -46,8 +56,10 @@ describe('parseBackup', () => {
     expect(parsed).toEqual({ [legacyIds[15]]: { solved: true } })
   })
 
-  it('treats an empty backup as empty progress, not as a failure', () => {
+  it('treats a genuinely empty backup as empty progress, not as a failure', () => {
+    // It claims nothing and delivers nothing, which is consistent.
     expect(parseBackup(JSON.stringify({ version: DATA_VERSION, progress: {} }), IDS)).toEqual({})
+    expect(parseBackup('{}', IDS)).toEqual({})
   })
 })
 
@@ -69,6 +81,16 @@ describe('useBackup import', () => {
   it('reports a bad file and leaves progress alone', async () => {
     const { result, setProgress, showToast } = setup({ 1: { solved: true } })
     await act(() => result.current.handleImport(fileOf('garbage')))
+    expect(setProgress).not.toHaveBeenCalled()
+    expect(showToast).toHaveBeenCalledWith('That file is not a valid progress backup', { tone: 'error' })
+  })
+
+  it('refuses a file that would import as nothing, leaving progress intact', async () => {
+    const confirm = vi.spyOn(window, 'confirm')
+    const { result, setProgress, showToast } = setup({ 1: { solved: true } })
+    // Readable JSON, claims an entry, but nothing in it is ours.
+    await act(() => result.current.handleImport(fileOf(JSON.stringify({ 999: { solved: true } }))))
+    expect(confirm).not.toHaveBeenCalled()
     expect(setProgress).not.toHaveBeenCalled()
     expect(showToast).toHaveBeenCalledWith('That file is not a valid progress backup', { tone: 'error' })
   })

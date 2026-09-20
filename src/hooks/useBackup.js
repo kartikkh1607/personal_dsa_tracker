@@ -20,16 +20,36 @@ const UTF8_BOM = String.fromCharCode(0xfeff)
 
 const BACKUP_SNOOZE_DAYS = 7
 
+// How many entries the file claims to hold, before any of them are checked.
+// A pre-v3 backup is a bare { id: entry } object; from v3 on it's wrapped.
+function claimedEntries(raw) {
+  const source = raw?.version === DATA_VERSION ? raw.progress : raw
+  if (!source || typeof source !== 'object' || Array.isArray(source)) return 0
+  return Object.keys(source).length
+}
+
 // Reads a backup file's text into progress we're willing to load, or null if it
 // isn't one. Pure and separate from the hook: this is the part that has to be
 // right, because it stands between a stranger's file and the user's progress.
 export function parseBackup(text, questionIds) {
+  let raw
   try {
-    return sanitizeProgress(progressFromBackup(JSON.parse(text)), questionIds)
+    raw = JSON.parse(text)
   } catch {
     // Unreadable JSON is treated exactly like a valid file of the wrong shape.
     return null
   }
+
+  const progress = sanitizeProgress(progressFromBackup(raw), questionIds)
+  if (progress === null) return null
+
+  // A file that listed entries but produced none we recognise is a backup from
+  // somewhere else, or a damaged one. Loading it would quietly replace real
+  // progress with nothing, so it is refused rather than imported as empty.
+  // A genuinely empty backup still imports, since that is what it says it is.
+  if (Object.keys(progress).length === 0 && claimedEntries(raw) > 0) return null
+
+  return progress
 }
 
 export function importedCount(progress) {
