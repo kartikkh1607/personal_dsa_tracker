@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { readLocal, syncCursorKey, writeLocal } from '../storage.js'
-import { getClient, GOOGLE_AUTH_ENABLED, SYNC_CONFIGURED } from '../sync/client.js'
+import {
+  clearAuthCallbackFromUrl,
+  GOOGLE_AUTH_ENABLED,
+  hasAuthCallback,
+  hasStoredSession,
+  loadClient,
+  SYNC_CONFIGURED,
+  takeAuthCallback,
+} from '../sync/client.js'
 import { mergeSummary } from '../sync/merge.js'
 import { syncOnce } from '../sync/sync.js'
 
@@ -21,6 +29,10 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   const [lastSyncedAt, setLastSyncedAt] = useState(null)
   const [error, setError] = useState(null)
   const [linkSentTo, setLinkSentTo] = useState(null)
+  // Whether this visit has any business with the auth library. False for
+  // someone who has never signed in, and that is the whole point: the library
+  // is a separate chunk and nothing here downloads it until this turns true.
+  const [authActive, setAuthActive] = useState(() => SYNC_CONFIGURED && (hasStoredSession() || hasAuthCallback()))
 
   // A round reads progress through this rather than closing over it, so it
   // never works from a snapshot the user has already moved past.
@@ -39,26 +51,68 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   const announceNext = useRef(false)
 
   useEffect(() => {
-    const client = getClient()
-    if (!client) return undefined
+    if (!authActive) return undefined
     let active = true
-    client.auth.getSession().then(({ data }) => active && setSession(data.session ?? null))
-    const { data } = client.auth.onAuthStateChange((event, next) => {
-      if (event === 'SIGNED_IN') announceNext.current = true
-      setSession(next ?? null)
+    let unsubscribe = null
+
+    loadClient().then(async (client) => {
+      if (!client || !active) return
+
+      const { data } = client.auth.onAuthStateChange((event, next) => {
+        if (event === 'SIGNED_IN') announceNext.current = true
+        setSession(next ?? null)
+      })
+      unsubscribe = () => data.subscription.unsubscribe()
+      // Unmounted while the chunk was in flight.
+      if (!active) {
+        unsubscribe()
+        return
+      }
+
+      // A sign-in coming back. Redeeming the code is what makes the session,
+      // and it is worth saying so when it fails: an expired or already-used
+      // link is the common case, and silence looks like a broken app.
+      const callback = takeAuthCallback()
+      if (callback?.errorDescription) {
+        setError(callback.errorDescription)
+        showToast(callback.errorDescription, { tone: 'error' })
+        clearAuthCallbackFromUrl()
+      } else if (callback?.code) {
+        announceNext.current = true
+        // Redeeming can fail by returning an error or by throwing, depending on
+        // how far it got. Either way the person is left staring at a page that
+        // did nothing, so both end up saying the same thing.
+        const cause = await client.auth
+          .exchangeCodeForSession(callback.code)
+          .then(({ error: returned }) => returned)
+          .catch((thrown) => thrown)
+        clearAuthCallbackFromUrl()
+        if (cause) {
+          setError(cause.message ?? String(cause))
+          showToast('That sign-in link did not work - try sending a new one', { tone: 'error' })
+        }
+      }
+
+      const { data: current } = await client.auth.getSession()
+      if (active) setSession(current.session ?? null)
     })
+
     return () => {
       active = false
-      data.subscription.unsubscribe()
+      unsubscribe?.()
     }
-  }, [])
+    // showToast is stable, and re-running this would mean a second
+    // subscription and a second attempt to spend a code already spent.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authActive])
 
   const userId = session?.user?.id ?? null
 
   const run = useCallback(
     async ({ announce = false } = {}) => {
-      const client = getClient()
-      if (!client || !userId) return
+      if (!userId) return
+      const client = await loadClient()
+      if (!client) return
       // One round at a time. A trigger arriving mid-round asks for another
       // instead of racing the one in flight.
       if (running.current) {
@@ -158,7 +212,10 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
 
   const signInWithEmail = useCallback(
     async (email) => {
-      const client = getClient()
+      // Starting a sign-in is a reason to have the library, and a reason to be
+      // listening for the session it leads to.
+      setAuthActive(true)
+      const client = await loadClient()
       if (!client) return
       setStatus('sending')
       const { error: cause } = await client.auth.signInWithOtp({
@@ -179,7 +236,8 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   )
 
   const signInWithGoogle = useCallback(async () => {
-    const client = getClient()
+    setAuthActive(true)
+    const client = await loadClient()
     if (!client) return
     const { error: cause } = await client.auth.signInWithOAuth({
       provider: 'google',
@@ -194,7 +252,7 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   // Signing out leaves this browser's progress exactly where it is. It is the
   // copy the app has always run on; the account is a mirror of it.
   const signOut = useCallback(async () => {
-    const client = getClient()
+    const client = await loadClient()
     if (!client) return
     await client.auth.signOut()
     setLinkSentTo(null)

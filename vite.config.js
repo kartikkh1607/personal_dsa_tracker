@@ -22,7 +22,14 @@ function serviceWorker() {
 
       // Every emitted chunk and asset, which is what actually changes between
       // deploys: the hashed JS, the CSS, and the question data.
+      //
+      // Except chunks only reachable through a dynamic import - today that is
+      // the auth library, which most visitors never need. Precaching one would
+      // download it for everyone in the background and undo the point of
+      // splitting it out. The fetch handler is cache-first and stores what it
+      // fetches, so a visitor who does need it has it offline from then on.
       const emitted = Object.keys(bundle)
+        .filter((name) => !bundle[name].isDynamicEntry)
         .map((name) => `/${name}`)
         .sort()
       const precache = [...new Set([...STATIC_PRECACHE, ...emitted])]
