@@ -28,4 +28,9 @@ export default [
     files: ['*.config.js'],
     languageOptions: { globals: globals.node },
   },
+  {
+    // Browser tests run in node and drive a browser, rather than running in one.
+    files: ['e2e/**/*.js'],
+    languageOptions: { globals: globals.node },
+  },
 ]

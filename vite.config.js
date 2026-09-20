@@ -63,6 +63,9 @@ function serviceWorker() {
 export default defineConfig({
   plugins: [react(), serviceWorker()],
   test: {
+    // e2e/ is Playwright's, driving a built app in a real browser. Vitest
+    // picking those files up gets a confusing failure per spec.
+    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**'],
     // Tests run against the local-only app, whatever the person running them
     // happens to have in .env.local. Without this, anything that reaches the
     // sync hook would build a real client and start talking to a real project

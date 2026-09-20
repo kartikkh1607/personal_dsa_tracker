@@ -3,3 +3,7 @@ dist
 
 # Local env files - never committed. Vite only exposes VITE_* to the client.
 *.local
+
+# Playwright
+test-results
+playwright-report
