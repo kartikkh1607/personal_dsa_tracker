@@ -55,12 +55,41 @@ export function formatDate(isoDate) {
   return dateFromIso(isoDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-// Consecutive days with at least one solve, ending today. A streak that ended
-// yesterday still counts, so it doesn't reset before you've had a chance today.
-export function streakFrom(solvedDates) {
-  let offset = solvedDates.has(localDate(0)) ? 0 : -1
+// Days you did something, from the progress itself rather than a separate log:
+// the day a problem was solved, and every day one was reviewed. A day spent
+// entirely on reviews is still a day of practice, so it counts for the streak
+// and shades the heatmap.
+//
+// Returns Map<'YYYY-MM-DD', { solves, reviews }>.
+export function activityFrom(progress) {
+  const days = new Map()
+  const bump = (date, kind) => {
+    const day = days.get(date) ?? { solves: 0, reviews: 0 }
+    day[kind]++
+    days.set(date, day)
+  }
+
+  for (const entry of Object.values(progress)) {
+    if (entry?.solved && entry.solvedAt) bump(entry.solvedAt, 'solves')
+    if (entry?.history?.length > 0) {
+      for (const item of entry.history) bump(item.date, 'reviews')
+    } else if (entry?.reviewedAt) {
+      // Progress from before reviews kept a history: the last review is all
+      // that was recorded, so count that rather than losing the day entirely.
+      bump(entry.reviewedAt, 'reviews')
+    }
+  }
+
+  return days
+}
+
+// Consecutive days with at least one solve or review, ending today. A streak
+// that ended yesterday still counts, so it doesn't reset before you've had a
+// chance today.
+export function streakFrom(activeDates) {
+  let offset = activeDates.has(localDate(0)) ? 0 : -1
   let streak = 0
-  while (solvedDates.has(localDate(offset))) {
+  while (activeDates.has(localDate(offset))) {
     streak++
     offset--
   }

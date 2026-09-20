@@ -12,7 +12,22 @@ function levelFor(count) {
   return 4
 }
 
-// Solves per day for the last few months, one column per week (Sunday first).
+function plural(count, noun) {
+  return `${count} ${noun}${count === 1 ? '' : 's'}`
+}
+
+// What a day's square means in words, for its tooltip and for screen readers.
+function describe(day) {
+  if (!day) return 'nothing'
+  const parts = []
+  if (day.solves > 0) parts.push(`${day.solves} solved`)
+  if (day.reviews > 0) parts.push(`${plural(day.reviews, 'review')}`)
+  return parts.join(' · ')
+}
+
+// Practice per day for the last few months, one column per week (Sunday first).
+// A day counts if you solved something or reviewed something, so a day spent
+// entirely on reviews still shows up.
 export default function Heatmap({ activity, today }) {
   const scrollRef = useRef(null)
 
@@ -28,22 +43,37 @@ export default function Heatmap({ activity, today }) {
   const days = []
   for (const date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) days.push(isoFromDate(date))
 
-  const total = days.reduce((sum, day) => sum + (activity.get(day) ?? 0), 0)
-  const activeDays = days.filter((day) => activity.has(day)).length
+  let solves = 0
+  let reviews = 0
+  let activeDays = 0
+  for (const day of days) {
+    const counts = activity.get(day)
+    if (!counts) continue
+    solves += counts.solves
+    reviews += counts.reviews
+    activeDays++
+  }
+
+  const summary = [solves > 0 && `${solves} solved`, reviews > 0 && plural(reviews, 'review')].filter(Boolean).join(' · ') || 'Nothing yet'
 
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <h3 className="text-sm font-medium text-ink-2">Activity</h3>
         <p className="text-xs text-ink-3">
-          {total} solved on {activeDays} {activeDays === 1 ? 'day' : 'days'} · last {WEEKS} weeks
+          {summary} on {plural(activeDays, 'day')} · last {WEEKS} weeks
         </p>
       </div>
       <div ref={scrollRef} className="mt-3 overflow-x-auto pb-1">
-        <div role="img" aria-label={`${total} problems solved in the last ${WEEKS} weeks`} className="grid w-max grid-flow-col grid-rows-7 gap-[3px]">
+        <div
+          role="img"
+          aria-label={`${summary} across ${plural(activeDays, 'day')} in the last ${WEEKS} weeks`}
+          className="grid w-max grid-flow-col grid-rows-7 gap-[3px]"
+        >
           {days.map((day) => {
-            const count = activity.get(day) ?? 0
-            return <span key={day} title={`${count} solved · ${formatDate(day)}`} className={`h-3 w-3 rounded-[3px] ${LEVELS[levelFor(count)]}`} />
+            const counts = activity.get(day)
+            const total = counts ? counts.solves + counts.reviews : 0
+            return <span key={day} title={`${describe(counts)} · ${formatDate(day)}`} className={`h-3 w-3 rounded-[3px] ${LEVELS[levelFor(total)]}`} />
           })}
         </div>
       </div>

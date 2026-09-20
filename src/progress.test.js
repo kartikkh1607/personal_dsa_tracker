@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { addDays, applyPatch, daysBetween, hasNote, localDate, streakFrom } from './progress.js'
+import { activityFrom, addDays, applyPatch, daysBetween, hasNote, localDate, streakFrom } from './progress.js'
 
 describe('hasNote', () => {
   it('counts real text or any image, but not blank text', () => {
@@ -56,5 +56,65 @@ describe('dates', () => {
     expect(streakFrom(new Set(['2026-09-12', '2026-09-11']))).toBe(2)
     expect(streakFrom(new Set(['2026-09-10']))).toBe(0)
     expect(streakFrom(new Set())).toBe(0)
+  })
+
+  // The point of the change: reviewing is practice too, so a day of nothing but
+  // reviews has to keep the streak alive.
+  it('keeps a streak alive on a day of reviews only', () => {
+    const progress = {
+      1: { solved: true, solvedAt: '2026-09-11' },
+      2: { solved: true, solvedAt: '2026-09-01', reviewedAt: '2026-09-13', history: [{ date: '2026-09-12', result: 'got' }, { date: '2026-09-13', result: 'struggled' }] },
+    }
+    const days = activityFrom(progress)
+    expect(streakFrom(new Set(days.keys()))).toBe(3) // 11th solved, 12th and 13th reviewed
+  })
+
+  it('still counts a review-only streak that ended yesterday', () => {
+    const progress = { 1: { solved: true, solvedAt: '2026-08-01', history: [{ date: '2026-09-12', result: 'got' }] } }
+    expect(streakFrom(new Set(activityFrom(progress).keys()))).toBe(1)
+  })
+})
+
+describe('activityFrom', () => {
+  it('counts solves and reviews separately on the same day', () => {
+    const progress = {
+      1: { solved: true, solvedAt: '2026-09-13' },
+      2: { solved: true, solvedAt: '2026-09-13' },
+      3: { solved: true, solvedAt: '2026-09-01', history: [{ date: '2026-09-13', result: 'got' }] },
+    }
+    expect(activityFrom(progress).get('2026-09-13')).toEqual({ solves: 2, reviews: 1 })
+  })
+
+  it('counts every review in the history, not just the last', () => {
+    const progress = {
+      1: {
+        solved: true,
+        solvedAt: '2026-09-01',
+        reviewedAt: '2026-09-20',
+        history: [
+          { date: '2026-09-08', result: 'got' },
+          { date: '2026-09-20', result: 'struggled' },
+        ],
+      },
+    }
+    const days = activityFrom(progress)
+    expect(days.get('2026-09-08')).toEqual({ solves: 0, reviews: 1 })
+    expect(days.get('2026-09-20')).toEqual({ solves: 0, reviews: 1 })
+    expect(days.get('2026-09-01')).toEqual({ solves: 1, reviews: 0 })
+  })
+
+  it('does not double count reviewedAt when a history covers it', () => {
+    const progress = { 1: { solved: true, solvedAt: '2026-09-01', reviewedAt: '2026-09-08', history: [{ date: '2026-09-08', result: 'got' }] } }
+    expect(activityFrom(progress).get('2026-09-08')).toEqual({ solves: 0, reviews: 1 })
+  })
+
+  it('falls back to reviewedAt for progress saved before history existed', () => {
+    const progress = { 1: { solved: true, solvedAt: '2026-09-01', reviewedAt: '2026-09-08', reviews: 1 } }
+    expect(activityFrom(progress).get('2026-09-08')).toEqual({ solves: 0, reviews: 1 })
+  })
+
+  it('ignores entries with nothing to count', () => {
+    expect(activityFrom({})).toEqual(new Map())
+    expect(activityFrom({ 1: { bookmarked: true }, 2: { notes: 'x' } })).toEqual(new Map())
   })
 })

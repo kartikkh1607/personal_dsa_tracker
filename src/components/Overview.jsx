@@ -260,7 +260,7 @@ function ProgressCard({ stats, today }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <Chip icon={<FlameIcon className="h-3.5 w-3.5 text-medium" />}>
-            {stats.streak > 0 ? `${stats.streak}-day streak` : 'Solve one today to start a streak'}
+            {stats.streak > 0 ? `${stats.streak}-day streak` : 'Solve or review one today to start a streak'}
           </Chip>
           <Chip icon={<CalendarIcon className="h-3.5 w-3.5 text-ink-3" />}>{stats.thisWeek} this week</Chip>
         </div>

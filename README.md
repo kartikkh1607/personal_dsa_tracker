@@ -43,6 +43,9 @@ npm run lint      # ESLint
   full size. **Clear note** removes the text and its images.
 - Problems with a note get a small note icon and a green edge in every list. **Has notes** on the
   Problems page shows only those.
+- **Streak and activity.** A day counts if you solved a problem *or* reviewed one, so a day
+  spent entirely on reviews keeps your streak going. A streak that ended yesterday still
+  counts, so it doesn't reset before you've had a chance today.
 - **Home** shows what's due, what to solve next, your progress and activity, the study plan,
   and pattern coverage.
 - **Patterns** lists all 168 patterns in the sheet, so you can find the ones you haven't touched.
@@ -102,7 +105,7 @@ deployed one.
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
 | `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
-| `src/progress.js` | Updating progress entries, dates and streaks. |
+| `src/progress.js` | Updating progress entries, dates, activity days and streaks. |
 | `src/review.js` | The 7 / 30 / 90 day review schedule, the 3-day relearn step, and weak-spot counting. |
 | `src/keyboard.js` | Shared keyboard helpers: what counts as typing, and the review keys. |
 | `src/storage.js` | Loads, validates and saves progress; backup reminders. |
