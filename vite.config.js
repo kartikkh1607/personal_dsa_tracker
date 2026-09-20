@@ -55,4 +55,11 @@ function serviceWorker() {
 
 export default defineConfig({
   plugins: [react(), serviceWorker()],
+  test: {
+    // Tests run against the local-only app, whatever the person running them
+    // happens to have in .env.local. Without this, anything that reaches the
+    // sync hook would build a real client and start talking to a real project
+    // on one machine and not another.
+    env: { VITE_SUPABASE_URL: '', VITE_SUPABASE_PUBLISHABLE_KEY: '' },
+  },
 })

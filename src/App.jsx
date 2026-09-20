@@ -10,6 +10,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
 import { useFilteredProblems, useHomeLists, useRelatedQuestions, useStats } from './hooks/useProblemLists.js'
 import { useProgress } from './hooks/useProgress.js'
 import { useRoute } from './hooks/useRoute.js'
+import { useSync } from './hooks/useSync.js'
 import { useToast } from './hooks/useToast.js'
 import { ALL } from './components/Filters.jsx'
 import { ALL_TOPICS } from './components/Sidebar.jsx'
@@ -33,8 +34,10 @@ function Tracker({ data }) {
   const today = localDate()
 
   const { route, navigate, openQuestion, closeQuestion } = useRoute()
-  const { progress, setProgress, restoreEntry, toggleSolved, toggleBookmark, reviewProblem, ...notes } = useProgress(questionIds)
+  const { progress, tombstones, applySynced, replaceProgress, restoreEntry, toggleSolved, toggleBookmark, reviewProblem, ...notes } =
+    useProgress(questionIds)
   const { toast, showToast, dismissToast } = useToast()
+  const sync = useSync({ progress, tombstones, questionIds, applySynced, showToast })
 
   const { view } = route
   const selectedTopic = (route.topic && topicByNumber.get(route.topic)) || ALL_TOPICS
@@ -57,7 +60,9 @@ function Tracker({ data }) {
   const relatedQuestions = useRelatedQuestions(questions, drawerQuestion)
   const currentPhase = upNext.length > 0 ? stats.phaseStats.find((phase) => phase.phase === upNext[0].phase) : null
 
-  const backup = useBackup({ progress, setProgress, questions, questionIds, today, showToast })
+  // An import replaces everything, so it goes through the stamping setter
+  // rather than the raw one: the entries it brings have to look new to sync.
+  const backup = useBackup({ progress, setProgress: replaceProgress, questions, questionIds, today, showToast })
 
   useKeyboardShortcuts({
     view,
@@ -176,6 +181,7 @@ function Tracker({ data }) {
         total={stats.total}
         theme={theme}
         onThemeChange={setTheme}
+        sync={sync}
         lastBackup={backup.lastBackup}
         onExport={backup.handleExport}
         onExportCsv={backup.handleExportCsv}

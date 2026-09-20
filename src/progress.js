@@ -2,6 +2,14 @@
 // the user has set: { solved, solvedAt, reviewedAt, reviews, bookmarked, notes,
 // images, link }. Problems with no progress have no entry.
 
+// Fields the sync layer keeps for its own bookkeeping rather than fields the
+// user set. An entry holding nothing but these is one the user has cleared.
+export const META_KEYS = ['updatedAt']
+
+export function isEmptyEntry(entry) {
+  return Object.keys(entry).every((key) => META_KEYS.includes(key))
+}
+
 // Merges a patch into one problem's entry. Empty fields (false, '' or
 // undefined) are dropped, and an entry with nothing left is removed.
 export function applyPatch(progress, id, patch) {
@@ -10,7 +18,7 @@ export function applyPatch(progress, id, patch) {
     if (entry[key] === undefined || entry[key] === false || entry[key] === '') delete entry[key]
   }
   const next = { ...progress }
-  if (Object.keys(entry).length === 0) delete next[id]
+  if (isEmptyEntry(entry)) delete next[id]
   else next[id] = entry
   return next
 }

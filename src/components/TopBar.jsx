@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatDate } from '../progress.js'
 import { resolvesToDark } from '../theme.js'
+import AccountMenu from './AccountMenu.jsx'
 import { CheckIcon, MoonIcon, SunIcon } from './icons.jsx'
 
 const TABS = [
@@ -12,7 +13,7 @@ const TABS = [
 const MENU_ITEM_CLASS = 'flex w-full flex-col rounded-lg px-3 py-2 text-left text-sm text-ink-2 transition-colors hover:bg-subtle hover:text-ink'
 const ICON_BUTTON_CLASS = 'grid h-9 w-9 shrink-0 place-items-center rounded-lg text-ink-3 transition-colors hover:bg-subtle hover:text-ink'
 
-export default function TopBar({ view, onViewChange, solved, total, theme, onThemeChange, lastBackup, onExport, onExportCsv, onImport }) {
+export default function TopBar({ view, onViewChange, solved, total, theme, onThemeChange, sync, lastBackup, onExport, onExportCsv, onImport }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -95,7 +96,7 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
               onClick={() => setMenuOpen((open) => !open)}
               aria-haspopup="menu"
               aria-expanded={menuOpen}
-              aria-label="Backup options"
+              aria-label={sync.configured ? 'Account and backup options' : 'Backup options'}
               className={ICON_BUTTON_CLASS}
             >
               <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor" aria-hidden="true">
@@ -106,9 +107,11 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
             </button>
 
             {menuOpen && (
-              <div role="menu" className="absolute right-0 top-full mt-2 w-72 animate-fade-up rounded-xl border border-line bg-surface p-1.5 shadow-lg">
+              <div role="menu" className="absolute right-0 top-full mt-2 w-80 animate-fade-up rounded-xl border border-line bg-surface p-1.5 shadow-lg">
+                <AccountMenu sync={sync} />
                 <p className="px-3 pb-2 pt-1.5 text-xs leading-5 text-ink-3">
-                  Progress is saved in this browser. {lastBackup ? `Last backup: ${formatDate(lastBackup)}.` : 'Not backed up yet.'}
+                  {sync.signedIn ? 'Progress is saved in this browser and mirrored to your account.' : 'Progress is saved in this browser.'}{' '}
+                  {lastBackup ? `Last backup: ${formatDate(lastBackup)}.` : 'Not backed up yet.'}
                 </p>
                 <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExport)}>
                   Export backup

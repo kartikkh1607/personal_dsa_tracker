@@ -1,8 +1,9 @@
 # DSA Practice Tracker
 
 A personal tracker for 922 DSA problems across 23 topics and 6 study phases. Your progress is
-saved in the browser's localStorage; the question list itself is static data. It works offline
-and can be installed as an app on your phone or computer.
+saved in the browser's localStorage, and can optionally be synced to your own Supabase project so
+several devices share it; the question list itself is static data. It works offline and can be
+installed as an app on your phone or computer.
 
 ## Run locally
 
@@ -21,6 +22,9 @@ npm run preview   # serve the built dist/ locally
 npm test          # unit tests (Vitest)
 npm run lint      # ESLint
 ```
+
+Sync is optional: with no `.env.local` the app runs entirely on local storage. See
+[Syncing across devices](#syncing-across-devices) to turn it on.
 
 ## Using it
 
@@ -94,7 +98,49 @@ Backups made before the sheet grew to 922 problems use the old problem numbers. 
 moves each entry onto the right problem automatically.
 
 Use export/import to move progress between devices, or between your local copy and a
-deployed one.
+deployed one. Or sign in, and let sync do it.
+
+## Syncing across devices
+
+Optional, and off until you configure it - without it the app behaves exactly as it always has.
+
+Sign in from the **⋯** menu and this browser's progress is mirrored to a Supabase project, so a
+device signed in to the same account picks it up. Progress stays **local-first**: every change is
+saved to this browser first and nothing waits on the network. The account holds a mirror, not the
+original, which is why sync keeps working offline and simply catches up later.
+
+### Setting it up
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/0001_progress.sql` and then `0002_progress_hardening.sql` in the SQL
+   editor. `supabase/verify.sql` checks the result: row level security on, four policies, the
+   trigger in place, and no privileges at all for the `anon` role.
+3. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
+4. In the dashboard, add the app's URL under **Authentication > URL Configuration**, so the
+   sign-in link comes back to it.
+
+Signing in is a magic link by email. Google sign-in is written but stays hidden until you set up
+an OAuth client and uncomment `VITE_ENABLE_GOOGLE_AUTH`.
+
+### How two devices agree
+
+One row per problem per account, holding the same entry the browser stores. The merge happens on
+the device, and every rule in it exists to avoid losing work:
+
+- **The same entry changed in both places.** The later change wins, by the clock of the device
+  that made it - which is what the `updatedAt` on each entry is for.
+- **An entry from before sync existed** has no `updatedAt` on one side, so there is no honest way
+  to order the two. Those are unioned field by field instead, keeping whatever either side had.
+- **Reviews** are replayed from the merged `history` rather than taken as the higher of the two
+  counts, so a lapse recorded on one device isn't undone by the other's older, higher count.
+- **A cleared entry** leaves a tombstone, so the deletion travels to the other devices instead of
+  the row quietly coming back on the next pull. A deletion only beats changes older than itself.
+
+The row also carries the server's own timestamp, set by a trigger. That one is never used to
+decide which copy wins - only as the "everything since" marker for the next pull, so a device
+with a wrong clock can misorder its own edits but can never hide its rows from another device.
+
+Signing out leaves everything in this browser exactly where it was.
 
 ## How it works
 
@@ -105,16 +151,18 @@ deployed one.
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
 | `src/App.jsx` | Composition and layout: wires the hooks below to the views. |
-| `src/hooks/` | `useRoute` (hash and history), `useProgress` (saved state and every change to it), `useBackup` (export, import, reminder), `useToast`, `useKeyboardShortcuts`, `useProblemLists` (counts and the filtered lists). |
+| `src/hooks/` | `useRoute` (hash and history), `useProgress` (saved state and every change to it), `useBackup` (export, import, reminder), `useSync` (signing in, and when to run a sync round), `useToast`, `useKeyboardShortcuts`, `useProblemLists` (counts and the filtered lists). |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
 | `src/progress.js` | Updating progress entries, dates, activity days and streaks. |
 | `src/review.js` | The 7 / 30 / 90 day review schedule, the 3-day relearn step, and weak-spot counting. |
 | `src/keyboard.js` | Shared keyboard helpers: what counts as typing, and the review keys. |
-| `src/storage.js` | Loads, validates and saves progress; backup reminders. |
+| `src/storage.js` | Loads, validates and saves progress; tombstones and the sync cursor; backup reminders. |
+| `src/sync/` | `client.js` (the Supabase client, built only when one is configured), `cloud.js` (the two requests the table ever sees), `merge.js` (which copy of an entry wins), `sync.js` (one pull, merge and push). |
+| `supabase/` | The SQL behind it: the `progress` table with its policies and trigger, and `verify.sql` to check what landed. |
 | `src/images.js` | Compresses note images and stores them in IndexedDB; cleans up unused ones. |
 | `src/csv.js` | The Excel-ready CSV export. |
 | `src/theme.js`, `src/index.css` | Light / dark theme and the colour tokens every component uses. |
-| `src/components/` | `TopBar`, `Overview` (Home), `ProblemsPage`, `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `AppSkeleton`, `LoadFailed`, `icons`. |
+| `src/components/` | `TopBar`, `AccountMenu` (sign-in and sync status), `Overview` (Home), `ProblemsPage`, `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `AppSkeleton`, `LoadFailed`, `icons`. |
 | `src/serviceWorker.js` | Registers the worker and surfaces the "new version ready" prompt. |
 | `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. The worker is a template; `vite.config.js` stamps the build id and precache list into `dist/sw.js`. |
 
@@ -129,10 +177,14 @@ deployed one.
     "reviews": 1,
     "bookmarked": true,
     "notes": "two pointers",
-    "history": [{ "date": "2026-09-20", "result": "got" }]
+    "history": [{ "date": "2026-09-20", "result": "got" }],
+    "updatedAt": "2026-09-20T09:14:02.511Z"
   }
 }
 ```
+
+`updatedAt` is stamped on every change and is only ever read by sync, to order two versions of the
+same entry. Progress saved before sync existed has none, and is merged a different way (above).
 
 `history` records how each re-solve went (`got` or `struggled`), oldest first, keeping the last
 20. It drives the 3-day relearn step and the weak-spot list. Progress saved before it existed

@@ -1,5 +1,5 @@
 import legacyIds from './data/legacyIds.json'
-import { daysBetween } from './progress.js'
+import { daysBetween, isEmptyEntry } from './progress.js'
 import { IMAGE_ID_PATTERN, MAX_NOTE_IMAGES } from './images.js'
 import { MAX_HISTORY, REVIEW_RESULTS } from './review.js'
 
@@ -16,15 +16,25 @@ const PRE_MIGRATION_KEY = 'dsa-tracker-progress-before-v3'
 export const BACKUP_KEY = 'dsa-last-backup'
 export const BACKUP_SNOOZE_KEY = 'dsa-backup-snoozed-until'
 export const BACKUP_REMIND_AFTER_DAYS = 14
+// Entries this browser has cleared, as { [questionId]: isoTimestamp }, kept so
+// the deletion reaches the cloud instead of the row coming back on the next
+// pull. There is at most one per question, so the map is bounded by the size of
+// the sheet and never needs pruning.
+export const TOMBSTONES_KEY = 'dsa-sync-tombstones'
+// How far the last pull got, per account: two people sharing a browser must not
+// inherit each other's cursor and skip the rows it covered.
+export const syncCursorKey = (userId) => `dsa-sync-cursor:${userId}`
 const BACKUP_REMIND_MIN_ENTRIES = 5
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+// The device clock stamp sync compares versions on, as toISOString writes it.
+const TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/
 // Only http(s) links are kept, so an imported file can't smuggle in a
 // javascript: URL that would run when the link is clicked.
 const URL_PATTERN = /^https?:\/\/\S+$/i
 const MAX_NOTES_LENGTH = 5000
 const MAX_REVIEWS = 10
-const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'images', 'link', 'history', 'status', 'confidence']
+const KNOWN_KEYS = ['solved', 'solvedAt', 'reviewedAt', 'reviews', 'bookmarked', 'notes', 'images', 'link', 'history', 'updatedAt', 'status', 'confidence']
 const RESULTS = new Set(REVIEW_RESULTS)
 
 export function isValidUrl(value) {
@@ -33,6 +43,10 @@ export function isValidUrl(value) {
 
 function isDate(value) {
   return typeof value === 'string' && DATE_PATTERN.test(value)
+}
+
+export function isTimestamp(value) {
+  return typeof value === 'string' && TIMESTAMP_PATTERN.test(value)
 }
 
 // Review history is user-supplied like everything else here: keep only well
@@ -71,8 +85,19 @@ function sanitizeEntry(item) {
     if (images.length > 0) entry.images = images
   }
   if (typeof item.link === 'string' && isValidUrl(item.link)) entry.link = item.link
+  // Kept whatever else the entry holds: this is how two devices work out which
+  // version of an entry is the newer one, so dropping it loses that ordering.
+  if (isTimestamp(item.updatedAt)) entry.updatedAt = item.updatedAt
 
   return entry
+}
+
+// One entry as it came back from the cloud. A row is only ever written by this
+// user, but it has been outside this browser, so it gets the same scrutiny as
+// an imported file rather than being trusted on arrival.
+export function sanitizeSyncedEntry(item) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return {}
+  return sanitizeEntry(item)
 }
 
 // Progress files are user supplied, so retain only known question IDs and valid
@@ -91,7 +116,7 @@ export function sanitizeProgress(value, questionIds) {
     if (!KNOWN_KEYS.some((key) => key in item)) continue
     recognised++
     const entry = sanitizeEntry(item)
-    if (Object.keys(entry).length > 0) clean[id] = entry
+    if (!isEmptyEntry(entry)) clean[id] = entry
   }
 
   return recognised > 0 ? clean : null
@@ -142,6 +167,28 @@ export function saveProgress(progress) {
   } catch {
     // Storage full or blocked (e.g. private mode) - nothing useful to do here.
   }
+}
+
+// Tombstones are read back with the same suspicion as progress: unknown ids,
+// and anything that isn't a timestamp, are dropped rather than trusted.
+export function loadTombstones(questionIds) {
+  try {
+    const raw = readLocal(TOMBSTONES_KEY)
+    if (!raw) return {}
+    const value = JSON.parse(raw)
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+    const clean = {}
+    for (const [id, at] of Object.entries(value)) {
+      if (questionIds.has(String(id)) && isTimestamp(at)) clean[id] = at
+    }
+    return clean
+  } catch {
+    return {}
+  }
+}
+
+export function saveTombstones(tombstones) {
+  writeLocal(TOMBSTONES_KEY, JSON.stringify(tombstones))
 }
 
 export function readLocal(key) {
