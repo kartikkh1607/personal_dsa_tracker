@@ -1,5 +1,4 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
-import rawQuestions from './data/questions.json'
 import { DIFFICULTIES, splitTopic, topicName } from './constants.js'
 import { progressToCsv } from './csv.js'
 import { cleanupOrphanImages, deleteImages, MAX_NOTE_IMAGES, requestPersistentStorage } from './images.js'
@@ -31,20 +30,8 @@ import ProblemList, { groupId } from './components/ProblemList.jsx'
 import ProblemDetailDrawer from './components/ProblemDetailDrawer.jsx'
 import Toast from './components/Toast.jsx'
 import Credit from './components/Credit.jsx'
-
-// Topics sort by their leading number, which is part of the topic string.
-const TOPICS = [...new Set(rawQuestions.map((q) => q.topic))].sort((a, b) => a.localeCompare(b))
-const TOPIC_BY_NUMBER = new Map(TOPICS.map((topic) => [splitTopic(topic).number, topic]))
-const QUESTION_IDS = new Set(rawQuestions.map((question) => String(question.id)))
-const QUESTIONS_BY_ID = new Map(rawQuestions.map((question) => [question.id, question]))
-const TOPIC_PHASE = new Map(rawQuestions.map((q) => [q.topic, { phase: q.phase, phaseName: q.phaseName }]))
-const PHASES = [...new Map(rawQuestions.map((q) => [q.phase, q.phaseName]))]
-  .map(([phase, name]) => ({ phase, name }))
-  .sort((a, b) => a.phase - b.phase)
-
-if (rawQuestions.length !== 922 || TOPICS.length !== 23) {
-  console.warn(`Expected 922 questions across 23 topics, got ${rawQuestions.length} across ${TOPICS.length}.`)
-}
+import AppSkeleton from './components/AppSkeleton.jsx'
+import { loadQuestions } from './questions.js'
 
 const WRITE_DELAY_MS = 400
 const UP_NEXT_COUNT = 5
@@ -74,9 +61,11 @@ function downloadFile(filename, content, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-export default function App() {
+function Tracker({ data }) {
+  const { questions, topics, phases, topicByNumber, questionIds, questionsById, topicPhase } = data
+
   // Saved state only - the static question list is never stored.
-  const [progress, setProgress] = useState(() => loadProgress(QUESTION_IDS))
+  const [progress, setProgress] = useState(() => loadProgress(questionIds))
   const [theme, setTheme] = useTheme()
   const [route, setRoute] = useState(initialRoute)
   const [toast, setToast] = useState(null)
@@ -94,10 +83,10 @@ export default function App() {
   const today = localDate()
 
   const { view, show, core: coreOnly, notes: notesOnly } = route
-  const selectedTopic = (route.topic && TOPIC_BY_NUMBER.get(route.topic)) || ALL_TOPICS
+  const selectedTopic = (route.topic && topicByNumber.get(route.topic)) || ALL_TOPICS
   const difficulty = route.difficulty ?? ALL
   const search = route.q
-  const drawerQuestion = (route.problem != null && QUESTIONS_BY_ID.get(route.problem)) || null
+  const drawerQuestion = (route.problem != null && questionsById.get(route.problem)) || null
 
   // Typing stays responsive: the input updates on every keystroke, while
   // re-filtering the long list runs at a lower priority and catches up.
@@ -165,9 +154,9 @@ export default function App() {
   }, [])
 
   const stats = useMemo(() => {
-    const topics = new Map(TOPICS.map((topic) => [topic, { topic, ...TOPIC_PHASE.get(topic), total: 0, solved: 0 }]))
-    const phases = new Map(PHASES.map((phase) => [phase.phase, { ...phase, total: 0, solved: 0, topics: [] }]))
-    for (const topic of topics.values()) phases.get(topic.phase).topics.push(topic)
+    const topicCounts = new Map(topics.map((topic) => [topic, { topic, ...topicPhase.get(topic), total: 0, solved: 0 }]))
+    const phaseCounts = new Map(phases.map((phase) => [phase.phase, { ...phase, total: 0, solved: 0, topics: [] }]))
+    for (const topic of topicCounts.values()) phaseCounts.get(topic.phase).topics.push(topic)
     const difficulties = Object.fromEntries(DIFFICULTIES.map((level) => [level, { total: 0, solved: 0 }]))
     const patterns = new Map()
     // Solves and reviews per day, which drives both the streak and the heatmap.
@@ -177,13 +166,13 @@ export default function App() {
     let saved = 0
     let thisWeek = 0
 
-    for (const question of rawQuestions) {
+    for (const question of questions) {
       const entry = progress[question.id]
       const isSolved = entry?.solved === true
       const patternKey = `${question.topic}|${question.pattern}`
       if (!patterns.has(patternKey)) patterns.set(patternKey, { key: patternKey, topic: question.topic, pattern: question.pattern, total: 0, solved: 0 })
 
-      for (const counts of [topics.get(question.topic), phases.get(question.phase), difficulties[question.difficulty], patterns.get(patternKey)]) {
+      for (const counts of [topicCounts.get(question.topic), phaseCounts.get(question.phase), difficulties[question.difficulty], patterns.get(patternKey)]) {
         counts.total++
         if (isSolved) counts.solved++
       }
@@ -195,53 +184,53 @@ export default function App() {
     }
 
     return {
-      total: rawQuestions.length,
+      total: questions.length,
       solved,
       saved,
       thisWeek,
       streak: streakFrom(new Set(activity.keys())),
       activity,
       difficulties,
-      topicStats: [...topics.values()],
-      phaseStats: [...phases.values()],
+      topicStats: [...topicCounts.values()],
+      phaseStats: [...phaseCounts.values()],
       patternStats: [...patterns.values()],
     }
-  }, [progress, today])
+  }, [progress, today, questions, topics, phases, topicPhase])
 
   // The sheet's study path: ids are its steps, so each phase's Core, Depth and
   // Stretch problems come before the next phase.
   const upNext = useMemo(
     () =>
-      rawQuestions
+      questions
         .filter((question) => !progress[question.id]?.solved)
         .sort((a, b) => a.id - b.id)
         .slice(0, UP_NEXT_COUNT),
-    [progress],
+    [progress, questions],
   )
   // Most overdue first.
   const reviewDue = useMemo(
     () =>
-      rawQuestions
+      questions
         .filter((question) => isDue(progress[question.id], today))
         .sort((a, b) => nextReviewDate(progress[a.id]).localeCompare(nextReviewDate(progress[b.id])) || a.id - b.id),
-    [progress, today],
+    [progress, today, questions],
   )
-  const savedPreview = useMemo(() => rawQuestions.filter((question) => progress[question.id]?.bookmarked).slice(0, SAVED_PREVIEW_COUNT), [progress])
+  const savedPreview = useMemo(() => questions.filter((question) => progress[question.id]?.bookmarked).slice(0, SAVED_PREVIEW_COUNT), [progress, questions])
   // Problems you've failed to re-solve at least twice: the ones actually worth
   // more reps. Most-struggled first.
   const weakProblems = useMemo(
     () =>
-      rawQuestions
+      questions
         .filter((question) => isWeak(progress[question.id]))
         .sort((a, b) => struggleCount(progress[b.id]) - struggleCount(progress[a.id]) || a.id - b.id),
-    [progress],
+    [progress, questions],
   )
   const currentPhase = upNext.length > 0 ? stats.phaseStats.find((phase) => phase.phase === upNext[0].phase) : null
 
   // Topic, show, difficulty, Core-only and search all combine.
   const visible = useMemo(() => {
     const term = deferredSearch.trim().toLowerCase()
-    return rawQuestions.filter((question) => {
+    return questions.filter((question) => {
       if (selectedTopic !== ALL_TOPICS && question.topic !== selectedTopic) return false
       if (difficulty !== ALL && question.difficulty !== difficulty) return false
       if (coreOnly && question.tier !== 'Core') return false
@@ -254,7 +243,7 @@ export default function App() {
       if (term && !question.problem.toLowerCase().includes(term) && !question.pattern.toLowerCase().includes(term)) return false
       return true
     })
-  }, [progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, deferredSearch])
+  }, [progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, deferredSearch, questions])
 
   // A single topic groups by pattern; all problems group by topic.
   const groupByPattern = selectedTopic !== ALL_TOPICS
@@ -434,11 +423,11 @@ export default function App() {
 
   const relatedQuestions = useMemo(() => {
     if (!drawerQuestion) return []
-    const others = rawQuestions.filter((q) => q.id !== drawerQuestion.id && q.topic === drawerQuestion.topic)
+    const others = questions.filter((q) => q.id !== drawerQuestion.id && q.topic === drawerQuestion.topic)
     const samePattern = others.filter((q) => q.pattern === drawerQuestion.pattern)
     const rest = others.filter((q) => q.pattern !== drawerQuestion.pattern)
     return [...samePattern, ...rest].slice(0, RELATED_COUNT)
-  }, [drawerQuestion])
+  }, [drawerQuestion, questions])
 
   const isFiltered = show !== 'all' || difficulty !== ALL || coreOnly || notesOnly || search !== ''
 
@@ -483,7 +472,7 @@ export default function App() {
 
   function handleExportCsv() {
     // The byte-order mark tells Excel the file is UTF-8, so symbols survive.
-    downloadFile(`dsa-progress-${today}.csv`, `\uFEFF${progressToCsv(rawQuestions, progress)}`, 'text/csv;charset=utf-8')
+    downloadFile(`dsa-progress-${today}.csv`, `\uFEFF${progressToCsv(questions, progress)}`, 'text/csv;charset=utf-8')
     showToast('Exported for Excel')
   }
 
@@ -496,7 +485,7 @@ export default function App() {
   async function handleImport(file) {
     let safeProgress = null
     try {
-      safeProgress = sanitizeProgress(progressFromBackup(JSON.parse(await file.text())), QUESTION_IDS)
+      safeProgress = sanitizeProgress(progressFromBackup(JSON.parse(await file.text())), questionIds)
     } catch {
       // Unreadable JSON is reported below, same as an invalid shape.
     }
@@ -523,7 +512,7 @@ export default function App() {
   const topicStats = stats.topicStats.find((topic) => topic.topic === selectedTopic)
   const header = topicStats
     ? { eyebrow: `Phase ${topicStats.phase} · ${topicStats.phaseName}`, title: topicName(selectedTopic), solved: topicStats.solved, total: topicStats.total }
-    : { eyebrow: `${stats.phaseStats.length} phases · ${TOPICS.length} topics`, title: 'All problems', solved: stats.solved, total: stats.total }
+    : { eyebrow: `${stats.phaseStats.length} phases · ${topics.length} topics`, title: 'All problems', solved: stats.solved, total: stats.total }
   const emptyState = EMPTY_STATES[search === '' && difficulty === ALL && !coreOnly && !notesOnly ? show : 'all']
 
   let content
@@ -618,9 +607,9 @@ export default function App() {
           onSnoozeBackup={snoozeBackup}
           weakProblems={weakProblems.slice(0, WEAK_PREVIEW_COUNT)}
           weakCount={weakProblems.length}
-          onSolve={(id) => withUndo(id, `Solved “${QUESTIONS_BY_ID.get(id).problem}”`, toggleSolved)}
+          onSolve={(id) => withUndo(id, `Solved “${questionsById.get(id).problem}”`, toggleSolved)}
           onReview={(id, result) =>
-            withUndo(id, result === 'got' ? `Reviewed “${QUESTIONS_BY_ID.get(id).problem}”` : `Back in 3 days: “${QUESTIONS_BY_ID.get(id).problem}”`, () =>
+            withUndo(id, result === 'got' ? `Reviewed “${questionsById.get(id).problem}”` : `Back in 3 days: “${questionsById.get(id).problem}”`, () =>
               reviewProblem(id, result),
             )
           }
@@ -676,4 +665,46 @@ export default function App() {
       {toast && <Toast key={toast.id} toast={toast} onDismiss={dismissToast} />}
     </div>
   )
+}
+
+// The question list is fetched rather than bundled, so the app has a brief
+// loading state now. Progress is read only once the ids are known, because
+// sanitising it needs them.
+export default function App() {
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    loadQuestions().then(
+      (loaded) => !cancelled && setData(loaded),
+      (loadError) => !cancelled && setError(loadError),
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [error])
+
+  if (error) {
+    return (
+      <div className="grid h-dvh place-items-center bg-canvas px-6 font-sans text-ink">
+        <div className="max-w-sm text-center">
+          <p className="font-semibold">Couldn’t load the problems</p>
+          <p className="mt-1 text-sm text-ink-2">
+            Your progress is safe in this browser. This is usually a connection problem.
+          </p>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="mt-5 h-10 rounded-xl bg-brand px-4 text-sm font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!data) return <AppSkeleton />
+  return <Tracker data={data} />
 }

@@ -101,6 +101,7 @@ deployed one.
 | File | Purpose |
 | --- | --- |
 | `src/data/questions.json` | The 922 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
+| `src/questions.js` | Fetches the question list as a separate asset and builds the indexes the app reads. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
 | `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
@@ -143,6 +144,12 @@ and confidence) is migrated on load: Solved or Mastered become ticked, and Revis
 confidence become bookmarks.
 
 ## Offline and updates
+
+**The question list is fetched, not bundled.** At 385 KB it dominated the main chunk, so the app
+couldn't render until all of it had parsed. It is now a separate content-hashed JSON file that
+loads alongside the app, which cut the main chunk from 537 KB to 234 KB. The service worker
+precaches it, so offline still works from the first install, and a brief skeleton covers the
+load. It is only re-downloaded when the question data itself changes.
 
 The app installs a service worker (`public/sw.js`) so it opens without a network. Pages are
 fetched network-first, so a new deploy shows up as soon as you're online; hashed build assets
