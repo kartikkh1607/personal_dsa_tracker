@@ -3,7 +3,7 @@ import { topicName } from '../constants.js'
 import { isImageFile, MAX_NOTE_IMAGES, storeImages } from '../images.js'
 import { formatDate, hasNote } from '../progress.js'
 import { isDue, isLapsed, nextReviewDate, struggleCount } from '../review.js'
-import { isTypingTarget, REVIEW_KEYS } from '../keyboard.js'
+import { isTypingTarget, reviewOutcomeFor } from '../keyboard.js'
 import { isValidUrl } from '../storage.js'
 import NoteImages from './NoteImages.jsx'
 import { DifficultyPill, NOTE_ACCENT, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
@@ -155,6 +155,12 @@ export default function ProblemDetailDrawer({
   const attachingCount = attaching[question.id] ?? 0
   const history = entry.history ?? []
 
+  // The key handler reads the entry through a ref: it changes on every
+  // keystroke in the notes field, and re-registering a window listener that
+  // often would be wasteful.
+  const reviewStateRef = useRef({ entry, today })
+  reviewStateRef.current = { entry, today }
+
   async function attachImages(files) {
     const questionId = question.id
     const room = MAX_NOTE_IMAGES - imageIds.length - attachingCount
@@ -212,12 +218,16 @@ export default function ProblemDetailDrawer({
         onClose()
         return
       }
-      // g/s record the review without leaving the panel, but only when there is
-      // a review to record and the user isn't writing a note.
-      if (due && REVIEW_KEYS[event.key] && !isTypingTarget(event.target) && !event.metaKey && !event.ctrlKey && !event.altKey) {
-        event.preventDefault()
-        onReview(question.id, REVIEW_KEYS[event.key])
-        return
+      // g/s record the review without leaving the panel, but only on a problem
+      // that is due and only when the user isn't writing a note.
+      if (!isTypingTarget(event.target) && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        const { entry: current, today: now } = reviewStateRef.current
+        const outcome = reviewOutcomeFor(event.key, current, now)
+        if (outcome) {
+          event.preventDefault()
+          onReview(question.id, outcome)
+          return
+        }
       }
       if (event.key !== 'Tab' || !dialogRef.current) return
       const focusable = [...dialogRef.current.querySelectorAll(FOCUSABLE)].filter((element) => element.getClientRects().length > 0)
@@ -235,7 +245,7 @@ export default function ProblemDetailDrawer({
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose, due, onReview, question.id])
+  }, [onClose, onReview, question.id])
 
   // On phones the panel is a bottom sheet: drag its top bar down to dismiss.
   function handleTouchStart(event) {

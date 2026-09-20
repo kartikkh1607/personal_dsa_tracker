@@ -3,9 +3,9 @@ import rawQuestions from './data/questions.json'
 import { DIFFICULTIES, splitTopic, topicName } from './constants.js'
 import { progressToCsv } from './csv.js'
 import { cleanupOrphanImages, deleteImages, MAX_NOTE_IMAGES, requestPersistentStorage } from './images.js'
-import { addDays, applyPatch, hasNote, localDate, streakFrom } from './progress.js'
+import { activityFrom, addDays, applyPatch, hasNote, localDate, streakFrom } from './progress.js'
 import { isDue, isWeak, nextReviewDate, recordReview, struggleCount } from './review.js'
-import { isTypingTarget, REVIEW_KEYS } from './keyboard.js'
+import { isTypingTarget, reviewOutcomeFor } from './keyboard.js'
 import { buildHash, initialRoute, parseHash, rememberRoute } from './route.js'
 import {
   BACKUP_KEY,
@@ -169,7 +169,8 @@ export default function App() {
     for (const topic of topics.values()) phases.get(topic.phase).topics.push(topic)
     const difficulties = Object.fromEntries(DIFFICULTIES.map((level) => [level, { total: 0, solved: 0 }]))
     const patterns = new Map()
-    const activity = new Map()
+    // Solves and reviews per day, which drives both the streak and the heatmap.
+    const activity = activityFrom(progress)
     const weekStart = addDays(today, -6)
     let solved = 0
     let saved = 0
@@ -187,10 +188,7 @@ export default function App() {
       }
       if (isSolved) {
         solved++
-        if (entry.solvedAt) {
-          activity.set(entry.solvedAt, (activity.get(entry.solvedAt) ?? 0) + 1)
-          if (entry.solvedAt >= weekStart) thisWeek++
-        }
+        if (entry.solvedAt && entry.solvedAt >= weekStart) thisWeek++
       }
       if (entry?.bookmarked) saved++
     }
@@ -410,9 +408,10 @@ export default function App() {
       // Reviewing only makes sense for a problem that is actually due, so g/s
       // stay inert elsewhere rather than silently rescheduling something.
       const id = Number(rows[current].dataset.questionId)
-      if (isDue(progressRef.current[id], localDate())) {
+      const outcome = reviewOutcomeFor(event.key, progressRef.current[id], localDate())
+      if (outcome) {
         event.preventDefault()
-        reviewProblem(id, REVIEW_KEYS[event.key])
+        reviewProblem(id, outcome)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
