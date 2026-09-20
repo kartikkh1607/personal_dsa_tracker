@@ -20,6 +20,7 @@ Other scripts:
 npm run build     # production build into dist/
 npm run preview   # serve the built dist/ locally
 npm test          # unit tests (Vitest)
+npm run test:e2e  # browser tests (Playwright, against the production build)
 npm run lint      # ESLint
 ```
 
@@ -117,7 +118,8 @@ original, which is why sync keeps working offline and simply catches up later.
    trigger in place, and no privileges at all for the `anon` role.
 3. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
 4. In the dashboard, add the app's URL under **Authentication > URL Configuration**, so the
-   sign-in link comes back to it.
+   sign-in link comes back to it. Deploy previews get a new URL each time, so they need a
+   wildcard redirect rather than one fixed address - see [Deploy to Vercel](#deploy-to-vercel).
 
 Signing in is a magic link by email. Google sign-in is written but stays hidden until you set up
 an OAuth client and uncomment `VITE_ENABLE_GOOGLE_AUTH`.
@@ -271,7 +273,8 @@ touches them.
 
 ## Deploy to Vercel
 
-The app is a static build with no backend or environment variables.
+The app is a static build with no backend. It needs environment variables only
+if you want sync; without them the deploy is the local-only app.
 
 **From the dashboard:** push this folder to a Git repo, then at
 [vercel.com/new](https://vercel.com/new) import it. Vercel detects Vite and fills in the
@@ -283,6 +286,27 @@ settings; confirm they read:
 - Install Command: `npm install`
 
 Click **Deploy**. Later pushes to the default branch redeploy automatically.
+
+**Environment variables**, under Settings > Environment Variables:
+
+| Name | Value | Environments |
+| --- | --- | --- |
+| `VITE_SUPABASE_URL` | `https://<project>.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | the project's publishable key | Production, Preview, Development |
+| `VITE_ENABLE_GOOGLE_AUTH` | `true`, only once Google is set up | wherever you want the button |
+
+Both are public by design: Vite inlines every `VITE_` variable into the bundle,
+which is what the publishable key is for. The service role key is not a
+`VITE_` variable and must never be added here - it bypasses row level security,
+and the bundle is readable by anyone. Because the values are inlined at build
+time, changing one takes a redeploy rather than a restart.
+
+Tick **Preview** as well as Production if you want to try sign-in on a branch
+deploy: a Preview build without them runs as the local-only app, which looks
+like sync being broken. Preview URLs change per deploy, so add a wildcard under
+**Authentication > URL Configuration > Redirect URLs** in Supabase
+(`https://<project>-*.vercel.app/**`) or the link will come back to a URL the
+project refuses to redirect to.
 
 **From the CLI:**
 
