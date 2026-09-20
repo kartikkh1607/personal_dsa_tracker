@@ -6,6 +6,7 @@ import { cleanupOrphanImages, deleteImages, MAX_NOTE_IMAGES, requestPersistentSt
 import { activityFrom, addDays, applyPatch, hasNote, localDate, streakFrom } from './progress.js'
 import { isDue, isWeak, nextReviewDate, recordReview, struggleCount } from './review.js'
 import { isTypingTarget, reviewOutcomeFor } from './keyboard.js'
+import { applyUpdate, onUpdateAvailable } from './serviceWorker.js'
 import { buildHash, initialRoute, parseHash, rememberRoute } from './route.js'
 import {
   BACKUP_KEY,
@@ -346,8 +347,21 @@ export default function App() {
   const dismissToast = useCallback(() => setToast(null), [])
 
   function showToast(message, options = {}) {
-    setToast({ message, tone: options.tone ?? 'info', action: options.action, id: Date.now() })
+    setToast({ message, tone: options.tone ?? 'info', action: options.action, persist: options.persist === true, id: Date.now() })
   }
+
+  // A new version is deployed and installed, waiting for this page to let go.
+  useEffect(() => {
+    return onUpdateAvailable(() => {
+      setToast({
+        message: 'A new version is ready',
+        tone: 'info',
+        persist: true,
+        action: { label: 'Reload', onClick: applyUpdate },
+        id: 'sw-update',
+      })
+    })
+  }, [])
 
   // Actions that make a problem disappear from a Home list offer an undo.
   function withUndo(id, message, change) {

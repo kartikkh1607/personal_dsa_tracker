@@ -113,7 +113,8 @@ deployed one.
 | `src/csv.js` | The Excel-ready CSV export. |
 | `src/theme.js`, `src/index.css` | Light / dark theme and the colour tokens every component uses. |
 | `src/components/` | `TopBar`, `Overview` (Home), `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `icons`. |
-| `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. |
+| `src/serviceWorker.js` | Registers the worker and surfaces the "new version ready" prompt. |
+| `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. The worker is a template; `vite.config.js` stamps the build id and precache list into `dist/sw.js`. |
 
 **Persistence.** Only what you've set is stored, keyed by question id:
 
@@ -140,6 +141,73 @@ the new ids once, on first load; the original is kept under `dsa-tracker-progres
 of edits results in a single write. Progress saved by older versions of the app (with statuses
 and confidence) is migrated on load: Solved or Mastered become ticked, and Revisit or a low
 confidence become bookmarks.
+
+## Offline and updates
+
+The app installs a service worker (`public/sw.js`) so it opens without a network. Pages are
+fetched network-first, so a new deploy shows up as soon as you're online; hashed build assets
+and fonts are served cache-first.
+
+**Each build gets its own cache.** `npm run build` rewrites `dist/sw.js` through the
+`serviceWorker` plugin in `vite.config.js`, stamping in a build id derived from the names *and*
+contents of everything the build emitted, plus the exact list of files to precache. The cache is
+named `dsa-tracker-<build id>`, and activating a new worker deletes every other cache. Earlier
+versions used a fixed name (`dsa-tracker-v1`) that never changed, so old hashed assets
+accumulated forever and were never reclaimed.
+
+**Updates ask before they apply.** A new worker installs in the background and then waits. The
+running page shows **"A new version is ready · Reload"**, and only when you accept does it tell
+the worker to take over and reload. It waits on purpose: taking over underneath a running page
+would delete the caches that page is still using, and its hashed assets are gone from the server
+after a deploy too. The prompt does not auto-dismiss, so you can't miss it.
+
+If you ignore the prompt nothing breaks — you keep running the version you loaded with, and the
+new one activates the next time every tab of the app is closed and reopened.
+
+### If a bad service worker ships
+
+A broken worker can keep serving a broken app from cache, and users can't fix it themselves.
+The way out is a worker that deletes everything and unregisters itself. Replace the whole of
+`public/sw.js` with this, commit, and deploy:
+
+```js
+// KILL SWITCH - temporary. Deletes every cache, unregisters, reloads open tabs.
+// Note there is deliberately no fetch handler, so nothing is served from cache.
+self.addEventListener('install', () => self.skipWaiting())
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then((clients) => clients.forEach((client) => client.navigate(client.url))),
+  )
+})
+```
+
+Also comment out `registerServiceWorker()` in `src/main.jsx` for that deploy, so the app doesn't
+immediately register a fresh worker afterwards. And delete the `serviceWorker()` plugin from the
+`plugins` array in `vite.config.js` for that deploy, or the build will fail trying to substitute
+tokens this file doesn't have.
+
+Then:
+
+1. Deploy and confirm on a device that had the bad version: DevTools → Application → Service
+   Workers should show none, and Cache Storage should be empty.
+2. **Leave the kill switch deployed for at least a week.** Clients only pick it up when they
+   next open the app, and anyone who doesn't visit keeps the bad worker until they do.
+3. Once you're satisfied, restore `public/sw.js`, `src/main.jsx` and `vite.config.js` and deploy
+   normally. Returning clients then install the fixed worker from scratch.
+
+Browsers do not serve `sw.js` itself from the HTTP cache when checking for updates, so a bad
+worker is never more than one visit away from being replaced. Nothing else is required of
+Vercel — no custom headers.
+
+**No progress is lost either way.** Caches hold only the app's own files. Progress lives in
+`localStorage` and note images in IndexedDB, and neither the normal worker nor the kill switch
+touches them.
 
 ## Deploy to Vercel
 

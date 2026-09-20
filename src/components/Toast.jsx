@@ -6,6 +6,9 @@ const DISMISS_WITH_ACTION_MS = 6000
 
 export default function Toast({ toast, onDismiss }) {
   useEffect(() => {
+    // A persistent toast (the update prompt) waits for the user rather than
+    // vanishing: missing it would mean running an old version until next time.
+    if (toast.persist) return undefined
     const timer = setTimeout(onDismiss, toast.action ? DISMISS_WITH_ACTION_MS : DISMISS_AFTER_MS)
     return () => clearTimeout(timer)
   }, [toast, onDismiss])
