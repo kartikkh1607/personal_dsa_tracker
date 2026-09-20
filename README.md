@@ -104,7 +104,8 @@ deployed one.
 | `src/questions.js` | Fetches the question list as a separate asset and builds the indexes the app reads. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
-| `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
+| `src/App.jsx` | Composition and layout: wires the hooks below to the views. |
+| `src/hooks/` | `useRoute` (hash and history), `useProgress` (saved state and every change to it), `useBackup` (export, import, reminder), `useToast`, `useKeyboardShortcuts`, `useProblemLists` (counts and the filtered lists). |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
 | `src/progress.js` | Updating progress entries, dates, activity days and streaks. |
 | `src/review.js` | The 7 / 30 / 90 day review schedule, the 3-day relearn step, and weak-spot counting. |
@@ -113,7 +114,7 @@ deployed one.
 | `src/images.js` | Compresses note images and stores them in IndexedDB; cleans up unused ones. |
 | `src/csv.js` | The Excel-ready CSV export. |
 | `src/theme.js`, `src/index.css` | Light / dark theme and the colour tokens every component uses. |
-| `src/components/` | `TopBar`, `Overview` (Home), `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `icons`. |
+| `src/components/` | `TopBar`, `Overview` (Home), `ProblemsPage`, `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `AppSkeleton`, `LoadFailed`, `icons`. |
 | `src/serviceWorker.js` | Registers the worker and surfaces the "new version ready" prompt. |
 | `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. The worker is a template; `vite.config.js` stamps the build id and precache list into `dist/sw.js`. |
 
