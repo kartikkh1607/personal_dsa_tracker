@@ -68,7 +68,7 @@ id is its step on the sheet's study path: within each phase, Core, then Depth, t
 **Links.** A problem whose link works opens it directly; any other problem opens a Google search
 for its name. `npm run check-links` checks every link (LeetCode problems that exist and are free,
 GeeksforGeeks practice pages that load a real problem) and records the result as `linkVerified`,
-so re-run it after changing `questions.json`. When a search leads you to the real page, use
+so re-run it after changing `src/data/questions.json`. When a search leads you to the real page, use
 **Paste the real link** in the problem details; the app remembers it and opens it directly.
 
 ## Backing up your progress
@@ -100,7 +100,7 @@ deployed one.
 
 | File | Purpose |
 | --- | --- |
-| `src/data/questions.json` | The 922 questions. Read-only source data - never written to. |
+| `src/data/questions.json` | The 922 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
 | `src/App.jsx` | State, counting, "up next", reviews, filtering, keyboard shortcuts, export/import. |
@@ -135,7 +135,7 @@ deployed one.
 20. It drives the 3-day relearn step and the weak-spot list. Progress saved before it existed
 simply has no `history` and keeps working unchanged.
 
-Updating `questions.json` never wipes your progress. Progress saved under the old ids is moved to
+Updating `src/data/questions.json` never wipes your progress. Progress saved under the old ids is moved to
 the new ids once, on first load; the original is kept under `dsa-tracker-progress-before-v3`. Writes are debounced by 400 ms so a burst
 of edits results in a single write. Progress saved by older versions of the app (with statuses
 and confidence) is migrated on load: Solved or Mastered become ticked, and Revisit or a low

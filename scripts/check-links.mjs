@@ -9,12 +9,12 @@
 // Search pages, premium-only LeetCode problems and dead pages do not.
 import { readFileSync, writeFileSync } from 'node:fs'
 
-const FILES = ['src/data/questions.json', 'questions.json']
+const QUESTIONS_FILE = 'src/data/questions.json'
 const CONCURRENCY = 6
 const ATTEMPTS = 3
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128 Safari/537.36'
 
-const questions = JSON.parse(readFileSync(FILES[0], 'utf8'))
+const questions = JSON.parse(readFileSync(QUESTIONS_FILE, 'utf8'))
 
 async function withRetry(check) {
   for (let attempt = 1; ; attempt++) {
@@ -97,7 +97,7 @@ for (const question of questions) {
 }
 
 const json = JSON.stringify(questions, null, 2) + '\n'
-for (const file of FILES) writeFileSync(file, json)
+writeFileSync(QUESTIONS_FILE, json)
 
 const working = questions.filter((question) => question.linkVerified).length
 console.log(`\nworking links: ${working}/${questions.length}; the other ${questions.length - working} open a Google search`)
