@@ -36,18 +36,35 @@ export function useKeyboardShortcuts({ view, drawerOpen, progress, navigate, onR
         target?.scrollIntoView({ block: 'nearest' })
         return
       }
-      if (current === -1) return
+      // Nothing focused is the ordinary case: the page has just loaded, or the
+      // list has been scrolled with the mouse. j/k already start from the first
+      // row there, and these agree rather than doing nothing at all - a
+      // shortcut that silently no-ops reads as a broken key.
+      const index = current === -1 ? 0 : current
+      const row = rows[index]
+      // Acting on a row nobody is looking at would be worse than not acting, so
+      // when we fall back to the first row we move focus there as well: the
+      // change happens where the user can see it, and j/k carry on from there.
+      const focusFallback = () => {
+        if (current !== -1) return
+        const target = row.querySelector('[data-row-open]')
+        target?.focus()
+        target?.scrollIntoView({ block: 'nearest' })
+      }
+
       if (event.key === 'x' || event.key === 'b') {
         event.preventDefault()
-        rows[current].querySelector(event.key === 'x' ? '[role="checkbox"]' : '[data-row-bookmark]')?.click()
+        focusFallback()
+        row.querySelector(event.key === 'x' ? '[role="checkbox"]' : '[data-row-bookmark]')?.click()
         return
       }
       // Reviewing only makes sense for a problem that is actually due, so g/s
       // stay inert elsewhere rather than silently rescheduling something.
-      const id = Number(rows[current].dataset.questionId)
+      const id = Number(row.dataset.questionId)
       const outcome = reviewOutcomeFor(event.key, progressRef.current[id], localDate())
       if (outcome) {
         event.preventDefault()
+        focusFallback()
         onReview(id, outcome)
       }
     }

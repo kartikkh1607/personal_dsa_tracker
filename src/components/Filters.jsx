@@ -166,13 +166,22 @@ export default function Filters({
         )}
       </div>
 
-      <p className="mt-3 hidden items-center gap-1.5 text-xs text-ink-3 lg:flex">
+      {/* Every shortcut the problems page listens for, including the two review
+          keys, which were implemented and then left undocumented. Shown from
+          the small breakpoint up rather than only on wide screens - a keyboard
+          is not a thing only large windows have - and allowed to wrap, since
+          six pairs do not fit on one line at that width. */}
+      <p className="mt-3 hidden flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-ink-3 sm:flex">
         <Kbd>j</Kbd>
         <Kbd>k</Kbd> move
         <span aria-hidden="true">·</span>
         <Kbd>x</Kbd> tick
         <span aria-hidden="true">·</span>
         <Kbd>b</Kbd> save
+        <span aria-hidden="true">·</span>
+        <Kbd>g</Kbd> got it
+        <span aria-hidden="true">·</span>
+        <Kbd>s</Kbd> struggled
         <span aria-hidden="true">·</span>
         <Kbd>Enter</Kbd> open
         <span aria-hidden="true">·</span>
