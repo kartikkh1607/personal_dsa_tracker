@@ -55,3 +55,40 @@ describe('indexQuestions', () => {
     expect([...small.questionIds]).toEqual(['7', '9'])
   })
 })
+
+// The sheet lists a handful of problems twice on purpose: the same problem is
+// worth solving again with a different technique. `sameAs` is what says so,
+// and separates those from the duplicates that were simply mistakes.
+describe('problems listed twice on purpose', () => {
+  const byId = new Map(questions.map((question) => [question.id, question]))
+
+  it('pairs every sameAs with the problem that points back at it', () => {
+    const paired = questions.filter((question) => question.sameAs !== undefined)
+    expect(paired.length).toBeGreaterThan(0)
+    for (const question of paired) {
+      const other = byId.get(question.sameAs)
+      expect(other, `#${question.id} points at a problem that is not in the sheet`).toBeDefined()
+      expect(other.sameAs).toBe(question.id)
+      expect(other.id).not.toBe(question.id)
+    }
+  })
+
+  it('puts each half of a pair under a different technique', () => {
+    for (const question of questions.filter((q) => q.sameAs !== undefined)) {
+      expect(byId.get(question.sameAs).pattern).not.toBe(question.pattern)
+    }
+  })
+
+  it('has no link left in the sheet twice that is not a declared pair', () => {
+    const byLink = new Map()
+    for (const question of questions) {
+      if (!byLink.has(question.link)) byLink.set(question.link, [])
+      byLink.get(question.link).push(question)
+    }
+    const shared = [...byLink.values()].filter((group) => group.length > 1)
+    for (const group of shared) {
+      expect(group, `${group[0].link} is on ${group.length} problems`).toHaveLength(2)
+      expect(group[0].sameAs).toBe(group[1].id)
+    }
+  })
+})

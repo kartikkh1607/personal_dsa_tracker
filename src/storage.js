@@ -2,6 +2,7 @@ import legacyIds from './data/legacyIds.json'
 import { daysBetween, isEmptyEntry } from './progress.js'
 import { IMAGE_ID_PATTERN, MAX_NOTE_IMAGES } from './images.js'
 import { MAX_HISTORY, REVIEW_RESULTS } from './review.js'
+import { unionEntries } from './sync/merge.js'
 
 // All saved progress lives under this one localStorage key.
 // Shape: { [questionId]: { solved?, solvedAt?, reviewedAt?, reviews?, bookmarked?, notes?, images?, link?, history? } }
@@ -11,8 +12,12 @@ export const STORAGE_KEY = 'dsa-tracker-progress'
 // Question ids were renumbered when the sheet grew from 570 problems to 922 in
 // study-path order. Progress saved without this version uses the old ids.
 export const DATA_VERSION_KEY = 'dsa-data-version'
-export const DATA_VERSION = 3
-const PRE_MIGRATION_KEY = 'dsa-tracker-progress-before-v3'
+// v3 renumbered the sheet from 570 problems to 922; v4 removed two rows that
+// were the same problem listed twice (see MERGED_IDS).
+export const DATA_VERSION = 4
+// The untouched copy each migration takes before it runs, one key per version
+// so a later migration can't overwrite an earlier one's safety net.
+export const preMigrationKey = (version) => `dsa-tracker-progress-before-v${version}`
 export const BACKUP_KEY = 'dsa-last-backup'
 export const BACKUP_SNOOZE_KEY = 'dsa-backup-snoozed-until'
 export const BACKUP_REMIND_AFTER_DAYS = 14
@@ -127,6 +132,49 @@ export function sanitizeProgress(value, questionIds) {
   return recognised > 0 ? clean : null
 }
 
+// Two problems were in the sheet twice, under different topics but on the same
+// link: Count of Smaller Numbers After Self (#138, now #905) and Linked List
+// Cycle II (#265, now #338). The second copy was removed in v4, so progress
+// saved against it moves onto the copy that was kept.
+export const MERGED_IDS = { 138: 905, 265: 338 }
+
+// One entry's work added to another's. Both sides are kept rather than one
+// winning: it is one problem, so all of the work on it belongs to one entry.
+export function mergeDuplicateEntries(keeper, removed) {
+  const entry = unionEntries(keeper ?? {}, removed ?? {})
+  // Two notes written against the same problem are notes on two approaches to
+  // it, so both are kept - unlike a sync union, where the two sides are rival
+  // copies of one note and the longer one is simply the fuller draft.
+  const notes = [...new Set([keeper?.notes, removed?.notes].filter((note) => typeof note === 'string' && note.trim() !== ''))]
+  if (notes.length > 0) entry.notes = notes.join('\n\n').slice(0, MAX_NOTES_LENGTH)
+  return entry
+}
+
+// Moves progress off the removed duplicates and onto the rows that were kept.
+export function mergeRemovedIds(value, mergedIds = MERGED_IDS) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value
+  if (!Object.keys(mergedIds).some((id) => Object.hasOwn(value, id))) return value
+
+  const merged = { ...value }
+  for (const [from, to] of Object.entries(mergedIds)) {
+    if (!Object.hasOwn(merged, from)) continue
+    const removed = merged[from]
+    delete merged[from]
+    if (!removed || typeof removed !== 'object' || Array.isArray(removed)) continue
+    merged[to] = mergeDuplicateEntries(merged[to], removed)
+  }
+  return merged
+}
+
+// Brings progress saved by an older build onto the ids this one uses. Each
+// step is skipped once the saved data is already past it.
+export function migrateProgress(value, version) {
+  let progress = value
+  if (version < 3) progress = remapLegacyIds(progress)
+  if (version < 4) progress = mergeRemovedIds(progress)
+  return progress
+}
+
 // Moves entries saved under the old 570-problem ids onto the matching new ids.
 export function remapLegacyIds(value, idMap = legacyIds) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return value
@@ -141,22 +189,23 @@ export function remapLegacyIds(value, idMap = legacyIds) {
 // progress object that still uses the old ids.
 export function progressFromBackup(value) {
   if (value?.version === DATA_VERSION) return value.progress
-  return remapLegacyIds(value)
+  if (Number.isInteger(value?.version)) return migrateProgress(value.progress, value.version)
+  return migrateProgress(value, 0)
 }
 
 export function loadProgress(questionIds) {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    const isCurrent = localStorage.getItem(DATA_VERSION_KEY) === String(DATA_VERSION)
-    if (raw && isCurrent) return sanitizeProgress(JSON.parse(raw), questionIds) ?? {}
+    const version = Number(localStorage.getItem(DATA_VERSION_KEY)) || 0
+    if (raw && version === DATA_VERSION) return sanitizeProgress(JSON.parse(raw), questionIds) ?? {}
 
-    // First load since the renumbering: migrate once, keeping the original
+    // First load since the ids changed: migrate once, keeping the original
     // untouched under its own key, and save straight away so a quick close
     // can't leave old-id progress marked as current.
     let progress = {}
     if (raw) {
-      localStorage.setItem(PRE_MIGRATION_KEY, raw)
-      progress = sanitizeProgress(remapLegacyIds(JSON.parse(raw)), questionIds) ?? {}
+      localStorage.setItem(preMigrationKey(DATA_VERSION), raw)
+      progress = sanitizeProgress(migrateProgress(JSON.parse(raw), version), questionIds) ?? {}
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
     }
     localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))

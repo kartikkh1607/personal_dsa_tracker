@@ -72,6 +72,9 @@ function Tracker({ data }) {
     search: route.q,
   })
   const relatedQuestions = useRelatedQuestions(questions, drawerQuestion)
+  // The same problem's other entry, where the sheet asks for it twice under
+  // two techniques. Undefined for all but a handful of problems.
+  const sameAsQuestion = drawerQuestion?.sameAs === undefined ? null : (questionsById.get(drawerQuestion.sameAs) ?? null)
   const currentPhase = upNext.length > 0 ? stats.phaseStats.find((phase) => phase.phase === upNext[0].phase) : null
 
   // Importing has two routes into progress with very different consequences,
@@ -237,6 +240,7 @@ function Tracker({ data }) {
           progress={progress}
           today={today}
           relatedQuestions={relatedQuestions}
+          sameAsQuestion={sameAsQuestion}
           onToggleSolved={toggleSolved}
           onToggleBookmark={toggleBookmark}
           onReview={reviewProblem}

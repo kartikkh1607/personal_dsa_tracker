@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { CHUNK_SIZE, PAGE_SIZE } from './cloud.js'
-import { syncOnce } from './sync.js'
+import { foldRemovedIdRows, syncOnce } from './sync.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
 const USER = '00000000-0000-4000-8000-000000000001'
@@ -116,8 +116,10 @@ describe('syncOnce', () => {
   })
 
   it('pages through a first pull bigger than one page', async () => {
+    // Numbered past the merged duplicates (see MERGED_IDS), so nothing folds
+    // together and the count is purely about how many rows came back.
     const rows = Array.from({ length: PAGE_SIZE + 3 }, (_, index) =>
-      row(index + 1, { solved: true, updatedAt: at('10') }, { server: serverAt('01') }),
+      row(index + 1000, { solved: true, updatedAt: at('10') }, { server: serverAt('01') }),
     )
     const client = fakeClient({ rows })
 
@@ -200,5 +202,64 @@ describe('syncOnce', () => {
   it('reports a failed push', async () => {
     const client = fakeClient({ rows: [], pushError: new Error('rejected') })
     await expect(run(client, { progress: { 1: { solved: true, updatedAt: at('10') } } })).rejects.toThrow('rejected')
+  })
+})
+
+// Rows an older device - or this account's own history - still holds under an
+// id the sheet has merged away. Dropping them silently would lose real work.
+describe('rows saved against a removed duplicate', () => {
+  const MERGED = { 265: 338 }
+
+  it('leaves rows alone when none of them uses a removed id', () => {
+    const rows = [row(1, { solved: true }), row(2, { solved: true })]
+    expect(foldRemovedIdRows(rows, MERGED)).toBe(rows)
+  })
+
+  it('moves the entry onto the row that was kept', () => {
+    const folded = foldRemovedIdRows([row(265, { solved: true, solvedAt: '2026-09-01' })], MERGED)
+    expect(folded).toEqual([{ question_id: 338, data: { solved: true, solvedAt: '2026-09-01' }, deleted_at: null, updated_at: serverAt('01') }])
+  })
+
+  it('combines the two when the cloud holds a row under each id', () => {
+    const folded = foldRemovedIdRows(
+      [
+        row(338, { solved: true, solvedAt: '2026-09-10', notes: 'fast and slow' }, { server: serverAt('01') }),
+        row(265, { solved: true, solvedAt: '2026-09-02', bookmarked: true }, { server: serverAt('05') }),
+      ],
+      MERGED,
+    )
+    expect(folded).toHaveLength(1)
+    expect(folded[0]).toMatchObject({ question_id: 338, deleted_at: null })
+    expect(folded[0].data).toMatchObject({ solved: true, solvedAt: '2026-09-02', bookmarked: true, notes: 'fast and slow' })
+    // The later server stamp, so the pull cursor still passes both rows.
+    expect(folded[0].updated_at).toBe(serverAt('05'))
+  })
+
+  it('does not let a deleted duplicate delete the row that was kept', () => {
+    const folded = foldRemovedIdRows(
+      [row(338, { solved: true }, { server: serverAt('01') }), row(265, {}, { deleted: at('02'), server: serverAt('05') })],
+      MERGED,
+    )
+    expect(folded).toEqual([row(338, { solved: true }, { server: serverAt('01') })])
+  })
+
+  it('keeps a deletion of the row that was kept', () => {
+    const folded = foldRemovedIdRows(
+      [row(265, { solved: true }, { server: serverAt('01') }), row(338, {}, { deleted: at('02'), server: serverAt('05') })],
+      MERGED,
+    )
+    expect(folded).toHaveLength(1)
+    expect(folded[0]).toMatchObject({ question_id: 338, deleted_at: at('02') })
+  })
+
+  it('reaches progress through a whole sync round, and pushes it back under the kept id', async () => {
+    const client = fakeClient({ rows: [row(265, { solved: true, solvedAt: '2026-09-01', updatedAt: at('10') })] })
+    const result = await run(client, { questionIds: new Set(['338']) })
+
+    expect(result.progress).toEqual({ 338: { solved: true, solvedAt: '2026-09-01', updatedAt: at('10') } })
+    expect(client.calls.pushes).toHaveLength(1)
+    expect(client.calls.pushes[0].batch).toEqual([
+      { question_id: 338, data: { solved: true, solvedAt: '2026-09-01', updatedAt: at('10') }, deleted_at: null, user_id: USER },
+    ])
   })
 })

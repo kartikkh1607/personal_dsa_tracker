@@ -124,6 +124,7 @@ export default function ProblemDetailDrawer({
   progress,
   today,
   relatedQuestions,
+  sameAsQuestion,
   onToggleSolved,
   onToggleBookmark,
   onReview,
@@ -427,6 +428,30 @@ export default function ProblemDetailDrawer({
             <p role="alert" className="mt-1 text-xs text-hard">
               {imageError.message}
             </p>
+          )}
+
+          {sameAsQuestion && (
+            <section className="mt-8">
+              <h3 className="text-sm font-semibold text-ink">Also in the sheet</h3>
+              <p className="mt-1 text-xs text-ink-3">The same problem again, to solve a second way.</p>
+              <button
+                type="button"
+                onClick={() => onSelectRelated(sameAsQuestion.id)}
+                className="group mt-2 flex w-full items-center gap-3 rounded-lg border border-line px-3 py-2.5 text-left hover:border-brand/60"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{sameAsQuestion.pattern}</span>
+                    {hasNote(progress[sameAsQuestion.id]) && <NoteMark />}
+                  </span>
+                  <span className="block truncate text-xs text-ink-3">
+                    {topicName(sameAsQuestion.topic)}
+                    {progress[sameAsQuestion.id]?.solved === true ? ' - solved' : ''}
+                  </span>
+                </span>
+                <DifficultyPill difficulty={sameAsQuestion.difficulty} />
+              </button>
+            </section>
           )}
 
           {relatedQuestions.length > 0 && (

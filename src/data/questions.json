@@ -1240,9 +1240,9 @@
     "tier": "Depth",
     "phase": 1,
     "phaseName": "Foundations",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/wiggle-sort/",
-    "linkVerified": false
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/problems/wave-array-1587115621/1",
+    "linkVerified": true
   },
   {
     "id": 84,
@@ -1316,8 +1316,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Rearrange+Array+Alternately",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/-rearrange-array-alternately-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 89,
@@ -1481,8 +1481,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Smallest+Window+in+a+String+Containing+All+Characters+of+Another+String",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/smallest-window-in-a-string-containing-all-the-characters-of-another-string-1587115621/1",
+    "linkVerified": true
   },
   {
     "id": 100,
@@ -1496,8 +1496,8 @@
     "phase": 1,
     "phaseName": "Foundations",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Count+Occurrences+of+Anagrams",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/count-occurences-of-anagrams5839/1",
+    "linkVerified": true
   },
   {
     "id": 101,
@@ -1932,7 +1932,8 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-duplicate-number/",
-    "linkVerified": true
+    "linkVerified": true,
+    "sameAs": 264
   },
   {
     "id": 130,
@@ -2052,21 +2053,6 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/reverse-pairs/",
-    "linkVerified": true
-  },
-  {
-    "id": 138,
-    "step": 138,
-    "stage": "1. Foundations - Stretch",
-    "topic": "04. Prefix Sum & Kadane",
-    "pattern": "Prefix + BIT",
-    "problem": "Count of Smaller Numbers After Self",
-    "difficulty": "Hard",
-    "tier": "Stretch",
-    "phase": 1,
-    "phaseName": "Foundations",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
     "linkVerified": true
   },
   {
@@ -2351,8 +2337,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Missing+Number+in+Arithmetic+Progression",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/missing-element-of-ap2228/1",
+    "linkVerified": true
   },
   {
     "id": 158,
@@ -2366,8 +2352,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Find+the+Smallest+Missing+Number",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/smallest-missing-number/1",
+    "linkVerified": true
   },
   {
     "id": 159,
@@ -2899,7 +2885,7 @@
     "step": 194,
     "stage": "2. Search & Strings - Core",
     "topic": "08. Hashing",
-    "pattern": "Cycle detection",
+    "pattern": "Floyd's cycle detection (two pointers)",
     "problem": "Happy Number",
     "difficulty": "Easy",
     "tier": "Core",
@@ -3326,8 +3312,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Search+in+Bitonic+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/find-element-bitonic-array/",
+    "linkVerified": true
   },
   {
     "id": 223,
@@ -3341,8 +3327,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Missing+Element+in+Sorted+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/k-th-missing-element3635/1",
+    "linkVerified": true
   },
   {
     "id": 224,
@@ -3386,8 +3372,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Find+Position+of+First+1+in+an+Infinite+Sorted+Binary+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/index-of-first-1-in-a-sorted-array-of-0s-and-1s4048/1",
+    "linkVerified": true
   },
   {
     "id": 227,
@@ -3401,8 +3387,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Exponential+Search",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/exponential-search/",
+    "linkVerified": true
   },
   {
     "id": 228,
@@ -3919,7 +3905,7 @@
     "step": 262,
     "stage": "2. Search & Strings - Depth",
     "topic": "08. Hashing",
-    "pattern": "Cycle detection",
+    "pattern": "Floyd's cycle detection (two pointers)",
     "problem": "Circular Array Loop",
     "difficulty": "Medium",
     "tier": "Depth",
@@ -3934,7 +3920,7 @@
     "step": 263,
     "stage": "2. Search & Strings - Depth",
     "topic": "08. Hashing",
-    "pattern": "Cycle detection",
+    "pattern": "Floyd's cycle detection (two pointers)",
     "problem": "Array Nesting",
     "difficulty": "Medium",
     "tier": "Depth",
@@ -3949,7 +3935,7 @@
     "step": 264,
     "stage": "2. Search & Strings - Depth",
     "topic": "08. Hashing",
-    "pattern": "Cycle detection",
+    "pattern": "Floyd's cycle detection (two pointers)",
     "problem": "Find the Duplicate Number (Floyd's cycle detection)",
     "difficulty": "Medium",
     "tier": "Depth",
@@ -3957,22 +3943,8 @@
     "phaseName": "Search & Strings",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/find-the-duplicate-number/",
-    "linkVerified": true
-  },
-  {
-    "id": 265,
-    "step": 265,
-    "stage": "2. Search & Strings - Depth",
-    "topic": "08. Hashing",
-    "pattern": "Cycle detection",
-    "problem": "Linked List Cycle II (Floyd's algorithm)",
-    "difficulty": "Medium",
-    "tier": "Depth",
-    "phase": 2,
-    "phaseName": "Search & Strings",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/linked-list-cycle-ii/",
-    "linkVerified": true
+    "linkVerified": true,
+    "sameAs": 129
   },
   {
     "id": 266,
@@ -4316,8 +4288,8 @@
     "phase": 2,
     "phaseName": "Search & Strings",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Median+of+Two+Sorted+Arrays+of+Different+Sizes",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/median-of-2-sorted-arrays-of-different-sizes/1",
+    "linkVerified": true
   },
   {
     "id": 289,
@@ -4646,8 +4618,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Doubly+Linked+List+Insertion",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/insert-a-node-in-doubly-linked-list/1",
+    "linkVerified": true
   },
   {
     "id": 311,
@@ -5231,8 +5203,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Multiply+Two+Linked+Lists",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/multiply-two-linked-lists/1",
+    "linkVerified": true
   },
   {
     "id": 350,
@@ -5246,8 +5218,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Subtract+Two+Numbers+Represented+as+Linked+Lists",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/subtraction-in-linked-list/1",
+    "linkVerified": true
   },
   {
     "id": 351,
@@ -5261,8 +5233,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Plus+One+Linked+List",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1",
+    "linkVerified": true
   },
   {
     "id": 352,
@@ -5651,8 +5623,8 @@
     "phase": 3,
     "phaseName": "Linear DS",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Sort+a+Nearly+Sorted+Array",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/nearly-sorted-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 378,
@@ -6101,8 +6073,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Activity+Selection",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/activity-selection-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 408,
@@ -6701,8 +6673,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Huffman+Encoding",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/huffman-encoding3345/1",
+    "linkVerified": true
   },
   {
     "id": 448,
@@ -6987,7 +6959,8 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
     "link": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
-    "linkVerified": true
+    "linkVerified": true,
+    "sameAs": 705
   },
   {
     "id": 467,
@@ -7046,8 +7019,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Permutations+of+a+Given+String",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/permutations-of-a-given-string-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 471,
@@ -7136,8 +7109,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Generate+All+Binary+Strings+from+Given+Pattern",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/generate-all-binary-strings-from-given-pattern/",
+    "linkVerified": true
   },
   {
     "id": 477,
@@ -7271,8 +7244,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Expression+Contains+Redundant+Bracket+or+Not",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/expression-contains-redundant-bracket-or-not/1",
+    "linkVerified": true
   },
   {
     "id": 486,
@@ -7421,8 +7394,8 @@
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Partition+of+a+Set+into+K+Subsets+with+Equal+Sum",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/partition-array-to-k-subsets/1",
+    "linkVerified": true
   },
   {
     "id": 496,
@@ -7525,9 +7498,9 @@
     "tier": "Stretch",
     "phase": 4,
     "phaseName": "Greedy & Backtracking",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/optimal-account-balancing/",
-    "linkVerified": false
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/dsa/minimize-cash-flow-among-given-set-friends-borrowed-money/",
+    "linkVerified": true
   },
   {
     "id": 503,
@@ -8066,8 +8039,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Convert+Adjacency+Matrix+to+Adjacency+List",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/convert-adjacency-matrix-to-adjacency-list/1",
+    "linkVerified": true
   },
   {
     "id": 539,
@@ -8081,8 +8054,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Transpose+of+a+Directed+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/transpose-graph/",
+    "linkVerified": true
   },
   {
     "id": 540,
@@ -8921,8 +8894,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=LCA+of+a+Binary+Tree+with+Parent+Pointers",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/lowest-common-ancestor-in-a-binary-tree-set-2-using-parent-pointer/",
+    "linkVerified": true
   },
   {
     "id": 596,
@@ -8936,8 +8909,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Distance+Between+Two+Nodes+of+a+Binary+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/min-distance-between-two-given-nodes-of-a-binary-tree/1",
+    "linkVerified": true
   },
   {
     "id": 597,
@@ -8950,9 +8923,9 @@
     "tier": "Depth",
     "phase": 5,
     "phaseName": "Trees & Graphs",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/closest-leaf-in-a-binary-tree/",
-    "linkVerified": false
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/dsa/find-closest-leaf-binary-tree/",
+    "linkVerified": true
   },
   {
     "id": 598,
@@ -9206,8 +9179,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Shortest+Unique+Prefix+for+Every+Word",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/shortest-unique-prefix-for-every-word/1",
+    "linkVerified": true
   },
   {
     "id": 615,
@@ -9221,8 +9194,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Word+Boggle",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/word-boggle4143/1",
+    "linkVerified": true
   },
   {
     "id": 616,
@@ -9236,8 +9209,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Prefix+Match+with+Other+Words",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/prefix-match-with-other-strings/1",
+    "linkVerified": true
   },
   {
     "id": 617,
@@ -9251,8 +9224,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Maximum+Subarray+XOR",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/maximum-xor-subarray--141631/1",
+    "linkVerified": true
   },
   {
     "id": 618,
@@ -9371,8 +9344,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Walls+and+Gates",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 626,
@@ -9416,8 +9389,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Number+of+Connected+Components+in+an+Undirected+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/connected-components-in-an-undirected-graph/1",
+    "linkVerified": true
   },
   {
     "id": 629,
@@ -9491,8 +9464,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Check+Whether+a+Graph+is+Bipartite",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/bipartite-graph/1",
+    "linkVerified": true
   },
   {
     "id": 634,
@@ -9551,8 +9524,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=0-1+BFS",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/0-1-bfs-shortest-path-binary-graph/",
+    "linkVerified": true
   },
   {
     "id": 638,
@@ -9731,8 +9704,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Negative+Weight+Cycle",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/negative-weight-cycle3504/1",
+    "linkVerified": true
   },
   {
     "id": 650,
@@ -9746,8 +9719,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Shortest+Path+in+Directed+Acyclic+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/shortest-path-in-directed-acyclic-graph/1",
+    "linkVerified": true
   },
   {
     "id": 651,
@@ -9776,8 +9749,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Detect+Negative+Cycle+using+Floyd+Warshall",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/detecting-negative-cycle-using-floyd-warshall/",
+    "linkVerified": true
   },
   {
     "id": 653,
@@ -9821,8 +9794,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Bridge+Edge+in+a+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/bridge-edge-in-graph/1",
+    "linkVerified": true
   },
   {
     "id": 656,
@@ -9836,8 +9809,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Mother+Vertex",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/mother-vertex/1",
+    "linkVerified": true
   },
   {
     "id": 657,
@@ -9851,8 +9824,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Check+if+a+Directed+Graph+is+Eulerian",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/euler-circuit-directed-graph/",
+    "linkVerified": true
   },
   {
     "id": 658,
@@ -9866,8 +9839,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Kth+Ancestor+in+a+Tree",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/kth-ancestor-in-a-tree/1",
+    "linkVerified": true
   },
   {
     "id": 659,
@@ -10346,8 +10319,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Strongly+Connected+Components",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/tarjan-algorithm-find-strongly-connected-components/",
+    "linkVerified": true
   },
   {
     "id": 691,
@@ -10391,8 +10364,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Euler+Circuit+in+an+Undirected+Graph",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/euler-circuit-and-path/1",
+    "linkVerified": true
   },
   {
     "id": 694,
@@ -10451,8 +10424,8 @@
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=LCA+using+Binary+Lifting",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/lca-in-a-tree-using-binary-lifting-technique/",
+    "linkVerified": true
   },
   {
     "id": 698,
@@ -10572,7 +10545,8 @@
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
     "link": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
-    "linkVerified": true
+    "linkVerified": true,
+    "sameAs": 466
   },
   {
     "id": 706,
@@ -11381,8 +11355,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Chocolate+Distribution+Problem",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/chocolate-distribution-problem3825/1",
+    "linkVerified": true
   },
   {
     "id": 760,
@@ -12356,8 +12330,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Power+Set",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/power-set-using-recursion/1",
+    "linkVerified": true
   },
   {
     "id": 825,
@@ -12446,8 +12420,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Segmented+Sieve",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/segmented-sieve/",
+    "linkVerified": true
   },
   {
     "id": 831,
@@ -12491,8 +12465,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Modular+Multiplicative+Inverse",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/modular-multiplicative-inverse-1587115620/1",
+    "linkVerified": true
   },
   {
     "id": 834,
@@ -12521,8 +12495,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Factorial+of+Large+Number",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/factorials-of-large-numbers2508/1",
+    "linkVerified": true
   },
   {
     "id": 836,
@@ -12551,8 +12525,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Number+of+Digits+in+N+Factorial",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/digits-in-factorial/1",
+    "linkVerified": true
   },
   {
     "id": 838,
@@ -12866,8 +12840,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Range+GCD+Queries+using+Sparse+Table",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/range-gcd-queries3654/1",
+    "linkVerified": true
   },
   {
     "id": 859,
@@ -12881,8 +12855,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Maximum+in+Subarrays+of+Size+K+using+Sparse+Table",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/maximum-of-all-subarrays-of-size-k3101/1",
+    "linkVerified": true
   },
   {
     "id": 860,
@@ -12911,8 +12885,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Rank+of+an+Element+in+a+Stream",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/rank-element-stream/",
+    "linkVerified": true
   },
   {
     "id": 862,
@@ -13631,8 +13605,9 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/problems/range-minimum-query/1",
-    "linkVerified": true
+    "link": "https://www.geeksforgeeks.org/dsa/segment-tree-range-minimum-query/",
+    "linkVerified": true,
+    "sameAs": 912
   },
   {
     "id": 910,
@@ -13677,7 +13652,8 @@
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
     "link": "https://www.geeksforgeeks.org/problems/range-minimum-query/1",
-    "linkVerified": true
+    "linkVerified": true,
+    "sameAs": 909
   },
   {
     "id": 913,
@@ -13691,8 +13667,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=LCA+using+Euler+Tour+and+Sparse+Table",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/dsa/lca-for-general-or-n-ary-trees-sparse-matrix-dp-approach-onlogn-ologn/",
+    "linkVerified": true
   },
   {
     "id": 914,
@@ -13706,8 +13682,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Range+LCM+Queries",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/range-lcm-queries3348/1",
+    "linkVerified": true
   },
   {
     "id": 915,
@@ -13796,8 +13772,8 @@
     "phase": 6,
     "phaseName": "DP & Closers",
     "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/search/?q=Count+Smaller+Elements+on+Right+Side",
-    "linkVerified": false
+    "link": "https://www.geeksforgeeks.org/problems/count-smaller-elements2214/1",
+    "linkVerified": true
   },
   {
     "id": 921,

@@ -1,6 +1,6 @@
 # DSA Practice Tracker
 
-A personal tracker for 922 DSA problems across 23 topics and 6 study phases. Your progress is
+A personal tracker for 920 DSA problems across 23 topics and 6 study phases. Your progress is
 saved in the browser's localStorage, and can optionally be synced to your own Supabase project so
 several devices share it; the question list itself is static data. It works offline and can be
 installed as an app on your phone or computer.
@@ -70,6 +70,13 @@ pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced D
 id is its step on the sheet's study path: within each phase, Core, then Depth, then Stretch.
 "Up next" follows those steps.
 
+**The same problem twice.** A few problems are on the sheet twice on purpose, to be solved a
+second way - Find the Duplicate Number by cyclic sort and by Floyd's cycle detection, Subset Sum
+by backtracking and by DP, Range Minimum Query by segment tree and by sparse table. Those pairs
+point at each other with `sameAs`, and the detail panel shows the other one under "Also in the
+sheet". Two problems that were simply listed twice by mistake were removed in data version 4;
+any progress on them moves onto the copy that was kept.
+
 **Links.** A problem whose link works opens it directly; any other problem opens a Google search
 for its name. `npm run check-links` checks every link (LeetCode problems that exist and are free,
 GeeksforGeeks practice pages that load a real problem) and records the result as `linkVerified`,
@@ -102,8 +109,9 @@ as "Image unavailable". On start-up, stored images that no note refers to are de
 they're over 7 days old. So after importing an older backup, images that aren't in it will
 eventually be removed.
 
-Backups made before the sheet grew to 922 problems use the old problem numbers. Importing one
-moves each entry onto the right problem automatically.
+Backups made before the sheet grew to 922 problems use the old problem numbers, and backups made
+before two duplicate problems were removed still name them. Importing either moves each entry
+onto the right problem automatically.
 
 Use export/import to move progress between devices, or between your local copy and a
 deployed one. Or sign in, and let sync do it.
@@ -199,7 +207,7 @@ Signing out leaves everything in this browser exactly where it was.
 
 | File | Purpose |
 | --- | --- |
-| `src/data/questions.json` | The 922 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
+| `src/data/questions.json` | The 920 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
 | `src/questions.js` | Fetches the question list as a separate asset and builds the indexes the app reads. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
 | `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
@@ -243,8 +251,13 @@ same entry. Progress saved before sync existed has none, and is merged a differe
 20. It drives the 3-day relearn step and the weak-spot list. Progress saved before it existed
 simply has no `history` and keeps working unchanged.
 
-Updating `src/data/questions.json` never wipes your progress. Progress saved under the old ids is moved to
-the new ids once, on first load; the original is kept under `dsa-tracker-progress-before-v3`. Writes are debounced by 400 ms so a burst
+Updating `src/data/questions.json` never wipes your progress. Progress saved under older ids is moved
+onto the current ones once, on first load, and the original is kept untouched under
+`dsa-tracker-progress-before-v<version>`. Data version 3 renumbered the sheet from 570 problems to
+922; version 4 removed two rows that were the same problem listed twice, and merges any progress
+on them into the row that was kept (solved if either was, the earlier solve date, both review
+histories, both notes). The same move happens to rows that arrive from sync under a removed id,
+and the merged entry is pushed back under the id that was kept. Writes are debounced by 400 ms so a burst
 of edits results in a single write. Progress saved by older versions of the app (with statuses
 and confidence) is migrated on load: Solved or Mastered become ticked, and Revisit or a low
 confidence become bookmarks.

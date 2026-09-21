@@ -2,7 +2,17 @@ import { describe, expect, it } from 'vitest'
 import legacyIds from './data/legacyIds.json'
 import questions from './data/questions.json'
 import { hasNote } from './progress.js'
-import { DATA_VERSION, needsBackupReminder, progressFromBackup, remapLegacyIds, sanitizeProgress } from './storage.js'
+import {
+  DATA_VERSION,
+  MERGED_IDS,
+  mergeDuplicateEntries,
+  mergeRemovedIds,
+  migrateProgress,
+  needsBackupReminder,
+  progressFromBackup,
+  remapLegacyIds,
+  sanitizeProgress,
+} from './storage.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
 
@@ -134,6 +144,98 @@ describe('old question ids', () => {
     const progress = { 11: { solved: true } }
     expect(progressFromBackup({ version: DATA_VERSION, progress })).toBe(progress)
     expect(progressFromBackup({ 15: { solved: true } })).toEqual({ [legacyIds[15]]: { solved: true } })
+  })
+})
+
+describe('merged duplicate problems', () => {
+  it('points every removed id at a problem that is still in the sheet', () => {
+    const ids = new Set(questions.map((question) => question.id))
+    for (const [removed, kept] of Object.entries(MERGED_IDS)) {
+      expect(ids.has(Number(removed))).toBe(false)
+      expect(ids.has(kept)).toBe(true)
+    }
+  })
+
+  it('keeps the duplicate and the row it merged into on the same link', () => {
+    // The whole reason these two rows merged: it is one problem, twice.
+    const links = { 138: 'count-of-smaller-numbers-after-self', 265: 'linked-list-cycle-ii' }
+    for (const [removed, kept] of Object.entries(MERGED_IDS)) {
+      expect(questions.find((question) => question.id === kept).link).toContain(links[removed])
+    }
+  })
+
+  it('moves progress off a removed duplicate onto the row that was kept', () => {
+    expect(mergeRemovedIds({ 265: { solved: true, solvedAt: '2026-09-01' }, 7: { bookmarked: true } })).toEqual({
+      338: { solved: true, solvedAt: '2026-09-01' },
+      7: { bookmarked: true },
+    })
+  })
+
+  it('leaves progress that never touched a duplicate exactly as it was', () => {
+    const progress = { 7: { solved: true } }
+    expect(mergeRemovedIds(progress)).toBe(progress)
+  })
+
+  it('combines both sides when the same problem was worked on under both ids', () => {
+    const merged = mergeRemovedIds({
+      338: { solved: true, solvedAt: '2026-09-10', notes: 'fast and slow', history: [{ date: '2026-09-12', result: 'got' }] },
+      265: { solved: true, solvedAt: '2026-09-02', bookmarked: true, notes: 'meet at the cycle start', history: [{ date: '2026-09-05', result: 'struggled' }] },
+    })
+    expect(merged[265]).toBeUndefined()
+    expect(merged[338]).toMatchObject({
+      solved: true,
+      // The earliest solve is when the work actually happened.
+      solvedAt: '2026-09-02',
+      bookmarked: true,
+      // Two notes on one problem are notes on two approaches to it.
+      notes: 'fast and slow\n\nmeet at the cycle start',
+      history: [
+        { date: '2026-09-05', result: 'struggled' },
+        { date: '2026-09-12', result: 'got' },
+      ],
+    })
+  })
+
+  it('solves the kept row when either side was solved, and keeps a lone note', () => {
+    expect(mergeRemovedIds({ 905: { bookmarked: true }, 138: { solved: true, solvedAt: '2026-09-01', notes: 'BIT over ranks' } })[905]).toEqual({
+      solved: true,
+      solvedAt: '2026-09-01',
+      bookmarked: true,
+      notes: 'BIT over ranks',
+    })
+  })
+
+  it('does not write the same note twice when both sides carry it', () => {
+    expect(mergeDuplicateEntries({ notes: 'same note' }, { notes: 'same note' }).notes).toBe('same note')
+  })
+
+  it('takes the newer stamp so sync still orders the merged entry', () => {
+    const merged = mergeDuplicateEntries({ solved: true, updatedAt: '2026-09-01T00:00:00.000Z' }, { solved: true, updatedAt: '2026-09-09T00:00:00.000Z' })
+    expect(merged.updatedAt).toBe('2026-09-09T00:00:00.000Z')
+  })
+
+  it('runs both steps for progress that predates the renumbering', () => {
+    expect(migrateProgress({ 15: { solved: true, solvedAt: '2026-08-01' } }, 0)).toEqual({ [legacyIds[15]]: { solved: true, solvedAt: '2026-08-01' } })
+    expect(migrateProgress({ 265: { solved: true, solvedAt: '2026-08-01' } }, 3)).toEqual({ 338: { solved: true, solvedAt: '2026-08-01' } })
+  })
+
+  it('has no old id that lands on a removed duplicate, so the two steps cannot collide', () => {
+    // If one ever did, the remap would have to run first - which it does - and
+    // this is the assertion that would notice if that stopped being true.
+    expect(Object.values(legacyIds).some((id) => Object.hasOwn(MERGED_IDS, String(id)))).toBe(false)
+  })
+
+  it('leaves progress already on the current version alone', () => {
+    const progress = { 338: { solved: true } }
+    expect(migrateProgress(progress, DATA_VERSION)).toBe(progress)
+  })
+
+  it('migrates a v3 backup and reads a v4 one as-is', () => {
+    expect(progressFromBackup({ version: 3, progress: { 265: { solved: true, solvedAt: '2026-09-01' } } })).toEqual({
+      338: { solved: true, solvedAt: '2026-09-01' },
+    })
+    const current = { 338: { solved: true } }
+    expect(progressFromBackup({ version: DATA_VERSION, progress: current })).toBe(current)
   })
 })
 
