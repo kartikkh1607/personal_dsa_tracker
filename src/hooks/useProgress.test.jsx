@@ -190,3 +190,68 @@ describe('useProgress tombstones', () => {
     })
   })
 })
+
+// The two routes an import can take into progress, told apart by the one thing
+// that actually reaches other devices: whether a tombstone gets written.
+describe('useProgress import routes', () => {
+  it('replacing tombstones whatever the file left out', () => {
+    const { result } = renderHook(() => useProgress(IDS))
+    act(() => result.current.toggleBookmark(1))
+    act(() => result.current.toggleBookmark(2))
+
+    // A file holding only 3. Entries 1 and 2 fall out, and a signed-in device
+    // has to tell the account about that - which is what makes replace the
+    // destructive choice.
+    act(() => result.current.replaceProgress({ 3: { solved: true } }))
+
+    expect(Object.keys(result.current.progress)).toEqual(['3'])
+    expect(result.current.tombstones).toEqual({ 1: STAMP, 2: STAMP })
+  })
+
+  it('merging writes no tombstone, so an old backup cannot delete on the account', () => {
+    const { result } = renderHook(() => useProgress(IDS))
+    act(() => result.current.toggleBookmark(1))
+    act(() => result.current.toggleBookmark(2))
+    const before = result.current.progress
+
+    // What mergeImported produces: everything that was here, plus the file's
+    // own entries. Nothing is dropped, so nothing is deleted anywhere.
+    act(() => result.current.mergeIntoProgress({ ...before, 3: { solved: true, updatedAt: STAMP } }))
+
+    expect(Object.keys(result.current.progress).sort()).toEqual(['1', '2', '3'])
+    expect(result.current.tombstones).toEqual({})
+    expect(savedTombstones()).toEqual({})
+  })
+
+  it('merging still writes no tombstone if an entry does fall out', () => {
+    const { result } = renderHook(() => useProgress(IDS))
+    act(() => result.current.toggleBookmark(1))
+    act(() => result.current.toggleBookmark(2))
+
+    // A merge should never lose an id, but if one ever did, it must not become
+    // a deletion other devices act on. This is the guard, not the expectation.
+    act(() => result.current.mergeIntoProgress({ 2: { bookmarked: true, updatedAt: STAMP } }))
+
+    expect(result.current.tombstones).toEqual({})
+  })
+
+  it('undoing a replace puts the old progress back and clears its tombstones', () => {
+    const { result } = renderHook(() => useProgress(IDS))
+    act(() => result.current.toggleBookmark(1))
+    act(() => result.current.toggleBookmark(2))
+    const before = result.current.progress
+
+    act(() => result.current.replaceProgress({ 3: { solved: true } }))
+    expect(result.current.tombstones).toEqual({ 1: STAMP, 2: STAMP })
+
+    act(() => result.current.restoreProgress(before))
+
+    expect(result.current.progress[1]).toEqual({ bookmarked: true, updatedAt: STAMP })
+    expect(result.current.progress[2]).toEqual({ bookmarked: true, updatedAt: STAMP })
+    // The tombstones for what came back are gone - leaving them would keep
+    // telling the cloud to delete entries that are sitting right here. The
+    // entry the file brought is itself now a deletion, which is correct: the
+    // account may already have been told about it.
+    expect(result.current.tombstones).toEqual({ 3: STAMP })
+  })
+})

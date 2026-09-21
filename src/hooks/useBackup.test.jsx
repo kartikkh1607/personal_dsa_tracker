@@ -65,66 +65,115 @@ describe('parseBackup', () => {
 
 describe('useBackup import', () => {
   const fileOf = (text, name = 'backup.json') => ({ name, text: () => Promise.resolve(text) })
+  const versioned = (progress) => JSON.stringify({ version: DATA_VERSION, progress })
 
   function setup(progress = {}) {
-    const setProgress = vi.fn()
+    const replaceProgress = vi.fn()
+    const mergeIntoProgress = vi.fn()
+    const restoreProgress = vi.fn()
     const showToast = vi.fn()
     const view = renderHook(() =>
-      useBackup({ progress, setProgress, questions: [], questionIds: IDS, today: '2026-09-20', showToast }),
+      useBackup({ progress, replaceProgress, mergeIntoProgress, restoreProgress, questions: [], questionIds: IDS, today: '2026-09-20', showToast }),
     )
-    return { ...view, setProgress, showToast }
+    return { ...view, replaceProgress, mergeIntoProgress, restoreProgress, showToast }
   }
 
   beforeEach(() => localStorage.clear())
   afterEach(() => vi.restoreAllMocks())
 
   it('reports a bad file and leaves progress alone', async () => {
-    const { result, setProgress, showToast } = setup({ 1: { solved: true } })
+    const { result, replaceProgress, mergeIntoProgress, showToast } = setup({ 1: { solved: true } })
     await act(() => result.current.handleImport(fileOf('garbage')))
-    expect(setProgress).not.toHaveBeenCalled()
+    expect(replaceProgress).not.toHaveBeenCalled()
+    expect(mergeIntoProgress).not.toHaveBeenCalled()
+    expect(result.current.pendingImport).toBeNull()
     expect(showToast).toHaveBeenCalledWith('That file is not a valid progress backup', { tone: 'error' })
   })
 
-  it('refuses a file that would import as nothing, leaving progress intact', async () => {
-    const confirm = vi.spyOn(window, 'confirm')
-    const { result, setProgress, showToast } = setup({ 1: { solved: true } })
+  it('refuses a file that would import as nothing, without asking anything', async () => {
+    const { result, replaceProgress, showToast } = setup({ 1: { solved: true } })
     // Readable JSON, claims an entry, but nothing in it is ours.
     await act(() => result.current.handleImport(fileOf(JSON.stringify({ 999: { solved: true } }))))
-    expect(confirm).not.toHaveBeenCalled()
-    expect(setProgress).not.toHaveBeenCalled()
+    expect(result.current.pendingImport).toBeNull()
+    expect(replaceProgress).not.toHaveBeenCalled()
     expect(showToast).toHaveBeenCalledWith('That file is not a valid progress backup', { tone: 'error' })
   })
 
   it('imports without asking when there is nothing to lose', async () => {
-    const confirm = vi.spyOn(window, 'confirm')
-    const { result, setProgress, showToast } = setup({})
-    await act(() => result.current.handleImport(fileOf(JSON.stringify({ version: DATA_VERSION, progress: { 1: { solved: true } } }))))
-    expect(confirm).not.toHaveBeenCalled()
-    expect(setProgress).toHaveBeenCalledWith({ 1: { solved: true } })
+    const { result, mergeIntoProgress, replaceProgress, showToast } = setup({})
+    await act(() => result.current.handleImport(fileOf(versioned({ 1: { solved: true } }))))
+    // No question worth asking: with nothing here, merge and replace agree.
+    expect(result.current.pendingImport).toBeNull()
+    expect(replaceProgress).not.toHaveBeenCalled()
+    expect(mergeIntoProgress).toHaveBeenCalledWith({ 1: { solved: true } })
     expect(showToast).toHaveBeenCalledWith('Imported progress for 1 problem')
   })
 
-  it('asks before replacing existing progress, and obeys a refusal', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(false)
-    const { result, setProgress } = setup({ 1: { solved: true } })
-    await act(() => result.current.handleImport(fileOf(JSON.stringify({ version: DATA_VERSION, progress: { 2: { solved: true } } }))))
-    expect(setProgress).not.toHaveBeenCalled()
+  it('asks before touching existing progress, naming the file', async () => {
+    const { result, replaceProgress, mergeIntoProgress } = setup({ 1: { solved: true } })
+    await act(() => result.current.handleImport(fileOf(versioned({ 2: { solved: true }, 3: { solved: true } }), 'phone.json')))
+
+    expect(result.current.pendingImport).toMatchObject({ fileName: 'phone.json', count: 2 })
+    // Nothing happens until the question is answered.
+    expect(replaceProgress).not.toHaveBeenCalled()
+    expect(mergeIntoProgress).not.toHaveBeenCalled()
   })
 
-  it('replaces when the user agrees', async () => {
-    vi.spyOn(window, 'confirm').mockReturnValue(true)
-    const { result, setProgress, showToast } = setup({ 1: { solved: true } })
-    const file = JSON.stringify({ version: DATA_VERSION, progress: { 2: { solved: true }, 3: { bookmarked: true } } })
-    await act(() => result.current.handleImport(fileOf(file)))
-    expect(setProgress).toHaveBeenCalledWith({ 2: { solved: true }, 3: { bookmarked: true } })
-    expect(showToast).toHaveBeenCalledWith('Imported progress for 2 problems')
+  it('cancelling leaves progress exactly as it was', async () => {
+    const { result, replaceProgress, mergeIntoProgress } = setup({ 1: { solved: true } })
+    await act(() => result.current.handleImport(fileOf(versioned({ 2: { solved: true } }))))
+    act(() => result.current.cancelImport())
+
+    expect(result.current.pendingImport).toBeNull()
+    expect(replaceProgress).not.toHaveBeenCalled()
+    expect(mergeIntoProgress).not.toHaveBeenCalled()
   })
 
-  it('names the file in the confirmation, so it is clear what is being loaded', async () => {
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
-    const { result } = setup({ 1: { solved: true } })
-    await act(() => result.current.handleImport(fileOf(JSON.stringify({ version: DATA_VERSION, progress: { 2: {} , 3: { solved: true } } }), 'phone.json')))
-    expect(confirm.mock.calls[0][0]).toContain('phone.json')
+  it('merging keeps what only this browser had, and never replaces', async () => {
+    const { result, mergeIntoProgress, replaceProgress, showToast } = setup({ 1: { solved: true, updatedAt: '2026-09-20T10:00:00.000Z' } })
+    await act(() => result.current.handleImport(fileOf(versioned({ 2: { solved: true, updatedAt: '2026-09-19T10:00:00.000Z' } }))))
+    act(() => result.current.confirmImport('merge'))
+
+    expect(replaceProgress).not.toHaveBeenCalled()
+    const merged = mergeIntoProgress.mock.calls[0][0]
+    // Both sides survive: the file adds 2 without costing 1.
+    expect(Object.keys(merged).sort()).toEqual(['1', '2'])
+    expect(showToast).toHaveBeenCalledWith('Merged in 1 problem')
+  })
+
+  it('merging an older backup cannot undo newer local work', async () => {
+    // The same problem, solved here and later un-solved, against a file that
+    // still remembers it as solved. The newer change is the local one.
+    const { result, mergeIntoProgress } = setup({ 1: { bookmarked: true, updatedAt: '2026-09-20T10:00:00.000Z' } })
+    await act(() => result.current.handleImport(fileOf(versioned({ 1: { solved: true, solvedAt: '2026-09-01', updatedAt: '2026-08-01T10:00:00.000Z' } }))))
+    act(() => result.current.confirmImport('merge'))
+
+    expect(mergeIntoProgress.mock.calls[0][0]).toEqual({ 1: { bookmarked: true, updatedAt: '2026-09-20T10:00:00.000Z' } })
+  })
+
+  it('says so plainly when a re-imported backup adds nothing', async () => {
+    const { result, showToast } = setup({ 1: { solved: true, updatedAt: '2026-09-20T10:00:00.000Z' } })
+    await act(() => result.current.handleImport(fileOf(versioned({ 1: { solved: true, updatedAt: '2026-09-01T10:00:00.000Z' } }))))
+    act(() => result.current.confirmImport('merge'))
+
+    expect(showToast).toHaveBeenCalledWith('Merged - nothing new in that file')
+  })
+
+  it('replacing only happens on the explicit choice, and offers an undo', async () => {
+    const before = { 1: { solved: true }, 5: { bookmarked: true } }
+    const { result, replaceProgress, mergeIntoProgress, restoreProgress, showToast } = setup(before)
+    await act(() => result.current.handleImport(fileOf(versioned({ 2: { solved: true } }))))
+    act(() => result.current.confirmImport('replace'))
+
+    expect(mergeIntoProgress).not.toHaveBeenCalled()
+    expect(replaceProgress).toHaveBeenCalledWith({ 2: { solved: true } })
+
+    const [message, options] = showToast.mock.calls.at(-1)
+    expect(message).toBe('Replaced with 1 problem')
+    // The undo puts back exactly what was there before the replace.
+    expect(options.action.label).toBe('Undo')
+    act(() => options.action.onClick())
+    expect(restoreProgress).toHaveBeenCalledWith(before)
   })
 })
 
@@ -135,7 +184,7 @@ describe('useBackup reminder', () => {
     const few = Object.fromEntries([1, 2, 3].map((id) => [id, { solved: true }]))
     const many = Object.fromEntries([1, 2, 3, 4, 5, 6].map((id) => [id, { solved: true }]))
     const render = (progress) =>
-      renderHook(() => useBackup({ progress, setProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }))
+      renderHook(() => useBackup({ progress, replaceProgress: vi.fn(), mergeIntoProgress: vi.fn(), restoreProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }))
 
     expect(render(few).result.current.showBackupReminder).toBe(false)
     expect(render(many).result.current.showBackupReminder).toBe(true)
@@ -144,7 +193,7 @@ describe('useBackup reminder', () => {
   it('records the backup date on export and stops reminding', () => {
     const progress = Object.fromEntries([1, 2, 3, 4, 5, 6].map((id) => [id, { solved: true }]))
     const { result, rerender } = renderHook(() =>
-      useBackup({ progress, setProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }),
+      useBackup({ progress, replaceProgress: vi.fn(), mergeIntoProgress: vi.fn(), restoreProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }),
     )
     expect(result.current.showBackupReminder).toBe(true)
 
@@ -162,7 +211,7 @@ describe('useBackup reminder', () => {
   it('snoozing silences the reminder for a week', () => {
     const progress = Object.fromEntries([1, 2, 3, 4, 5, 6].map((id) => [id, { solved: true }]))
     const { result, rerender } = renderHook(() =>
-      useBackup({ progress, setProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }),
+      useBackup({ progress, replaceProgress: vi.fn(), mergeIntoProgress: vi.fn(), restoreProgress: vi.fn(), questions: [], questionIds: IDS, today: '2026-09-20', showToast: vi.fn() }),
     )
     act(() => result.current.snoozeBackup())
     rerender()

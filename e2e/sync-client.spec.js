@@ -106,7 +106,7 @@ test('a first sign-in keeps both sides and says what it merged', async ({ page, 
     ([verifierKey, saved]) => {
       localStorage.setItem('dsa-data-version', '3')
       localStorage.setItem('dsa-tracker-progress', saved)
-      // What signInWithOtp leaves behind for the link to come back to.
+      // What starting a Google sign-in leaves behind for the code to come back to.
       // supabase-js stores it JSON-encoded, and reads it back the same way -
       // a bare string is read as "no verifier" and the exchange never happens.
       localStorage.setItem(verifierKey, JSON.stringify('stub-code-verifier'))
@@ -203,4 +203,93 @@ test('a tick made offline drains once the connection is back', async ({ page, co
 
   await expect.poll(() => project.upserts.length, { timeout: 15_000 }).toBe(1)
   expect(project.upserts[0].data.solved).toBe(true)
+})
+
+// Importing a backup while signed in is the one thing in this app that can
+// take work off a device that isn't here: a replace tombstones everything the
+// file left out, and tombstones travel. These are the tests that matter for
+// that, and they assert on the wire rather than on the screen - what reaches
+// the account is the only thing another device ever sees.
+
+const DATA_VERSION = 3
+
+const backupOf = (progress, name = 'laptop.json') => ({
+  name,
+  mimeType: 'application/json',
+  buffer: Buffer.from(JSON.stringify({ version: DATA_VERSION, progress })),
+})
+
+async function importBackup(page, file, choice) {
+  await page.getByRole('button', { name: /options/i }).click()
+  await page.setInputFiles('input[type=file]', file)
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await dialog.getByRole('button', { name: choice === 'merge' ? /^Merge/ : /^Replace/ }).click()
+  await expect(dialog).toBeHidden()
+}
+
+// An old backup, holding a problem the account has never heard of and a stale
+// copy of one it has.
+const OLD_BACKUP = {
+  3: { solved: true, solvedAt: '2026-01-01', updatedAt: '2026-01-01T10:00:00.000Z' },
+  2: { solved: true, solvedAt: '2026-01-02', updatedAt: '2026-01-02T10:00:00.000Z' },
+}
+
+test('importing an older backup with Merge deletes nothing on the account', async ({ page, context }) => {
+  // The account holds work from another device; this browser has its own.
+  const project = await stubProject(context, {
+    rows: [cloudRow(2, { solved: true, solvedAt: '2026-09-10', updatedAt: '2026-09-10T10:00:00.000Z' })],
+  })
+  await withSession(page, { progress: { 1: { solved: true, solvedAt: '2026-09-15', updatedAt: '2026-09-15T10:00:00.000Z' } } })
+
+  await page.goto('/')
+  // Let the sign-in round settle, so both sides are here before the import.
+  await expect.poll(() => savedProgress(page).then((saved) => Object.keys(saved).sort()), { timeout: 15_000 }).toEqual(['1', '2'])
+  project.upserts.length = 0
+
+  await importBackup(page, backupOf(OLD_BACKUP), 'merge')
+  await expect(page.getByText(/^Merged/)).toBeVisible()
+
+  // Long enough that any push the import caused has been made.
+  await page.waitForTimeout(PUSH_DELAY_MS * 2)
+
+  // The whole point: a merge sends no deletion, so nothing on the account and
+  // nothing on any other device can be removed by it.
+  expect(project.upserts.filter((row) => row.deleted_at !== null)).toEqual([])
+  expect(project.rows.filter((row) => row.deleted_at !== null)).toEqual([])
+
+  // And the account still holds everything it held, plus what the file added.
+  expect(project.rows.map((row) => row.question_id).sort()).toEqual([1, 2, 3])
+  // The stale copy in the file did not overwrite the newer one on the account.
+  expect(project.rows.find((row) => row.question_id === 2).data.solvedAt).toBe('2026-09-10')
+})
+
+test('Replace tombstones only after the explicit choice, and undo takes it back', async ({ page, context }) => {
+  const project = await stubProject(context, {
+    rows: [cloudRow(2, { solved: true, solvedAt: '2026-09-10', updatedAt: '2026-09-10T10:00:00.000Z' })],
+  })
+  await withSession(page, { progress: { 1: { solved: true, solvedAt: '2026-09-15', updatedAt: '2026-09-15T10:00:00.000Z' } } })
+
+  await page.goto('/')
+  await expect.poll(() => savedProgress(page).then((saved) => Object.keys(saved).sort()), { timeout: 15_000 }).toEqual(['1', '2'])
+  project.upserts.length = 0
+
+  // Opening the dialog and walking away sends nothing at all.
+  await page.getByRole('button', { name: /options/i }).click()
+  await page.setInputFiles('input[type=file]', backupOf(OLD_BACKUP))
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(PUSH_DELAY_MS * 2)
+  expect(project.upserts).toEqual([])
+
+  // Now the explicit choice. Question 1 is not in the file, so it goes.
+  await importBackup(page, backupOf(OLD_BACKUP), 'replace')
+  await expect.poll(() => project.upserts.filter((row) => row.deleted_at !== null).map((row) => row.question_id), { timeout: 15_000 }).toEqual([1])
+  expect(project.rows.find((row) => row.question_id === 1).deleted_at).not.toBeNull()
+
+  // Undo has to reach the account too, or the deletion stands on every other
+  // device while this one shows the entry back in place.
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect.poll(() => project.rows.find((row) => row.question_id === 1).deleted_at, { timeout: 15_000 }).toBeNull()
+  await expect.poll(() => savedProgress(page).then((saved) => saved['1']?.solved)).toBe(true)
 })

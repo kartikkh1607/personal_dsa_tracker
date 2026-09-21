@@ -123,7 +123,7 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
                 </button>
                 <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(() => fileInputRef.current?.click())}>
                   Import backup…
-                  <span className="text-xs text-ink-3">Replaces the progress in this browser</span>
+                  <span className="text-xs text-ink-3">Merge it in, or replace what&rsquo;s here</span>
                 </button>
               </div>
             )}

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { progressToCsv } from '../csv.js'
 import { downloadFile } from '../download.js'
 import { addDays } from '../progress.js'
+import { mergeProgress, rowFromEntry } from '../sync/merge.js'
 import {
   BACKUP_KEY,
   BACKUP_SNOOZE_KEY,
@@ -57,10 +58,46 @@ export function importedCount(progress) {
   return `Imported progress for ${count} ${count === 1 ? 'problem' : 'problems'}`
 }
 
+// Merging an imported file with what this browser already has, through the
+// same engine sync uses. The file is treated exactly like rows arriving from
+// another device: entry by entry the newer `updatedAt` wins, and anything only
+// one side has is kept.
+//
+// The result is always a superset of what was here, so no id disappears and no
+// tombstone is written. That is the difference that matters - a merge cannot
+// delete, so importing an old backup while signed in can never take work off
+// another device.
+export function mergeImported(progress, imported, questionIds) {
+  const { progress: merged } = mergeProgress({
+    local: progress,
+    remote: Object.entries(imported).map(([id, entry]) => rowFromEntry(id, entry)),
+    questionIds,
+    // Entries too old to carry a stamp on either side get this one, so the
+    // merge settles rather than being redone on every sync round.
+    now: new Date().toISOString(),
+  })
+  return merged
+}
+
+// What a merge actually did, which is not the same as the file's entry count:
+// most of a re-imported backup is usually already here.
+export function mergedCount(before, after) {
+  const added = Object.keys(after).length - Object.keys(before).length
+  if (added <= 0) return 'Merged - nothing new in that file'
+  return `Merged in ${added} ${added === 1 ? 'problem' : 'problems'}`
+}
+
+export function replacedCount(progress) {
+  const count = Object.keys(progress).length
+  return `Replaced with ${count} ${count === 1 ? 'problem' : 'problems'}`
+}
+
 // Export, import and the "you haven't backed up lately" nudge.
-export function useBackup({ progress, setProgress, questions, questionIds, today, showToast }) {
+export function useBackup({ progress, replaceProgress, mergeIntoProgress, restoreProgress, questions, questionIds, today, showToast }) {
   const [lastBackup, setLastBackup] = useState(() => readLocal(BACKUP_KEY))
   const [backupSnoozedUntil, setBackupSnoozedUntil] = useState(() => readLocal(BACKUP_SNOOZE_KEY))
+  // A parsed file waiting on the user to say merge or replace.
+  const [pendingImport, setPendingImport] = useState(null)
 
   const handleExport = useCallback(() => {
     downloadFile(`dsa-progress-${today}.json`, JSON.stringify({ version: DATA_VERSION, progress }, null, 2), 'application/json')
@@ -89,14 +126,44 @@ export function useBackup({ progress, setProgress, questions, questionIds, today
         return
       }
 
-      const count = Object.keys(safeProgress).length
-      const hasProgress = Object.keys(progress).length > 0
-      if (hasProgress && !window.confirm(`Replace your current progress with the ${count} entries in "${file.name}"? This can't be undone.`)) return
+      // With nothing here yet, merge and replace do the same thing, so there
+      // is no question worth asking.
+      if (Object.keys(progress).length === 0) {
+        mergeIntoProgress(mergeImported(progress, safeProgress, questionIds))
+        showToast(importedCount(safeProgress))
+        return
+      }
 
-      setProgress(safeProgress)
-      showToast(importedCount(safeProgress))
+      setPendingImport({ fileName: file.name, count: Object.keys(safeProgress).length, progress: safeProgress })
     },
-    [progress, setProgress, questionIds, showToast],
+    [progress, mergeIntoProgress, questionIds, showToast],
+  )
+
+  const cancelImport = useCallback(() => setPendingImport(null), [])
+
+  // The two ways to take the file. Merge is what the dialog offers first and
+  // can only add; replace is the destructive one, and the only one that needs
+  // an undo to fall back on.
+  const confirmImport = useCallback(
+    (mode) => {
+      if (!pendingImport) return
+      const incoming = pendingImport.progress
+      setPendingImport(null)
+
+      if (mode === 'merge') {
+        const merged = mergeImported(progress, incoming, questionIds)
+        mergeIntoProgress(merged)
+        showToast(mergedCount(progress, merged))
+        return
+      }
+
+      // Snapshotted before the replace, because after it the old progress is
+      // only recoverable from here.
+      const snapshot = progress
+      replaceProgress(incoming)
+      showToast(replacedCount(incoming), { action: { label: 'Undo', onClick: () => restoreProgress(snapshot) } })
+    },
+    [pendingImport, progress, questionIds, replaceProgress, mergeIntoProgress, restoreProgress, showToast],
   )
 
   const showBackupReminder = needsBackupReminder({
@@ -106,5 +173,5 @@ export function useBackup({ progress, setProgress, questions, questionIds, today
     today,
   })
 
-  return { lastBackup, showBackupReminder, handleExport, handleExportCsv, handleImport, snoozeBackup }
+  return { lastBackup, showBackupReminder, handleExport, handleExportCsv, handleImport, pendingImport, confirmImport, cancelImport, snoozeBackup }
 }

@@ -15,6 +15,7 @@ import { useToast } from './hooks/useToast.js'
 import { ALL } from './components/Filters.jsx'
 import { ALL_TOPICS } from './components/Sidebar.jsx'
 import AppSkeleton from './components/AppSkeleton.jsx'
+import ImportDialog from './components/ImportDialog.jsx'
 import LoadFailed from './components/LoadFailed.jsx'
 import Overview from './components/Overview.jsx'
 import PatternsView from './components/PatternsView.jsx'
@@ -34,7 +35,7 @@ function Tracker({ data }) {
   const today = localDate()
 
   const { route, navigate, openQuestion, closeQuestion } = useRoute()
-  const { progress, tombstones, applySynced, replaceProgress, restoreEntry, toggleSolved, toggleBookmark, reviewProblem, ...notes } =
+  const { progress, tombstones, applySynced, replaceProgress, mergeIntoProgress, restoreProgress, restoreEntry, toggleSolved, toggleBookmark, reviewProblem, ...notes } =
     useProgress(questionIds)
   const { toast, showToast, dismissToast } = useToast()
   const sync = useSync({ progress, tombstones, questionIds, applySynced, showToast })
@@ -60,9 +61,10 @@ function Tracker({ data }) {
   const relatedQuestions = useRelatedQuestions(questions, drawerQuestion)
   const currentPhase = upNext.length > 0 ? stats.phaseStats.find((phase) => phase.phase === upNext[0].phase) : null
 
-  // An import replaces everything, so it goes through the stamping setter
-  // rather than the raw one: the entries it brings have to look new to sync.
-  const backup = useBackup({ progress, setProgress: replaceProgress, questions, questionIds, today, showToast })
+  // Importing has two routes into progress with very different consequences,
+  // so it gets both rather than one general setter: merging can only add,
+  // replacing deletes and therefore needs the undo as well.
+  const backup = useBackup({ progress, replaceProgress, mergeIntoProgress, restoreProgress, questions, questionIds, today, showToast })
 
   useKeyboardShortcuts({
     view,
@@ -206,6 +208,18 @@ function Tracker({ data }) {
           onLinkChange={notes.changeLink}
           onSelectRelated={openQuestion}
           onClose={closeQuestion}
+        />
+      )}
+
+      {backup.pendingImport && (
+        <ImportDialog
+          fileName={backup.pendingImport.fileName}
+          count={backup.pendingImport.count}
+          currentCount={Object.keys(progress).length}
+          signedIn={sync.signedIn}
+          onMerge={() => backup.confirmImport('merge')}
+          onReplace={() => backup.confirmImport('replace')}
+          onCancel={backup.cancelImport}
         />
       )}
 

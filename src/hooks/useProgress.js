@@ -85,12 +85,43 @@ export function useProgress(questionIds) {
     setTombstones(merged.tombstones)
   }, [])
 
-  // Replacing everything at once, which is what importing a backup does. Each
-  // entry is stamped: an import is a deliberate act and should win against
-  // whatever the cloud holds, not be quietly undone by the next pull.
+  // Replacing everything at once, which is what importing a backup over the
+  // top does. Each entry is stamped: a replace is a deliberate act and should
+  // win against whatever the cloud holds, not be quietly undone by the next
+  // pull. Entries the file doesn't have fall out, and the diff above turns
+  // those into tombstones - which is exactly why this is the option the user
+  // has to ask for by name.
   const replaceProgress = useCallback((next) => {
     const at = new Date().toISOString()
     setProgress(Object.fromEntries(Object.entries(next).map(([id, entry]) => [id, { ...entry, updatedAt: at }])))
+  }, [])
+
+  // The other way to import: the file merged with what is already here. The
+  // result can only add or update, never drop an id, but `seen` still moves
+  // forward with it - the same guard applySynced uses - so that a merge can
+  // never be read as a deletion even if an entry does fall out. A merge that
+  // tombstones would delete another device's work, which is the one thing
+  // importing must not be able to do.
+  const mergeIntoProgress = useCallback((merged) => {
+    seen.current = merged
+    setProgress(merged)
+  }, [])
+
+  // Undo for a replace. The snapshot goes back with a fresh stamp so it beats
+  // the tombstones the replace just wrote, and those tombstones are dropped
+  // outright: leaving them would keep telling the cloud to delete entries that
+  // are sitting right here. Ids the file brought and the snapshot never had
+  // are left to the diff above, which tombstones them properly - by then the
+  // cloud may already have been told about them.
+  const restoreProgress = useCallback((snapshot) => {
+    const at = new Date().toISOString()
+    const restored = Object.fromEntries(Object.entries(snapshot).map(([id, entry]) => [id, { ...entry, updatedAt: at }]))
+    setProgress(restored)
+    setTombstones((prev) => {
+      const next = { ...prev }
+      for (const id of Object.keys(restored)) delete next[id]
+      return next
+    })
   }, [])
 
   const toggleSolved = useCallback((id) => {
@@ -156,6 +187,8 @@ export function useProgress(questionIds) {
     tombstones,
     applySynced,
     replaceProgress,
+    mergeIntoProgress,
+    restoreProgress,
     toggleSolved,
     toggleBookmark,
     reviewProblem,
