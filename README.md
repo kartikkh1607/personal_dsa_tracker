@@ -124,6 +124,47 @@ original, which is why sync keeps working offline and simply catches up later.
 Signing in is a magic link by email. Google sign-in is written but stays hidden until you set up
 an OAuth client and uncomment `VITE_ENABLE_GOOGLE_AUTH`.
 
+### Sending the sign-in emails
+
+Sign-in here is a magic link, so the whole feature is only as good as whatever sends the email.
+Supabase gives every project a built-in sender, and it is explicitly not for production - not
+mainly because it is slow, but because **it refuses to deliver to any address that is not already
+a member of the project**. Sign in as yourself and it works; hand the app to anyone else and their
+link is silently never sent. On top of that it is capped at a handful of messages an hour and
+offered on a best-effort basis with no delivery or uptime guarantee.
+
+Any SMTP provider fixes this. [Resend](https://resend.com) is a good default: the free tier is
+3,000 emails a month (100 a day), which a tracker's sign-in links will never come close to, and it
+speaks ordinary SMTP so Supabase needs nothing special.
+
+1. **Verify a domain** in Resend, under **Domains > Add Domain**. It hands you DKIM and SPF
+   records to add wherever your DNS lives, and verification usually lands within minutes. Until a
+   domain is verified you can only send to your own address - enough to test with, not enough to
+   ship, and the same trap as the built-in sender.
+2. **Create an API key** under **API Keys**, with sending permission. Copy it then; Resend shows
+   it once.
+3. **Turn on custom SMTP** in Supabase, under **Authentication > Emails > SMTP Settings**:
+
+   | Field | Value |
+   | --- | --- |
+   | Host | `smtp.resend.com` |
+   | Port | `465` |
+   | Username | `resend` |
+   | Password | the Resend API key |
+   | Sender email | an address at the verified domain, e.g. `login@yourdomain.com` |
+   | Sender name | whatever the inbox should show, e.g. `DSA Tracker` |
+
+4. **Then raise the rate limit.** This is the step that looks optional and is not. Custom SMTP
+   does not lift Supabase's own cap - that lives separately under **Authentication > Rate
+   Limits**, and it defaults to 30 new users an hour even once your own sender is wired up.
+
+The API key is a server-side secret that Supabase holds. It is not a `VITE_` variable and must
+never reach `.env.local` or the bundle, for exactly the reason spelled out in
+[Deploy to Vercel](#deploy-to-vercel).
+
+To confirm it took, sign in from a browser with no session and look at the message headers: it
+should come from your domain rather than Supabase's shared sender.
+
 ### How two devices agree
 
 One row per problem per account, holding the same entry the browser stores. The merge happens on
