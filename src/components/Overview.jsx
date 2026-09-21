@@ -21,7 +21,7 @@ function ReviewActions({ onGotIt, onStruggled, problem, stacked = false }) {
       <button
         type="button"
         onClick={onGotIt}
-        aria-label={`Got it: ${problem}`}
+        aria-label={`Got it: ${problem}. Schedules the next review further out.`}
         className={`rounded-lg border border-line font-semibold text-ink transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong ${shape}`}
       >
         Got it
@@ -29,7 +29,7 @@ function ReviewActions({ onGotIt, onStruggled, problem, stacked = false }) {
       <button
         type="button"
         onClick={onStruggled}
-        aria-label={`Struggled with: ${problem}`}
+        aria-label={`Struggled with: ${problem}. Comes back in 3 days, and is saved for revision.`}
         title="Back in 3 days, and saved for revision"
         className={`rounded-lg border border-line font-semibold text-ink-2 transition-colors hover:border-medium hover:bg-medium/10 hover:text-medium ${shape}`}
       >
@@ -95,6 +95,54 @@ function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
         </button>
       </div>
     </div>
+  )
+}
+
+// What the app expects of you, said once, on a tracker with nothing in it yet.
+//
+// The three things are the ones that aren't guessable from the interface: that
+// ticking is the whole input, that a solved problem comes back on a schedule
+// rather than being finished with, and that none of it needs an account. It
+// dismisses for good, because an introduction that keeps introducing itself is
+// just a banner.
+function GettingStartedCard({ total, onDismiss }) {
+  return (
+    <section className={`${CARD} border-brand/30`} aria-labelledby="getting-started-heading">
+      <CardHeader
+        id="getting-started-heading"
+        title="How this works"
+        action={<TextButton onClick={onDismiss}>Got it</TextButton>}
+      />
+      <ul className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
+        <li className="flex gap-3">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+            1
+          </span>
+          <p className="text-sm leading-6 text-ink-2">
+            <span className="font-medium text-ink">Tick a problem when you solve it.</span> That is the only thing you have to do — all{' '}
+            {total} are listed under Problems, in the order the sheet intends.
+          </p>
+        </li>
+        <li className="flex gap-3">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+            2
+          </span>
+          <p className="text-sm leading-6 text-ink-2">
+            <span className="font-medium text-ink">Solved problems come back.</span> Each returns after 7, 30 and 90 days to be re-solved
+            from scratch. Say how it went and the schedule adjusts — a capped handful a day, so it stays finishable.
+          </p>
+        </li>
+        <li className="flex gap-3">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+            3
+          </span>
+          <p className="text-sm leading-6 text-ink-2">
+            <span className="font-medium text-ink">Your progress stays in this browser.</span> No account needed. Export a backup from the{' '}
+            <span className="font-medium text-ink">⋯</span> menu, or sign in there to mirror it to your other devices.
+          </p>
+        </li>
+      </ul>
+    </section>
   )
 }
 
@@ -473,6 +521,8 @@ export default function Overview({
   onShowSaved,
   onShowReview,
   onReviewMore,
+  showGettingStarted,
+  onDismissGettingStarted,
   onShowPatterns,
   onBrowse,
 }) {
@@ -527,6 +577,7 @@ export default function Overview({
 
       <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-3">
         <div className="flex min-w-0 flex-col gap-5 lg:col-span-2">
+          {showGettingStarted && <GettingStartedCard total={stats.total} onDismiss={onDismissGettingStarted} />}
           {reviewToday.length > 0 && (
             <ReviewCard
               reviewToday={reviewToday}

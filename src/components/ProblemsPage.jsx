@@ -85,7 +85,7 @@ export default function ProblemsPage({
         isNarrow={isNarrow}
       />
 
-      <main className="bg-surface md:flex md:min-h-0 md:flex-1 md:flex-col">
+      <main id="main-content" tabIndex={-1} className="bg-surface md:flex md:min-h-0 md:flex-1 md:flex-col">
         <Filters
           eyebrow={header.eyebrow}
           title={header.title}

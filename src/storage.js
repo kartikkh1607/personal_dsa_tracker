@@ -21,6 +21,11 @@ export const BACKUP_REMIND_AFTER_DAYS = 14
 // pull. There is at most one per question, so the map is bounded by the size of
 // the sheet and never needs pruning.
 export const TOMBSTONES_KEY = 'dsa-sync-tombstones'
+
+// Set once the first-run card has been dismissed. Only ever written by that
+// dismissal, so clearing browser data brings the introduction back - which is
+// the right answer, since it also brings back an empty tracker.
+export const ONBOARDED_KEY = 'dsa-onboarded'
 // How far the last pull got, per account: two people sharing a browser must not
 // inherit each other's cursor and skip the rows it covered.
 export const syncCursorKey = (userId) => `dsa-sync-cursor:${userId}`
