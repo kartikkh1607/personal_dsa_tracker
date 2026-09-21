@@ -7,3 +7,8 @@ dist
 # Playwright
 test-results
 playwright-report
+
+# Local agent tooling - vendored skills and MCP server config
+.agents
+.mcp.json
+skills-lock.json
