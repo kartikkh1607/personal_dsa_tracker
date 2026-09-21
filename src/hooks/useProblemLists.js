@@ -9,6 +9,11 @@ const UP_NEXT_COUNT = 5
 const SAVED_PREVIEW_COUNT = 5
 const RELATED_COUNT = 6
 
+// How many reviews Home will put in front of you on any one day. The schedule
+// itself is untouched - nothing is dropped or rescheduled, this is only what
+// today's plan shows.
+export const REVIEW_DAILY_CAP = 15
+
 // Every count on the page, in one pass over the question list.
 export function useStats({ questions, topics, phases, topicPhase, progress, today }) {
   return useMemo(() => {
@@ -69,14 +74,24 @@ export function useHomeLists({ questions, progress, today }) {
     [progress, questions],
   )
 
-  // Most overdue first.
-  const reviewDue = useMemo(
+  // Everything the schedule says is due, most overdue first.
+  const reviewBacklog = useMemo(
     () =>
       questions
         .filter((question) => isDue(progress[question.id], today))
         .sort((a, b) => nextReviewDate(progress[a.id]).localeCompare(nextReviewDate(progress[b.id])) || a.id - b.id),
     [progress, today, questions],
   )
+
+  // ...and the part of it worth doing today. Come back after three weeks away
+  // and the schedule hands back every problem at once; a list of 143 is not a
+  // plan, it is a reason to close the tab. Taking the most overdue first means
+  // the cap delays the least urgent work rather than losing any of it, and the
+  // rest is still one click away on the problems page.
+  //
+  // Sliced here, once, so Home and the problems page can't drift into
+  // disagreeing about what is due.
+  const reviewToday = useMemo(() => reviewBacklog.slice(0, REVIEW_DAILY_CAP), [reviewBacklog])
 
   const savedPreview = useMemo(
     () => questions.filter((question) => progress[question.id]?.bookmarked).slice(0, SAVED_PREVIEW_COUNT),
@@ -93,7 +108,7 @@ export function useHomeLists({ questions, progress, today }) {
     [progress, questions],
   )
 
-  return { upNext, reviewDue, savedPreview, weakProblems }
+  return { upNext, reviewToday, reviewBacklog, savedPreview, weakProblems }
 }
 
 // The filtered, grouped problem list. Topic, show, difficulty, Core-only,

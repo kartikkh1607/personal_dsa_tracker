@@ -46,7 +46,7 @@ function Tracker({ data }) {
   const drawerQuestion = (route.problem != null && questionsById.get(route.problem)) || null
 
   const stats = useStats({ questions, topics, phases, topicPhase, progress, today })
-  const { upNext, reviewDue, savedPreview, weakProblems } = useHomeLists({ questions, progress, today })
+  const { upNext, reviewToday, reviewBacklog, savedPreview, weakProblems } = useHomeLists({ questions, progress, today })
   const { visible, groupByPattern } = useFilteredProblems({
     questions,
     progress,
@@ -124,7 +124,7 @@ function Tracker({ data }) {
         groupByPattern={groupByPattern}
         selectedTopic={selectedTopic}
         difficulty={difficulty}
-        reviewCount={reviewDue.length}
+        reviewCount={reviewBacklog.length}
         currentPhase={currentPhase}
         isNarrow={isNarrow}
         searchInputRef={searchInputRef}
@@ -146,7 +146,8 @@ function Tracker({ data }) {
         <Overview
           stats={stats}
           upNext={upNext}
-          reviewDue={reviewDue}
+          reviewToday={reviewToday}
+          reviewBacklog={reviewBacklog}
           savedPreview={savedPreview}
           currentPhase={currentPhase}
           progress={progress}

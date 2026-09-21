@@ -98,21 +98,45 @@ function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
   )
 }
 
-function ReviewCard({ reviewDue, progress, onReview, onOpenQuestion, onShowReview }) {
-  const preview = reviewDue.slice(0, REVIEW_PREVIEW_COUNT)
+// Nothing due. Worth a card of its own rather than an absent one: having
+// cleared the schedule is the good outcome, and a section that quietly
+// disappears reads as something broken rather than something finished.
+function CaughtUpCard({ backlogCount }) {
   return (
     <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
       <CardHeader
         id="review-heading"
-        title={`Due for review · ${reviewDue.length}`}
-        subtitle="Re-solve each one from scratch, then say how it went."
-        action={reviewDue.length > preview.length && <TextButton onClick={onShowReview}>See all</TextButton>}
+        title="You’re caught up"
+        subtitle={
+          backlogCount === 0
+            ? 'Nothing is due for review today. Solve something new, or come back when the schedule brings these round again.'
+            : 'Nothing left for today. The rest come round on their own schedule.'
+        }
+      />
+    </section>
+  )
+}
+
+function ReviewCard({ reviewToday, backlogCount, progress, onReview, onOpenQuestion, onShowReview }) {
+  const preview = reviewToday.slice(0, REVIEW_PREVIEW_COUNT)
+  const held = backlogCount - reviewToday.length
+  return (
+    <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
+      <CardHeader
+        id="review-heading"
+        title={`Today’s reviews · ${reviewToday.length}`}
+        subtitle={
+          held > 0
+            ? `${reviewToday.length} of ${backlogCount} — the most overdue first. The rest are held back so today stays finishable.`
+            : 'Re-solve each one from scratch, then say how it went.'
+        }
+        action={backlogCount > preview.length && <TextButton onClick={onShowReview}>See all</TextButton>}
       />
       <ul className="-mx-5 mt-4 divide-y divide-line/70 border-t border-line sm:-mx-6">
         {preview.map((question) => {
           const entry = progress[question.id]
           return (
-            <li key={question.id} className={`px-5 py-3 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
+            <li key={question.id} data-review-row className={`px-5 py-3 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
               <div className="flex items-center gap-3 sm:gap-4">
               <button type="button" onClick={() => onOpenQuestion(question.id)} className="group min-w-0 flex-1 text-left">
                 <span className="flex items-center gap-1.5">
@@ -164,6 +188,20 @@ function ReviewCard({ reviewDue, progress, onReview, onOpenQuestion, onShowRevie
 // tracker has that a pattern hasn't landed yet, so it says so plainly rather
 // than hiding it in a count.
 function WeakCard({ weakProblems, weakCount, progress, onOpenQuestion }) {
+  // No weak spots is a result, not an empty list, so it says so rather than
+  // leaving a gap where a card used to be.
+  if (weakCount === 0) {
+    return (
+      <section className={CARD} aria-labelledby="weak-heading">
+        <CardHeader
+          id="weak-heading"
+          title="No weak spots"
+          subtitle="Nothing has tripped you up twice. Anything you struggle with twice shows up here."
+        />
+      </section>
+    )
+  }
+
   return (
     <section className={`${CARD} border-medium/30`} aria-labelledby="weak-heading">
       <CardHeader
@@ -395,7 +433,8 @@ function SavedCard({ savedPreview, savedCount, progress, onOpenQuestion, onShowS
 export default function Overview({
   stats,
   upNext,
-  reviewDue,
+  reviewToday,
+  reviewBacklog,
   savedPreview,
   weakProblems,
   weakCount,
@@ -418,15 +457,24 @@ export default function Overview({
   onBrowse,
 }) {
   const isNew = stats.solved === 0
+  const backlogCount = reviewBacklog.length
+  const held = backlogCount - reviewToday.length
 
+  // Home is meant to answer "what am I doing today", so the headline is today's
+  // work rather than a running total. The phase is still the context, but it is
+  // the second thing said, not the first.
   let headline = 'You finished the sheet'
   let subline = 'Every problem is solved. Keep your reviews up to date.'
   if (isNew) {
     headline = 'Let’s start your DSA sheet'
     subline = `${stats.total} problems in ${stats.phaseStats.length} phases. Begin with Phase 1 and tick problems off as you solve them.`
+  } else if (reviewToday.length > 0) {
+    headline = `Today: ${reviewToday.length} ${reviewToday.length === 1 ? 'review' : 'reviews'}`
+    const tail = currentPhase ? `, then carry on with Phase ${currentPhase.phase}.` : '.'
+    subline = held > 0 ? `${held} more are due but held back for later${tail}` : `Re-solve each from scratch${tail}`
   } else if (currentPhase) {
-    headline = `Phase ${currentPhase.phase}: ${currentPhase.name}`
-    subline = `${currentPhase.solved} of ${currentPhase.total} solved in this phase. Keep going.`
+    headline = `Today: Phase ${currentPhase.phase}`
+    subline = `Nothing due for review. ${currentPhase.solved} of ${currentPhase.total} solved in ${currentPhase.name}.`
   }
 
   return (
@@ -453,10 +501,19 @@ export default function Overview({
 
       <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-3">
         <div className="flex min-w-0 flex-col gap-5 lg:col-span-2">
-          {reviewDue.length > 0 && (
-            <ReviewCard reviewDue={reviewDue} progress={progress} onReview={onReview} onOpenQuestion={onOpenQuestion} onShowReview={onShowReview} />
+          {reviewToday.length > 0 ? (
+            <ReviewCard
+              reviewToday={reviewToday}
+              backlogCount={backlogCount}
+              progress={progress}
+              onReview={onReview}
+              onOpenQuestion={onOpenQuestion}
+              onShowReview={onShowReview}
+            />
+          ) : (
+            !isNew && <CaughtUpCard backlogCount={backlogCount} />
           )}
-          {weakCount > 0 && <WeakCard weakProblems={weakProblems} weakCount={weakCount} progress={progress} onOpenQuestion={onOpenQuestion} />}
+          {!isNew && <WeakCard weakProblems={weakProblems} weakCount={weakCount} progress={progress} onOpenQuestion={onOpenQuestion} />}
           <UpNextCard
             upNext={upNext}
             progress={progress}
