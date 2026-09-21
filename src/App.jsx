@@ -3,6 +3,7 @@ import { splitTopic } from './constants.js'
 import { cleanupOrphanImages, requestPersistentStorage } from './images.js'
 import { localDate } from './progress.js'
 import { loadQuestions } from './questions.js'
+import { ONBOARDED_KEY, readLocal, writeLocal } from './storage.js'
 import { useTheme } from './theme.js'
 import { useIsNarrow } from './useIsNarrow.js'
 import { useBackup } from './hooks/useBackup.js'
@@ -50,6 +51,9 @@ function Tracker({ data }) {
   // for this visit only: a reload is a new sitting, and the cap asking again is
   // the point of it.
   const [extraReviews, setExtraReviews] = useState(0)
+  // Shown until it is dismissed, and only while there is nothing solved: a
+  // tracker with work in it has already answered the questions the card asks.
+  const [onboarded, setOnboarded] = useState(() => readLocal(ONBOARDED_KEY) === 'true')
   const { upNext, reviewToday, reviewBacklog, reviewedToday, savedPreview, weakProblems } = useHomeLists({
     questions,
     progress,
@@ -145,13 +149,13 @@ function Tracker({ data }) {
     )
   } else if (view === 'patterns') {
     content = (
-      <main className="min-h-0 flex-1 overflow-y-auto">
+      <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
         <PatternsView patternStats={stats.patternStats} onOpenPattern={(topic, pattern) => goToProblems({ topic, pattern })} />
       </main>
     )
   } else {
     content = (
-      <main className="min-h-0 flex-1 overflow-y-auto">
+      <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
         <Overview
           stats={stats}
           upNext={upNext}
@@ -179,6 +183,11 @@ function Tracker({ data }) {
           onShowSaved={() => goToProblems({ show: 'saved' })}
           onShowReview={() => goToProblems({ show: 'review' })}
           onReviewMore={() => setExtraReviews((count) => count + REVIEW_DAILY_CAP)}
+          showGettingStarted={!onboarded && stats.solved === 0}
+          onDismissGettingStarted={() => {
+            writeLocal(ONBOARDED_KEY, 'true')
+            setOnboarded(true)
+          }}
           onShowPatterns={() => navigate({ view: 'patterns', problem: null })}
           onBrowse={() => goToProblems()}
         />
@@ -188,6 +197,24 @@ function Tracker({ data }) {
 
   return (
     <div className="flex h-dvh flex-col bg-canvas font-sans text-ink">
+      {/* First thing in the tab order, invisible until it has focus: keyboard
+          and screen reader users can jump the nav and the filter bar instead of
+          tabbing through them on the way to the list.
+
+          A button rather than an href="#main-content" anchor, because this
+          app's route lives in the hash - an anchor would overwrite it and throw
+          you back to Home, which is a worse bug than the one being fixed. */}
+      <button
+        type="button"
+        onClick={() => {
+          const main = document.getElementById('main-content')
+          main?.focus()
+          main?.scrollIntoView({ block: 'start' })
+        }}
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[80] focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-contrast"
+      >
+        Skip to content
+      </button>
       <TopBar
         view={view}
         onViewChange={(nextView) => navigate({ view: nextView, problem: null })}
@@ -215,8 +242,8 @@ function Tracker({ data }) {
           onReview={reviewProblem}
           onNotesChange={notes.changeNotes}
           onAddImages={notes.addNoteImages}
-          onRemoveImage={notes.removeNoteImage}
-          onClearNote={notes.clearNote}
+          onRemoveImage={(id, imageId) => withUndo(id, 'Image deleted', () => notes.removeNoteImage(id, imageId))}
+          onClearNote={(id, imageIds) => withUndo(id, 'Note cleared', () => notes.clearNote(id, imageIds))}
           onLinkChange={notes.changeLink}
           onSelectRelated={openQuestion}
           onClose={closeQuestion}

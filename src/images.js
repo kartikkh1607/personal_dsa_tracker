@@ -99,6 +99,42 @@ export async function deleteImages(ids) {
   }
 }
 
+// How long a removed image's bytes are kept before they actually go.
+//
+// Deleting them the moment the note lets go would make Undo a lie: the entry
+// comes back pointing at ids whose blobs are gone, and the note renders as
+// "Image unavailable". So the delete waits out the undo toast instead.
+//
+// Nothing leaks if the tab closes inside the window: an image no note refers to
+// is collected by cleanupOrphanImages on a later start-up. Losing the timer
+// costs a few kilobytes for a week, which is the cheaper way to be wrong.
+export const UNDO_GRACE_MS = 10_000
+
+const pendingDeletions = new Map()
+
+export function scheduleImageDeletion(ids, delay = UNDO_GRACE_MS) {
+  for (const id of ids ?? []) {
+    clearTimeout(pendingDeletions.get(id))
+    pendingDeletions.set(
+      id,
+      setTimeout(() => {
+        pendingDeletions.delete(id)
+        deleteImages([id])
+      }, delay),
+    )
+  }
+}
+
+// Called when an entry comes back, for whatever images it still refers to.
+export function cancelImageDeletion(ids) {
+  for (const id of ids ?? []) {
+    const timer = pendingDeletions.get(id)
+    if (timer === undefined) continue
+    clearTimeout(timer)
+    pendingDeletions.delete(id)
+  }
+}
+
 // Ids of stored images that no note refers to and that are old enough to be
 // safely unreachable. Records without a valid timestamp are left alone.
 export function findOrphans(records, referencedIds, now, minAge = ORPHAN_MIN_AGE_MS) {

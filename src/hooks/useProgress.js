@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { deleteImages, MAX_NOTE_IMAGES } from '../images.js'
+import { cancelImageDeletion, MAX_NOTE_IMAGES, scheduleImageDeletion } from '../images.js'
 import { applyPatch, localDate } from '../progress.js'
 import { recordReview } from '../review.js'
 import { loadProgress, loadTombstones, saveProgress, saveTombstones } from '../storage.js'
@@ -156,17 +156,19 @@ export function useProgress(questionIds) {
     setProgress((prev) => applyPatch(prev, id, stamped({ images: [...(prev[id]?.images ?? []), ...imageIds].slice(0, MAX_NOTE_IMAGES) })))
   }, [])
 
+  // The bytes are scheduled rather than deleted, so an Undo inside the toast's
+  // lifetime brings back a note whose images are still there.
   const removeNoteImage = useCallback((id, imageId) => {
     setProgress((prev) => {
       const images = (prev[id]?.images ?? []).filter((item) => item !== imageId)
       return applyPatch(prev, id, stamped({ images: images.length > 0 ? images : undefined }))
     })
-    deleteImages([imageId])
+    scheduleImageDeletion([imageId])
   }, [])
 
   const clearNote = useCallback((id, imageIds) => {
     setProgress((prev) => applyPatch(prev, id, stamped({ notes: undefined, images: undefined })))
-    deleteImages(imageIds)
+    scheduleImageDeletion(imageIds)
   }, [])
 
   // Puts one problem's entry back exactly as it was, for Undo. Restored with a
@@ -174,6 +176,9 @@ export function useProgress(questionIds) {
   // with the old stamp the cloud's copy of what was just undone would look
   // newer and win.
   const restoreEntry = useCallback((id, entry) => {
+    // Whatever images the restored entry still refers to are no longer on their
+    // way out - undoing a note's deletion has to save its pictures too.
+    cancelImageDeletion(entry?.images)
     setProgress((prev) => {
       const next = { ...prev }
       if (entry) next[id] = { ...entry, updatedAt: new Date().toISOString() }

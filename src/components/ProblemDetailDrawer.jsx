@@ -191,13 +191,15 @@ export default function ProblemDetailDrawer({
     attachImages(files)
   }
 
+  // Both of these used to stop and ask. They don't any more: the action is
+  // reversible now, and an Undo you can ignore beats a prompt you have to
+  // answer before every single deletion.
   function handleDeleteImage(imageId) {
-    if (window.confirm('Delete this image? This can’t be undone.')) onRemoveImage(question.id, imageId)
+    onRemoveImage(question.id, imageId)
   }
 
   function handleClearNote() {
-    const images = imageIds.length > 0 ? ` and its ${imageIds.length} ${imageIds.length === 1 ? 'image' : 'images'}` : ''
-    if (window.confirm(`Clear this note${images}? This can’t be undone.`)) onClearNote(question.id, imageIds)
+    onClearNote(question.id, imageIds)
   }
 
   // Return focus to whatever opened the drawer once it closes.
@@ -359,6 +361,7 @@ export default function ProblemDetailDrawer({
                   <button
                     type="button"
                     onClick={() => onReview(question.id, 'got')}
+                    aria-label="Got it. Schedules the next review further out."
                     className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-brand px-2.5 text-xs font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
                   >
                     <CheckIcon className="h-3.5 w-3.5" />
@@ -367,6 +370,7 @@ export default function ProblemDetailDrawer({
                   <button
                     type="button"
                     onClick={() => onReview(question.id, 'struggled')}
+                    aria-label="Struggled. Comes back in 3 days, and is saved for revision."
                     title="Back in 3 days, and saved for revision"
                     className="inline-flex h-9 items-center justify-center rounded-lg border border-medium/40 bg-medium/10 px-2.5 text-xs font-semibold text-medium transition-colors hover:bg-medium/20"
                   >
