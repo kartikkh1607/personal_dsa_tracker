@@ -61,9 +61,19 @@ describe('deciding whether the auth library is needed', () => {
   it('hands the callback over once, because a code is good for one exchange', async () => {
     const client = await loadAt('/?code=a-pkce-code#/home')
 
-    expect(client.takeAuthCallback()).toEqual({ code: 'a-pkce-code', errorDescription: null })
+    expect(client.takeAuthCallback()).toEqual({ code: 'a-pkce-code', errorCode: null, errorDescription: null })
     expect(client.takeAuthCallback()).toBeNull()
     expect(client.hasAuthCallback()).toBe(false)
+  })
+
+  it('keeps the provider error code, not just its prose', async () => {
+    // What Google sends back for an account that is not on the test user list
+    // of an OAuth client still in testing. The code is the part worth matching
+    // on, so it has to survive the trip.
+    const client = await loadAt('/?error=access_denied&error_description=Access%20blocked')
+
+    expect(client.hasAuthCallback()).toBe(true)
+    expect(client.takeAuthCallback()).toEqual({ code: null, errorCode: 'access_denied', errorDescription: 'Access blocked' })
   })
 
   it('clears a spent code from the address bar and leaves the route alone', async () => {

@@ -17,6 +17,17 @@ import { syncOnce } from '../sync/sync.js'
 // is already on disk, which is where this app's progress actually lives.
 export const PUSH_DELAY_MS = 2500
 
+// The OAuth client is in testing mode, so Google only lets through accounts on
+// its test user list and turns everyone else away with access_denied. That is
+// not a fault the visitor can do anything about by retrying, so it gets the one
+// message that actually helps rather than Google's own wording.
+export const NOT_A_TEST_USER = 'Ask Kartik to add your Gmail.'
+
+export function signInErrorFor({ errorCode, errorDescription } = {}) {
+  if (errorCode === 'access_denied') return NOT_A_TEST_USER
+  return errorDescription ?? null
+}
+
 // Signing in, and keeping this browser's progress in step with the account.
 //
 // Every round is the same shape - pull, merge, push - and the merge is the part
@@ -28,7 +39,6 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   const [status, setStatus] = useState('idle')
   const [lastSyncedAt, setLastSyncedAt] = useState(null)
   const [error, setError] = useState(null)
-  const [linkSentTo, setLinkSentTo] = useState(null)
   // Whether this visit has any business with the auth library. False for
   // someone who has never signed in, and that is the whole point: the library
   // is a separate chunk and nothing here downloads it until this turns true.
@@ -70,12 +80,15 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
       }
 
       // A sign-in coming back. Redeeming the code is what makes the session,
-      // and it is worth saying so when it fails: an expired or already-used
-      // link is the common case, and silence looks like a broken app.
+      // and it is worth saying so when it fails: a code that has expired or
+      // already been spent is the common case, and silence looks like a
+      // broken app. Google refusing outright arrives here too, with no code
+      // and an error instead.
       const callback = takeAuthCallback()
-      if (callback?.errorDescription) {
-        setError(callback.errorDescription)
-        showToast(callback.errorDescription, { tone: 'error' })
+      const refusal = callback && !callback.code ? signInErrorFor(callback) : null
+      if (refusal) {
+        setError(refusal)
+        showToast(refusal, { tone: 'error' })
         clearAuthCallbackFromUrl()
       } else if (callback?.code) {
         announceNext.current = true
@@ -89,7 +102,7 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
         clearAuthCallbackFromUrl()
         if (cause) {
           setError(cause.message ?? String(cause))
-          showToast('That sign-in link did not work - try sending a new one', { tone: 'error' })
+          showToast('That sign-in did not go through - try again', { tone: 'error' })
         }
       }
 
@@ -210,39 +223,20 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
     }
   }, [userId])
 
-  const signInWithEmail = useCallback(
-    async (email) => {
-      // Starting a sign-in is a reason to have the library, and a reason to be
-      // listening for the session it leads to.
-      setAuthActive(true)
-      const client = await loadClient()
-      if (!client) return
-      setStatus('sending')
-      const { error: cause } = await client.auth.signInWithOtp({
-        email,
-        // Back to this app, which is where the code in the link gets read.
-        options: { emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
-      })
-      setStatus('idle')
-      if (cause) {
-        setError(cause.message)
-        showToast('Could not send the sign-in link', { tone: 'error' })
-        return
-      }
-      setError(null)
-      setLinkSentTo(email)
-    },
-    [showToast],
-  )
-
+  // The only way in. Starting a sign-in is a reason to have the auth library,
+  // and a reason to be listening for the session it leads to.
   const signInWithGoogle = useCallback(async () => {
     setAuthActive(true)
     const client = await loadClient()
     if (!client) return
+    setError(null)
     const { error: cause } = await client.auth.signInWithOAuth({
       provider: 'google',
+      // Back here, which is where the code on the way back gets read.
       options: { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}` },
     })
+    // Only a failure to *start* the redirect lands here. Google turning
+    // somebody away happens on its own page and comes back as a callback error.
     if (cause) {
       setError(cause.message)
       showToast('Could not start Google sign-in', { tone: 'error' })
@@ -255,7 +249,6 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
     const client = await loadClient()
     if (!client) return
     await client.auth.signOut()
-    setLinkSentTo(null)
     setError(null)
     showToast('Signed out - your progress is still on this device')
   }, [showToast])
@@ -270,8 +263,6 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
     status,
     lastSyncedAt,
     error,
-    linkSentTo,
-    signInWithEmail,
     signInWithGoogle,
     signOut,
     syncNow,

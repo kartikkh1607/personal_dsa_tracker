@@ -54,10 +54,10 @@ test('the sign-in form is there without the library behind it', async ({ page })
   await page.goto('/')
   await page.getByRole('button', { name: /options/i }).click()
 
-  // The whole signed-out account UI renders from the main chunk.
+  // The whole signed-out account UI renders from the main chunk. Google is the
+  // only way in, and its button is there before the library behind it is.
   await expect(page.getByText('Sync across devices')).toBeVisible()
-  await expect(page.getByLabel('Email address')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Send link' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
 
   expect(requests.filter((url) => url.includes(authChunk))).toEqual([])
 })

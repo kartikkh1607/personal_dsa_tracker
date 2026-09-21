@@ -82,9 +82,16 @@ Progress lives only in this browser, so clearing browser data erases it. The app
 when you haven't backed up in 14 days. From the **⋯** menu:
 
 - **Export backup** downloads `dsa-progress-<date>.json`.
-- **Import backup** restores from that file. This replaces current progress, so export first
-  if you have anything you want to keep. An unreadable file is rejected and leaves your
-  existing progress untouched.
+- **Import backup** restores from that file, and asks which way you want it:
+  - **Merge** keeps everything from both sides. Where the same problem differs, the more recent
+    change wins. Nothing is deleted, which makes it the safe answer and the default.
+  - **Replace** throws away what is in this browser and keeps only what the file holds. While
+    you are signed in this is not a local act: the entries it drops are deleted from your
+    account, and therefore from every other device you are signed in to. The app says so at the
+    point of asking, and offers an Undo straight afterwards.
+
+  With nothing saved yet there is no question to ask, so the file is simply loaded. An
+  unreadable file is rejected and leaves existing progress untouched.
 - **Export for Excel** downloads a CSV in the Master tab's column order (`Step` through `Notes`).
   Rows line up by `Step`, so you can paste its Status, Last Revised and Notes columns into
   `DSA_Master_Sheet.xlsx`.
@@ -118,52 +125,55 @@ original, which is why sync keeps working offline and simply catches up later.
    trigger in place, and no privileges at all for the `anon` role.
 3. Copy `.env.example` to `.env.local` and fill in the project URL and publishable key.
 4. In the dashboard, add the app's URL under **Authentication > URL Configuration**, so the
-   sign-in link comes back to it. Deploy previews get a new URL each time, so they need a
+   sign-in comes back to it. Deploy previews get a new URL each time, so they need a
    wildcard redirect rather than one fixed address - see [Deploy to Vercel](#deploy-to-vercel).
+5. Set up Google, below. It is the only way in, so sync does nothing until it is done.
 
-Signing in is a magic link by email. Google sign-in is written but stays hidden until you set up
-an OAuth client and uncomment `VITE_ENABLE_GOOGLE_AUTH`.
+### Setting up Google sign-in
 
-### Sending the sign-in emails
+Google is the only way to sign in. There was a magic link once and it could not work: Supabase's
+built-in email sender refuses to deliver to anyone who is not a member of the project, so for
+every other person a link was "sent" and never arrived. Rather than run a mail service for a
+personal tracker, sign-in is one OAuth provider and nothing else.
 
-Sign-in here is a magic link, so the whole feature is only as good as whatever sends the email.
-Supabase gives every project a built-in sender, and it is explicitly not for production - not
-mainly because it is slow, but because **it refuses to deliver to any address that is not already
-a member of the project**. Sign in as yourself and it works; hand the app to anyone else and their
-link is silently never sent. On top of that it is capped at a handful of messages an hour and
-offered on a best-effort basis with no delivery or uptime guarantee.
+**1. Create the OAuth client.** In the [Google Cloud console](https://console.cloud.google.com),
+under **APIs & Services > Credentials**, create an **OAuth client ID** of type **Web
+application**. It needs one authorized redirect URI, and it is Supabase's callback rather than
+this app's address - Google returns to Supabase, which then returns here:
 
-Any SMTP provider fixes this. [Resend](https://resend.com) is a good default: the free tier is
-3,000 emails a month (100 a day), which a tracker's sign-in links will never come close to, and it
-speaks ordinary SMTP so Supabase needs nothing special.
+```
+https://<your-project>.supabase.co/auth/v1/callback
+```
 
-1. **Verify a domain** in Resend, under **Domains > Add Domain**. It hands you DKIM and SPF
-   records to add wherever your DNS lives, and verification usually lands within minutes. Until a
-   domain is verified you can only send to your own address - enough to test with, not enough to
-   ship, and the same trap as the built-in sender.
-2. **Create an API key** under **API Keys**, with sending permission. Copy it then; Resend shows
-   it once.
-3. **Turn on custom SMTP** in Supabase, under **Authentication > Emails > SMTP Settings**:
+**2. Add test users.** A new OAuth client starts in **testing** mode, which means Google only
+lets through accounts listed under **Audience > Test users**. Anyone else is turned away before
+Supabase is ever involved, and comes back to the app with `access_denied`. The app recognises
+that one case and says "Ask Kartik to add your Gmail", because no amount of retrying fixes it.
+Add each person's Gmail there, or publish the app if you want it open to anyone.
 
-   | Field | Value |
-   | --- | --- |
-   | Host | `smtp.resend.com` |
-   | Port | `465` |
-   | Username | `resend` |
-   | Password | the Resend API key |
-   | Sender email | an address at the verified domain, e.g. `login@yourdomain.com` |
-   | Sender name | whatever the inbox should show, e.g. `DSA Tracker` |
+**3. Enable the provider in Supabase.** Under **Authentication > Sign In / Providers > Google**,
+turn it on and paste the **Client ID** and **Client secret** from step 1. The secret is held by
+Supabase and never reaches the browser; it is not a `VITE_` variable and must never become one.
 
-4. **Then raise the rate limit.** This is the step that looks optional and is not. Custom SMTP
-   does not lift Supabase's own cap - that lives separately under **Authentication > Rate
-   Limits**, and it defaults to 30 new users an hour even once your own sender is wired up.
+**4. Point the redirect back at the app.** Under **Authentication > URL Configuration**, the Site
+URL and Redirect URLs have to include wherever the app is served from, with the trailing slash,
+because that is exactly what the app asks to come back to:
 
-The API key is a server-side secret that Supabase holds. It is not a `VITE_` variable and must
-never reach `.env.local` or the bundle, for exactly the reason spelled out in
+```
+https://your-app.vercel.app/
+```
+
+Preview deploys get a new host every time, so they need a wildcard too - see
 [Deploy to Vercel](#deploy-to-vercel).
 
-To confirm it took, sign in from a browser with no session and look at the message headers: it
-should come from your domain rather than Supabase's shared sender.
+**5. Turn the button on.** Set `VITE_ENABLE_GOOGLE_AUTH=true` wherever the app is built, locally
+in `.env.local` and in the host's environment variables. This is a build-time flag, so changing it
+takes a redeploy rather than a restart.
+
+That last one is worth saying plainly: with Google as the only sign-in, this flag is the on/off
+switch for signing in at all. Leave it unset and the account menu says sign-in isn't available and
+the app runs local-only - which is a perfectly good state to be in, just not the one you want by
+accident on production.
 
 ### How two devices agree
 
@@ -334,9 +344,9 @@ Click **Deploy**. Later pushes to the default branch redeploy automatically.
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | `https://<project>.supabase.co` | Production, Preview, Development |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | the project's publishable key | Production, Preview, Development |
-| `VITE_ENABLE_GOOGLE_AUTH` | `true`, only once Google is set up | wherever you want the button |
+| `VITE_ENABLE_GOOGLE_AUTH` | `true` - required for sign-in to exist at all | Production, Preview, Development |
 
-Both are public by design: Vite inlines every `VITE_` variable into the bundle,
+The first two are public by design: Vite inlines every `VITE_` variable into the bundle,
 which is what the publishable key is for. The service role key is not a
 `VITE_` variable and must never be added here - it bypasses row level security,
 and the bundle is readable by anyone. Because the values are inlined at build

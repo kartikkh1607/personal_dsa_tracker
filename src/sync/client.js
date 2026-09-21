@@ -6,8 +6,10 @@ const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
 export const SYNC_CONFIGURED = Boolean(url && publishableKey)
 
-// Google sign-in needs an OAuth client set up in Google Cloud and added as a
-// provider in Supabase, so it stays hidden until someone says it is ready.
+// Google is the only way in, and it needs an OAuth client in Google Cloud plus
+// the provider enabled in Supabase. The flag says that groundwork is done.
+// With sync configured but this off there is no way to sign in at all, so the
+// account menu says so rather than showing an empty panel.
 export const GOOGLE_AUTH_ENABLED = import.meta.env.VITE_ENABLE_GOOGLE_AUTH === 'true'
 
 // The auth library is around half the size of everything else this app ships,
@@ -62,16 +64,21 @@ export function hasStoredSession() {
 
 // A sign-in landing back here, read once at import time - before React mounts
 // and the router starts rewriting the address bar - and held until the sync
-// hook is ready to act on it. Both flows this app uses (the email link and
-// Google) are PKCE, so what comes back is a code on the query string, or an
-// error the provider wants to explain.
+// hook is ready to act on it. The flow is PKCE, so what comes back is a code on
+// the query string, or an error the provider wants to explain.
+//
+// The error *code* is kept alongside the description because the two say
+// different things: the description is Google's prose, the code is what can be
+// matched on. access_denied is the one worth recognising - it is what an OAuth
+// client still in testing returns for anyone not on its test user list.
 function readAuthCallback() {
   try {
     const params = new URLSearchParams(window.location.search)
     const code = params.get('code')
+    const errorCode = params.get('error')
     const errorDescription = params.get('error_description')
-    if (!code && !errorDescription) return null
-    return { code, errorDescription }
+    if (!code && !errorCode && !errorDescription) return null
+    return { code, errorCode, errorDescription }
   } catch {
     return null
   }
