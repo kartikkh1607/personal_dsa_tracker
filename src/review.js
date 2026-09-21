@@ -67,3 +67,24 @@ export function isDue(entry, today) {
   const next = nextReviewDate(entry)
   return next !== null && next <= today
 }
+
+// How many reviews were recorded on one day, across every problem.
+//
+// The daily cap counts these rather than counting what is left in the backlog.
+// Clearing a review takes that problem out of the backlog, so a cap applied to
+// the backlog would simply let the next one slide up into the gap and never
+// bind at all - you could sit there and review all 143. Counting what has
+// actually been done is the only version of "15 a day" that means anything.
+export function reviewsOn(progress, date) {
+  let count = 0
+  for (const entry of Object.values(progress)) {
+    const history = entry?.history
+    if (history?.length > 0) {
+      for (const item of history) if (item.date === date) count++
+    } else if (entry?.reviewedAt === date) {
+      // From before reviews kept a history: the last review is all there is.
+      count++
+    }
+  }
+  return count
+}

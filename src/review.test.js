@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { applyPatch } from './progress.js'
-import { isDue, isLapsed, isWeak, lastResult, MAX_HISTORY, nextReviewDate, recordReview, struggleCount } from './review.js'
+import { isDue, isLapsed, isWeak, lastResult, MAX_HISTORY, nextReviewDate, recordReview, reviewsOn, struggleCount } from './review.js'
 
 const solved = (extra = {}) => ({ solved: true, solvedAt: '2026-09-01', ...extra })
 
@@ -131,5 +131,37 @@ describe('weak problems', () => {
     expect(lastResult({ history: [] })).toBeNull()
     expect(isLapsed({ history: history('struggled', 'got') })).toBe(false)
     expect(isLapsed({ history: history('got', 'struggled') })).toBe(true)
+  })
+})
+
+describe('reviewsOn', () => {
+  const entry = (history) => ({ solved: true, solvedAt: '2026-01-01', history })
+
+  it('counts every review recorded on the day, across problems', () => {
+    const progress = {
+      1: entry([{ date: '2026-09-20', result: 'got' }, { date: '2026-09-21', result: 'got' }]),
+      2: entry([{ date: '2026-09-21', result: 'struggled' }]),
+      3: entry([{ date: '2026-09-19', result: 'got' }]),
+    }
+    expect(reviewsOn(progress, '2026-09-21')).toBe(2)
+    expect(reviewsOn(progress, '2026-09-20')).toBe(1)
+    expect(reviewsOn(progress, '2026-09-18')).toBe(0)
+  })
+
+  it('counts a problem reviewed twice in one day twice', () => {
+    const progress = { 1: entry([{ date: '2026-09-21', result: 'struggled' }, { date: '2026-09-21', result: 'got' }]) }
+    expect(reviewsOn(progress, '2026-09-21')).toBe(2)
+  })
+
+  it('falls back to reviewedAt for entries from before history was kept', () => {
+    expect(reviewsOn({ 1: { solved: true, reviewedAt: '2026-09-21' } }, '2026-09-21')).toBe(1)
+    // ...and doesn't double count when both are there.
+    const both = { 1: { solved: true, reviewedAt: '2026-09-21', history: [{ date: '2026-09-21', result: 'got' }] } }
+    expect(reviewsOn(both, '2026-09-21')).toBe(1)
+  })
+
+  it('ignores entries with nothing to count', () => {
+    expect(reviewsOn({}, '2026-09-21')).toBe(0)
+    expect(reviewsOn({ 1: { solved: true, solvedAt: '2026-09-21' } }, '2026-09-21')).toBe(0)
   })
 })

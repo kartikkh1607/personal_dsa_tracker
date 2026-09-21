@@ -98,21 +98,39 @@ function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
   )
 }
 
-// Nothing due. Worth a card of its own rather than an absent one: having
-// cleared the schedule is the good outcome, and a section that quietly
+// Nothing due at all. Worth a card of its own rather than an absent one:
+// having cleared the schedule is the good outcome, and a section that quietly
 // disappears reads as something broken rather than something finished.
-function CaughtUpCard({ backlogCount }) {
+function CaughtUpCard() {
   return (
     <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
       <CardHeader
         id="review-heading"
         title="You’re caught up"
-        subtitle={
-          backlogCount === 0
-            ? 'Nothing is due for review today. Solve something new, or come back when the schedule brings these round again.'
-            : 'Nothing left for today. The rest come round on their own schedule.'
-        }
+        subtitle="Nothing is due for review today. Solve something new, or come back when the schedule brings these round again."
       />
+    </section>
+  )
+}
+
+// The day's reviews are done but the backlog isn't empty. This is a stopping
+// point, not a wall: the next batch is one button away, and asking for it is a
+// deliberate act rather than the list quietly refilling itself.
+function DoneForTodayCard({ reviewedToday, remaining, onReviewMore }) {
+  return (
+    <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
+      <CardHeader
+        id="review-heading"
+        title="Done for today"
+        subtitle={`${reviewedToday} reviewed today. ${remaining} still due — they'll keep until tomorrow.`}
+      />
+      <button
+        type="button"
+        onClick={onReviewMore}
+        className="mt-4 h-9 rounded-lg border border-line bg-surface px-3.5 text-sm font-medium text-ink-2 transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong"
+      >
+        Review more
+      </button>
     </section>
   )
 }
@@ -435,6 +453,7 @@ export default function Overview({
   upNext,
   reviewToday,
   reviewBacklog,
+  reviewedToday,
   savedPreview,
   weakProblems,
   weakCount,
@@ -453,12 +472,15 @@ export default function Overview({
   onSelectPhase,
   onShowSaved,
   onShowReview,
+  onReviewMore,
   onShowPatterns,
   onBrowse,
 }) {
   const isNew = stats.solved === 0
   const backlogCount = reviewBacklog.length
   const held = backlogCount - reviewToday.length
+  // The day's reviews are spent, but there is still a backlog waiting.
+  const doneForToday = reviewToday.length === 0 && backlogCount > 0
 
   // Home is meant to answer "what am I doing today", so the headline is today's
   // work rather than a running total. The phase is still the context, but it is
@@ -468,6 +490,10 @@ export default function Overview({
   if (isNew) {
     headline = 'Let’s start your DSA sheet'
     subline = `${stats.total} problems in ${stats.phaseStats.length} phases. Begin with Phase 1 and tick problems off as you solve them.`
+  } else if (doneForToday) {
+    headline = 'Today: reviews done'
+    const tail = currentPhase ? ` Carry on with Phase ${currentPhase.phase}, or review more.` : ''
+    subline = `${reviewedToday} reviewed today, ${backlogCount} still due.${tail}`
   } else if (reviewToday.length > 0) {
     headline = `Today: ${reviewToday.length} ${reviewToday.length === 1 ? 'review' : 'reviews'}`
     const tail = currentPhase ? `, then carry on with Phase ${currentPhase.phase}.` : '.'
@@ -501,7 +527,7 @@ export default function Overview({
 
       <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-3">
         <div className="flex min-w-0 flex-col gap-5 lg:col-span-2">
-          {reviewToday.length > 0 ? (
+          {reviewToday.length > 0 && (
             <ReviewCard
               reviewToday={reviewToday}
               backlogCount={backlogCount}
@@ -510,9 +536,9 @@ export default function Overview({
               onOpenQuestion={onOpenQuestion}
               onShowReview={onShowReview}
             />
-          ) : (
-            !isNew && <CaughtUpCard backlogCount={backlogCount} />
           )}
+          {doneForToday && <DoneForTodayCard reviewedToday={reviewedToday} remaining={backlogCount} onReviewMore={onReviewMore} />}
+          {!isNew && !doneForToday && reviewToday.length === 0 && <CaughtUpCard />}
           {!isNew && <WeakCard weakProblems={weakProblems} weakCount={weakCount} progress={progress} onOpenQuestion={onOpenQuestion} />}
           <UpNextCard
             upNext={upNext}

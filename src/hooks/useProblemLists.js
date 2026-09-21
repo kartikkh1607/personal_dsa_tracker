@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { DIFFICULTIES } from '../constants.js'
 import { activityFrom, addDays, hasNote, streakFrom } from '../progress.js'
-import { isDue, isWeak, nextReviewDate, struggleCount } from '../review.js'
+import { isDue, isWeak, nextReviewDate, reviewsOn, struggleCount } from '../review.js'
 import { ALL_TOPICS } from '../components/Sidebar.jsx'
 import { ALL } from '../components/Filters.jsx'
 
@@ -9,9 +9,9 @@ const UP_NEXT_COUNT = 5
 const SAVED_PREVIEW_COUNT = 5
 const RELATED_COUNT = 6
 
-// How many reviews Home will put in front of you on any one day. The schedule
-// itself is untouched - nothing is dropped or rescheduled, this is only what
-// today's plan shows.
+// How many reviews Home asks of you in a day. The schedule itself is untouched
+// - nothing is dropped or rescheduled, this is only how much of it today's
+// plan puts in front of you.
 export const REVIEW_DAILY_CAP = 15
 
 // Every count on the page, in one pass over the question list.
@@ -62,7 +62,10 @@ export function useStats({ questions, topics, phases, topicPhase, progress, toda
 }
 
 // The lists Home shows: what to do next, what's due, what's saved, what's shaky.
-export function useHomeLists({ questions, progress, today }) {
+//
+// `extraReviews` is what "Review more" adds: the day's budget, deliberately
+// raised, rather than the cap being quietly ignored.
+export function useHomeLists({ questions, progress, today, extraReviews = 0 }) {
   // The sheet's study path: ids are its steps, so each phase's Core, Depth and
   // Stretch problems come before the next phase.
   const upNext = useMemo(
@@ -83,15 +86,21 @@ export function useHomeLists({ questions, progress, today }) {
     [progress, today, questions],
   )
 
-  // ...and the part of it worth doing today. Come back after three weeks away
-  // and the schedule hands back every problem at once; a list of 143 is not a
-  // plan, it is a reason to close the tab. Taking the most overdue first means
-  // the cap delays the least urgent work rather than losing any of it, and the
-  // rest is still one click away on the problems page.
+  // Come back after three weeks away and the schedule hands back every problem
+  // at once; a list of 143 is not a plan, it is a reason to close the tab.
   //
-  // Sliced here, once, so Home and the problems page can't drift into
+  // So the cap is a budget for the day, spent by reviews actually done, not a
+  // window onto the first 15 of the list. Those are different things: reviewing
+  // one takes it out of the backlog, so a window would refill itself and the
+  // cap would never bind. This counts what has been recorded today instead.
+  const reviewedToday = useMemo(() => reviewsOn(progress, today), [progress, today])
+  const allowance = Math.max(0, REVIEW_DAILY_CAP + extraReviews - reviewedToday)
+
+  // Taking the most overdue first means the budget delays the least urgent work
+  // rather than losing any of it, and the rest stay one click away on the
+  // problems page. Sliced here, once, so Home and that page can't drift into
   // disagreeing about what is due.
-  const reviewToday = useMemo(() => reviewBacklog.slice(0, REVIEW_DAILY_CAP), [reviewBacklog])
+  const reviewToday = useMemo(() => reviewBacklog.slice(0, allowance), [reviewBacklog, allowance])
 
   const savedPreview = useMemo(
     () => questions.filter((question) => progress[question.id]?.bookmarked).slice(0, SAVED_PREVIEW_COUNT),
@@ -108,7 +117,7 @@ export function useHomeLists({ questions, progress, today }) {
     [progress, questions],
   )
 
-  return { upNext, reviewToday, reviewBacklog, savedPreview, weakProblems }
+  return { upNext, reviewToday, reviewBacklog, reviewedToday, savedPreview, weakProblems }
 }
 
 // The filtered, grouped problem list. Topic, show, difficulty, Core-only,

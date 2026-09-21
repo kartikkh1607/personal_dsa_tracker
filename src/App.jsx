@@ -7,7 +7,7 @@ import { useTheme } from './theme.js'
 import { useIsNarrow } from './useIsNarrow.js'
 import { useBackup } from './hooks/useBackup.js'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
-import { useFilteredProblems, useHomeLists, useRelatedQuestions, useStats } from './hooks/useProblemLists.js'
+import { REVIEW_DAILY_CAP, useFilteredProblems, useHomeLists, useRelatedQuestions, useStats } from './hooks/useProblemLists.js'
 import { useProgress } from './hooks/useProgress.js'
 import { useRoute } from './hooks/useRoute.js'
 import { useSync } from './hooks/useSync.js'
@@ -46,7 +46,16 @@ function Tracker({ data }) {
   const drawerQuestion = (route.problem != null && questionsById.get(route.problem)) || null
 
   const stats = useStats({ questions, topics, phases, topicPhase, progress, today })
-  const { upNext, reviewToday, reviewBacklog, savedPreview, weakProblems } = useHomeLists({ questions, progress, today })
+  // "Review more" raises the day's review budget rather than bypassing it. Held
+  // for this visit only: a reload is a new sitting, and the cap asking again is
+  // the point of it.
+  const [extraReviews, setExtraReviews] = useState(0)
+  const { upNext, reviewToday, reviewBacklog, reviewedToday, savedPreview, weakProblems } = useHomeLists({
+    questions,
+    progress,
+    today,
+    extraReviews,
+  })
   const { visible, groupByPattern } = useFilteredProblems({
     questions,
     progress,
@@ -148,6 +157,7 @@ function Tracker({ data }) {
           upNext={upNext}
           reviewToday={reviewToday}
           reviewBacklog={reviewBacklog}
+          reviewedToday={reviewedToday}
           savedPreview={savedPreview}
           currentPhase={currentPhase}
           progress={progress}
@@ -168,6 +178,7 @@ function Tracker({ data }) {
           onSelectPhase={selectPhase}
           onShowSaved={() => goToProblems({ show: 'saved' })}
           onShowReview={() => goToProblems({ show: 'review' })}
+          onReviewMore={() => setExtraReviews((count) => count + REVIEW_DAILY_CAP)}
           onShowPatterns={() => navigate({ view: 'patterns', problem: null })}
           onBrowse={() => goToProblems()}
         />
