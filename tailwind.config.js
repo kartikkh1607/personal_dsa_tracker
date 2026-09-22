@@ -9,7 +9,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        script: ['"Dancing Script"', '"Segoe Script"', '"Brush Script MT"', 'cursive'],
       },
       colors: {
         canvas: token('canvas'),

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { PHASE_NAMES, stageOf } from './constants.js'
 import questions from './data/questions.json'
 import { EXPECTED_QUESTIONS, EXPECTED_TOPICS, indexQuestions } from './questions.js'
 
@@ -41,10 +42,28 @@ describe('indexQuestions', () => {
     }
   })
 
+  it('names every phase the sheet actually uses', () => {
+    for (const phase of new Set(questions.map((question) => question.phase))) {
+      expect(PHASE_NAMES[phase], `phase ${phase} has no name`).toBeTruthy()
+    }
+    expect(Object.keys(PHASE_NAMES)).toHaveLength(index.phases.length)
+  })
+
+  // Step, Stage and phaseName were on all 920 rows and are all derivable, so
+  // they are derived. Storing them again would let two rows disagree.
+  it('stores nothing a row can work out for itself', () => {
+    for (const question of questions) {
+      expect(question).not.toHaveProperty('step')
+      expect(question).not.toHaveProperty('stage')
+      expect(question).not.toHaveProperty('phaseName')
+    }
+    expect(stageOf(questions[0])).toBe('1. Foundations - Core')
+  })
+
   it('works on an arbitrary subset, not just the real sheet', () => {
     const small = indexQuestions([
-      { id: 7, topic: '03. Arrays', phase: 2, phaseName: 'Search & Strings' },
-      { id: 9, topic: '01. Basics', phase: 1, phaseName: 'Foundations' },
+      { id: 7, topic: '03. Arrays', phase: 2 },
+      { id: 9, topic: '01. Basics', phase: 1 },
     ])
     expect(small.topics).toEqual(['01. Basics', '03. Arrays'])
     expect(small.phases).toEqual([

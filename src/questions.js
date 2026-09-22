@@ -1,5 +1,5 @@
 import questionsUrl from './data/questions.json?url'
-import { splitTopic } from './constants.js'
+import { phaseName, splitTopic } from './constants.js'
 
 // The question list is 385 KB and never changes at runtime. Importing it
 // directly put all of it in the main chunk, so the app couldn't render until
@@ -16,9 +16,9 @@ export const EXPECTED_TOPICS = 23
 export function indexQuestions(questions) {
   // Topics sort by their leading number, which is part of the topic string.
   const topics = [...new Set(questions.map((question) => question.topic))].sort((a, b) => a.localeCompare(b))
-  const phases = [...new Map(questions.map((question) => [question.phase, question.phaseName]))]
-    .map(([phase, name]) => ({ phase, name }))
-    .sort((a, b) => a.phase - b.phase)
+  const phases = [...new Set(questions.map((question) => question.phase))]
+    .sort((a, b) => a - b)
+    .map((phase) => ({ phase, name: phaseName(phase) }))
 
   return {
     questions,
@@ -27,7 +27,7 @@ export function indexQuestions(questions) {
     topicByNumber: new Map(topics.map((topic) => [splitTopic(topic).number, topic])),
     questionIds: new Set(questions.map((question) => String(question.id))),
     questionsById: new Map(questions.map((question) => [question.id, question])),
-    topicPhase: new Map(questions.map((question) => [question.topic, { phase: question.phase, phaseName: question.phaseName }])),
+    topicPhase: new Map(questions.map((question) => [question.topic, { phase: question.phase, phaseName: phaseName(question.phase) }])),
   }
 }
 

@@ -1,3 +1,5 @@
+import { stageOf } from './constants.js'
+
 // Exports progress in the Excel sheet's Master tab column order, so the Status,
 // Last Revised and Notes columns can be pasted straight into the workbook. The
 // app doesn't track Confidence or Attempts, and the sheet calculates Next
@@ -41,8 +43,10 @@ export function progressToCsv(questions, progress) {
   const rows = questions.map((question) => {
     const entry = progress[question.id]
     return [
-      question.step ?? question.id,
-      question.stage,
+      // The sheet's Step column is the problem's id: they have always been the
+      // same number, so the id is the one that is kept.
+      question.id,
+      stageOf(question),
       question.topic,
       question.pattern,
       question.problem,

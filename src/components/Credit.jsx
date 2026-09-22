@@ -1,3 +1,5 @@
+import NameMark from './NameMark.jsx'
+
 // A quiet sign-off at the end of each page.
 export default function Credit({ className = '' }) {
   return (
@@ -10,7 +12,7 @@ export default function Credit({ className = '' }) {
         <span className="h-px flex-1 bg-gradient-to-l from-transparent to-line" />
       </div>
       <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.22em] text-ink-3">Made with care by</p>
-      <p className="mt-0.5 font-script text-[1.75rem] leading-tight text-brand-strong sm:text-3xl">Kartik Khandelwal</p>
+      <NameMark className="mt-1.5 h-[1.52rem] fill-brand-strong sm:h-[1.63rem]" />
     </footer>
   )
 }
