@@ -45,6 +45,11 @@ test('undo brings the note back', async ({ page }) => {
 
 test('the skip link is the first stop and lands on the content', async ({ page }) => {
   await page.goto('/')
+  // The question list is fetched, and until it arrives the app renders a
+  // skeleton with no skip link in it. Tabbing straight after goto races that
+  // fetch and lands on the skeleton's scrollable <main>, which Chrome makes
+  // focusable. Wait for the real app before asking what the first stop is.
+  await expect(page.getByRole('button', { name: 'Skip to content' })).toBeAttached()
 
   await page.locator('body').press('Tab')
 
