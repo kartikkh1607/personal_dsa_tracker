@@ -1,6 +1,6 @@
 # DSA Practice Tracker
 
-A personal tracker for 922 DSA problems across 23 topics and 6 study phases. Your progress is
+A personal tracker for 917 DSA problems across 23 topics and 6 study phases. Your progress is
 saved in the browser's localStorage, and can optionally be synced to your own Supabase project so
 several devices share it; the question list itself is static data. It works offline and can be
 installed as an app on your phone or computer.
@@ -50,7 +50,7 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
 - **Bookmark** tricky problems to save them. They collect on Home and under **Saved**.
 - **Problems** is the full sheet: a sidebar of phases and topics with progress bars, and a list
   you can filter by status (**All**, **To do**, **Solved**, **Review**, **Saved**), difficulty
-  and **Has notes**. **Search** always covers all 922 problems, whatever topic is selected, and
+  and **Has notes**. **Search** always covers all 917 problems, whatever topic is selected, and
   picking a topic ends the search. **Random** opens a random unsolved problem from the list.
 - **Click a problem**, anywhere on its row, for its details: a button to open it, Solved and
   Save toggles, where it sits in the review schedule, notes, and more problems from the same
@@ -64,7 +64,8 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
 - **Streak and activity.** A day counts if you solved a problem *or* reviewed one, so a day
   spent entirely on reviews keeps your streak going. A streak that ended yesterday still
   counts, so it doesn't reset before you've had a chance today.
-- **Patterns** lists all 168 patterns in the sheet, so you can find the ones you haven't touched.
+- **Patterns** lists every pattern in the sheet, topic by topic, so you can find the ones you haven't
+  touched. That is 172 entries: 156 distinct patterns, some of which appear under more than one topic.
 - The page, topic and filters are in the URL, so refresh, Back and bookmarks keep your place.
   The app also reopens wherever you left off.
 - **Light and dark** follow your system until you flip the sun/moon button in the top bar.
@@ -78,9 +79,11 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
 <kbd>g</kbd> and <kbd>s</kbd> work on the problem that's focused in the list and inside the
 open detail panel, and only when that problem is actually due for review.
 
-**Tiers, phases and steps** come from the Excel sheet. `Core` (373 problems) covers every
+**Tiers, phases and steps** come from the Excel sheet. `Core` (387 problems) covers every
 pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's
-id is its step on the sheet's study path: within each phase, Core, then Depth, then Stretch.
+`step` is its place on the sheet's study path: within each phase, Core, then Depth, then Stretch.
+Its `id` is only a stable key for saved progress and sync, so ids are not in study order and have
+gaps where duplicates were removed.
 "Up next" follows those steps.
 
 **Links.** A problem whose link works opens it directly; any other problem opens a Google search
@@ -115,7 +118,7 @@ as "Image unavailable". On start-up, stored images that no note refers to are de
 they're over 7 days old. So after importing an older backup, images that aren't in it will
 eventually be removed.
 
-Backups made before the sheet grew to 922 problems use the old problem numbers. Importing one
+Backups from the old 570-problem sheet use its problem numbers. Importing one
 moves each entry onto the right problem automatically.
 
 Use export/import to move progress between devices, or between your local copy and a
@@ -223,10 +226,10 @@ Signing out leaves everything in this browser exactly where it was.
 
 | File | Purpose |
 | --- | --- |
-| `src/data/questions.json` | The 922 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
+| `src/data/questions.json` | The 917 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
 | `src/questions.js` | Fetches the question list as a separate asset and builds the indexes the app reads. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
-| `DSA_Master_Sheet.xlsx` | An offline companion, not an input: nothing in the app or `scripts/` reads it. Its Master tab holds the same 922 questions in the same order, next to plan, dashboard and pattern-coverage tabs, and **Export for Excel** writes a CSV laid out to paste into it. It is kept by hand, so `src/data/questions.json` is the source of truth; the workbook's links predate the last link update. |
+| `DSA_Master_Sheet.xlsx` | An offline companion, not an input: nothing in the app or `scripts/` reads it. Its Master tab holds the same 917 questions in the same order, next to plan, dashboard and pattern-coverage tabs, and **Export for Excel** writes a CSV laid out to paste into it. It is kept by hand, so `src/data/questions.json` is the source of truth. |
 | `src/App.jsx` | Composition and layout: wires the hooks below to the views. |
 | `src/hooks/` | `useRoute` (hash and history), `useProgress` (saved state and every change to it), `useBackup` (export, import, reminder), `useSync` (signing in, and when to run a sync round), `useToast`, `useKeyboardShortcuts`, `useProblemLists` (counts and the filtered lists). |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
