@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { topicName } from '../constants.js'
+import { ProgressBar } from './QuestionControls.jsx'
 import { CheckIcon, SearchIcon } from './icons.jsx'
 
 export const ALL_TOPICS = 'All topics'
@@ -13,18 +14,29 @@ function Count({ solved, total }) {
   )
 }
 
-function TopicItem({ label, solved, total, isSelected, onClick, indent = false }) {
+// A 2px bar under a row's text: the same solved/total as the count beside
+// it, which it supplements rather than replaces. An empty track still shows,
+// so 0% reads as a place to start rather than a missing bar. A selected row
+// is already --tint, so there the empty track steps to --line to stay visible.
+function RowBar({ solved, total, onTint = false }) {
+  return <ProgressBar value={solved} total={total} className={`mt-1 !h-[2px] ${onTint ? '!bg-line' : ''}`} />
+}
+
+function TopicItem({ label, solved, total, isSelected, onClick, indent = false, bar = false }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-current={isSelected ? 'page' : undefined}
-      className={`flex w-full items-center gap-2 rounded-md py-1.5 pr-2 text-left ${indent ? 'pl-5 text-[12.5px]' : 'pl-2 text-[13px]'} ${
+      className={`block w-full rounded-md py-1.5 pr-2 text-left ${indent ? 'pl-5 text-[12.5px]' : 'pl-2 text-[13px]'} ${
         isSelected ? 'bg-tint text-ink' : 'text-muted hover:bg-low hover:text-ink'
       }`}
     >
-      <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
-      <Count solved={solved} total={total} />
+      <span className="flex items-center gap-2">
+        <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
+        <Count solved={solved} total={total} />
+      </span>
+      {bar && <RowBar solved={solved} total={total} onTint={isSelected} />}
     </button>
   )
 }
@@ -128,11 +140,14 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
                   type="button"
                   onClick={() => togglePhase(phase.phase)}
                   aria-expanded={open}
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] text-muted hover:bg-low hover:text-ink"
+                  className="block w-full rounded-md px-2 py-1.5 text-left text-[13px] text-muted hover:bg-low hover:text-ink"
                 >
-                  <span className={`mono shrink-0 text-[11px] ${current ? 'text-accent' : ''}`}>{String(phase.phase).padStart(2, '0')}</span>
-                  <span className={`min-w-0 flex-1 truncate font-medium ${open ? 'text-ink' : ''}`}>{phase.name}</span>
-                  <Count solved={phase.solved} total={phase.total} />
+                  <span className="flex items-center gap-2">
+                    <span className={`mono shrink-0 text-[11px] ${current ? 'text-accent' : ''}`}>{String(phase.phase).padStart(2, '0')}</span>
+                    <span className={`min-w-0 flex-1 truncate font-medium ${open ? 'text-ink' : ''}`}>{phase.name}</span>
+                    <Count solved={phase.solved} total={phase.total} />
+                  </span>
+                  <RowBar solved={phase.solved} total={phase.total} />
                 </button>
                 {open && (
                   <ul className="mb-1">
@@ -140,6 +155,7 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
                       <li key={topic.topic}>
                         <TopicItem
                           indent
+                          bar
                           label={topicName(topic.topic)}
                           solved={topic.solved}
                           total={topic.total}
