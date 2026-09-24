@@ -229,6 +229,37 @@
     font-weight: 550;
   }
 
+  /* Under 760px a board row becomes the narrow card: the name gets the whole
+     first line, and the controls sit under it. Cells marked .cell-wide are
+     table-only extras (index, topic) and drop out. */
+  @media (max-width: 759px) {
+    .board--cards thead,
+    .board--cards .cell-wide {
+      display: none;
+    }
+    .board--cards tbody tr {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr);
+      align-items: center;
+      gap: 8px 10px;
+      padding: 10px 2px;
+      border-bottom: 1px solid rgb(var(--line));
+    }
+    .board--cards tbody td {
+      display: block;
+      padding: 0;
+      border: 0;
+      width: auto;
+      max-width: none;
+    }
+    .board--cards tbody td.cell-name {
+      grid-column: 1 / -1;
+    }
+    .board--cards tbody td:last-child {
+      justify-self: end;
+    }
+  }
+
   /* Difficulty: the letter carries the meaning, the fill only reinforces it. */
   .dif {
     display: inline-grid;

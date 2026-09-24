@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react'
 import { dateFromIso, formatDate, isoFromDate } from '../progress.js'
 
-const WEEKS = 18
+// Wide enough to fill the page with square cells: one column per week.
+const WEEKS = 26
 // Empty, then 28%, 58% and 100% of the accent (see index.css).
 const LEVELS = ['heat-0', 'heat-1', 'heat-2', 'heat-3']
 
@@ -25,18 +25,10 @@ function describe(day) {
   return parts.join(' · ')
 }
 
-// Practice per day for the last few months, one column per week (Sunday first).
-// A day counts if you solved something or reviewed something, so a day spent
-// entirely on reviews still shows up.
+// Practice per day, one column per week (Sunday first). A day counts if you
+// solved something or reviewed something, so a day spent entirely on reviews
+// still shows up.
 export default function Heatmap({ activity, today }) {
-  const scrollRef = useRef(null)
-
-  // On narrow screens the grid scrolls; start at the most recent weeks.
-  useEffect(() => {
-    const element = scrollRef.current
-    if (element) element.scrollLeft = element.scrollWidth
-  }, [])
-
   const end = dateFromIso(today)
   const start = new Date(end)
   start.setDate(end.getDate() - end.getDay() - (WEEKS - 1) * 7)
@@ -57,33 +49,27 @@ export default function Heatmap({ activity, today }) {
   const summary = [solves > 0 && `${solves} solved`, reviews > 0 && plural(reviews, 'review')].filter(Boolean).join(' · ') || 'Nothing yet'
 
   return (
-    <div>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h3 className="text-sm font-medium text-muted">Activity</h3>
-        <p className="text-xs text-muted">
-          {summary} on {plural(activeDays, 'day')} · last {WEEKS} weeks
+    <>
+      <div className="sech">
+        <h2 id="activity-heading" className="lbl">
+          Activity · {WEEKS} weeks
+        </h2>
+        <p className="lbl ml-auto">
+          {summary} · {plural(activeDays, 'day')}
         </p>
       </div>
-      <div ref={scrollRef} className="mt-3 overflow-x-auto pb-1">
-        <div
-          role="img"
-          aria-label={`${summary} across ${plural(activeDays, 'day')} in the last ${WEEKS} weeks`}
-          className="grid w-max grid-flow-col grid-rows-7 gap-[3px]"
-        >
-          {days.map((day) => {
-            const counts = activity.get(day)
-            const total = counts ? counts.solves + counts.reviews : 0
-            return <span key={day} title={`${describe(counts)} · ${formatDate(day)}`} className={`h-3 w-3 rounded-[3px] ${LEVELS[levelFor(total)]}`} />
-          })}
-        </div>
+      <div
+        role="img"
+        aria-label={`${summary} across ${plural(activeDays, 'day')} in the last ${WEEKS} weeks`}
+        className="mt-2 grid grid-flow-col grid-rows-7 gap-[3px]"
+        style={{ gridTemplateColumns: `repeat(${WEEKS}, minmax(0, 1fr))` }}
+      >
+        {days.map((day) => {
+          const counts = activity.get(day)
+          const total = counts ? counts.solves + counts.reviews : 0
+          return <span key={day} title={`${describe(counts)} · ${formatDate(day)}`} className={`aspect-square ${LEVELS[levelFor(total)]}`} />
+        })}
       </div>
-      <div className="mt-2 flex items-center justify-end gap-1 text-[11px] text-muted" aria-hidden="true">
-        Less
-        {LEVELS.map((level) => (
-          <span key={level} className={`h-2.5 w-2.5 rounded-[3px] ${level}`} />
-        ))}
-        More
-      </div>
-    </div>
+    </>
   )
 }

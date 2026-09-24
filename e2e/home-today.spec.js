@@ -16,7 +16,9 @@ test('Home says you are caught up rather than dropping the card', async ({ page 
   await page.goto('/')
 
   await expect(page.getByRole('heading', { name: /caught up/i })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'No weak spots' })).toBeVisible()
+  // The empty column stays, and says why it is empty.
+  await expect(page.getByRole('heading', { name: 'Weak spots · 0' })).toBeVisible()
+  await expect(page.getByText(/^No weak spots/)).toBeVisible()
 })
 
 test('Home frames the day and states what is held back', async ({ page }) => {
@@ -29,8 +31,8 @@ test('Home frames the day and states what is held back', async ({ page }) => {
   })
   await page.goto('/')
 
-  await expect(page.getByRole('heading', { level: 1, name: 'Today: 15 reviews' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Today’s reviews · 15' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Today: 15 reviews, then Phase 1' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Due today — 15 of 40' })).toBeVisible()
   // The remainder is stated rather than quietly dropped.
   await expect(page.getByText(/15 of 40/)).toBeVisible()
   await expect(page.getByText(/25 more are due but held back/)).toBeVisible()
@@ -66,7 +68,7 @@ async function reviewOne(page, index) {
 
 test('fifteen reviews spend the day, and Home says so', async ({ page }) => {
   await withBigBacklog(page)
-  await expect(page.getByRole('heading', { name: 'Today’s reviews · 15' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Due today — 15 of 40' })).toBeVisible()
 
   for (let done = 0; done < 15; done++) await reviewOne(page, done)
 
@@ -75,7 +77,7 @@ test('fifteen reviews spend the day, and Home says so', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Done for today' })).toBeVisible()
   await expect(page.getByRole('heading', { level: 1, name: 'Today: reviews done' })).toBeVisible()
   await expect(page.getByText(/15 reviewed today\. 25 still due/)).toBeVisible()
-  await expect(page.getByRole('heading', { name: /Today’s reviews/ })).toBeHidden()
+  await expect(page.getByRole('heading', { name: /^Due today/ })).toBeHidden()
 })
 
 test('the next batch is revealed only by asking for it', async ({ page }) => {
@@ -87,8 +89,7 @@ test('the next batch is revealed only by asking for it', async ({ page }) => {
 
   // A deliberate act raises the budget rather than bypassing it, and what comes
   // back is the next batch of the same backlog.
-  await expect(page.getByRole('heading', { name: 'Today’s reviews · 15' })).toBeVisible()
-  await expect(page.getByText(/15 of 25/)).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Due today — 15 of 25' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Done for today' })).toBeHidden()
 })
 
@@ -101,7 +102,7 @@ test('a backlog smaller than what is left of the budget is not held back', async
   await page.getByRole('button', { name: 'Review more' }).click()
 
   // Fewer than a full batch left, so nothing is held back and the card says so.
-  await expect(page.getByRole('heading', { name: 'Today’s reviews · 5' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Due today — 5', exact: true })).toBeVisible()
   await expect(page.getByText(/held back/)).toBeHidden()
 })
 

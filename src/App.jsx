@@ -176,7 +176,6 @@ function Tracker({ data }) {
           onReview={(id, result) =>
             withUndo(id, result === 'got' ? `Reviewed “${named(id)}”` : `Back in 3 days: “${named(id)}”`, () => reviewProblem(id, result))
           }
-          onToggleBookmark={toggleBookmark}
           onOpenQuestion={openQuestion}
           onContinue={() => goToProblems({ topic: upNext[0].topic, show: 'todo' })}
           onSelectPhase={selectPhase}
@@ -189,7 +188,7 @@ function Tracker({ data }) {
             setOnboarded(true)
           }}
           onShowPatterns={() => navigate({ view: 'patterns', problem: null })}
-          onBrowse={() => goToProblems()}
+          onOpenPattern={(topic, pattern) => goToProblems({ topic, pattern })}
         />
       </main>
     )
