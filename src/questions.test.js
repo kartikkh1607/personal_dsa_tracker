@@ -12,6 +12,14 @@ describe('indexQuestions', () => {
     expect(index.questionsById.size).toBe(EXPECTED_QUESTIONS)
   })
 
+  it('keeps the file in step order, with steps 1..N and no gaps', () => {
+    // csv.js exports in array order and the rows must line up with the workbook's Master tab,
+    // so a record whose step changed has to move in the array too.
+    expect(questions.map((q) => q.step)).toEqual(
+      Array.from({ length: EXPECTED_QUESTIONS }, (_, i) => i + 1),
+    )
+  })
+
   it('sorts topics by their leading sheet number', () => {
     expect(index.topics).toEqual([...index.topics].sort((a, b) => a.localeCompare(b)))
     expect(index.topics[0]).toMatch(/^01\./)

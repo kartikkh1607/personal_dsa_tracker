@@ -7680,6 +7680,21 @@
     "linkVerified": true
   },
   {
+    "id": 460,
+    "step": 513,
+    "stage": "4. Greedy & Backtracking - Depth",
+    "topic": "15. Intervals",
+    "pattern": "Scheduling",
+    "problem": "Job Sequencing Problem",
+    "difficulty": "Medium",
+    "tier": "Depth",
+    "phase": 4,
+    "phaseName": "Greedy & Backtracking",
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1",
+    "linkVerified": true
+  },
+  {
     "id": 843,
     "step": 514,
     "stage": "4. Greedy & Backtracking - Depth",
@@ -8007,21 +8022,6 @@
     "phaseName": "Greedy & Backtracking",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/remove-duplicate-letters/",
-    "linkVerified": true
-  },
-  {
-    "id": 460,
-    "step": 513,
-    "stage": "4. Greedy & Backtracking - Depth",
-    "topic": "15. Intervals",
-    "pattern": "Scheduling",
-    "problem": "Job Sequencing Problem",
-    "difficulty": "Medium",
-    "tier": "Depth",
-    "phase": 4,
-    "phaseName": "Greedy & Backtracking",
-    "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1",
     "linkVerified": true
   },
   {
@@ -9042,6 +9042,21 @@
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/amount-of-time-for-binary-tree-to-be-infected/",
+    "linkVerified": true
+  },
+  {
+    "id": 598,
+    "step": 604,
+    "stage": "5. Trees & Graphs - Core",
+    "topic": "18. Trees & BST",
+    "pattern": "Serialization",
+    "problem": "Serialize and Deserialize BST",
+    "difficulty": "Medium",
+    "tier": "Core",
+    "phase": 5,
+    "phaseName": "Trees & Graphs",
+    "platform": "LeetCode",
+    "link": "https://leetcode.com/problems/serialize-and-deserialize-bst/",
     "linkVerified": true
   },
   {
@@ -10123,21 +10138,6 @@
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/closest-leaf-in-a-binary-tree/",
     "linkVerified": false
-  },
-  {
-    "id": 598,
-    "step": 604,
-    "stage": "5. Trees & Graphs - Core",
-    "topic": "18. Trees & BST",
-    "pattern": "Serialization",
-    "problem": "Serialize and Deserialize BST",
-    "difficulty": "Medium",
-    "tier": "Core",
-    "phase": 5,
-    "phaseName": "Trees & Graphs",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/serialize-and-deserialize-bst/",
-    "linkVerified": true
   },
   {
     "id": 524,
