@@ -670,9 +670,9 @@
     "tier": "Core",
     "phase": 1,
     "phaseName": "Foundations",
-    "platform": "LeetCode",
-    "link": "https://leetcode.com/problems/wiggle-sort/",
-    "linkVerified": false
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/problems/convert-array-into-zig-zag-fashion1638/1",
+    "linkVerified": true
   },
   {
     "id": 185,
