@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { isLapsed, nextReviewDate } from '../review.js'
-import { entryFromRow, mergeProgress, mergeSummary, unionEntries } from './merge.js'
+import { entryFromRow, mergeProgress, mergeSummary, mergeWasTwoSided, unionEntries } from './merge.js'
 
 const IDS = new Set(['1', '2', '3', '4', '5'])
 
@@ -362,5 +362,23 @@ describe('mergeSummary', () => {
     expect(mergeSummary({ fromLocal: 1, fromCloud: 0, merged: 0, deleted: 0 })).toBe('Merged 1 local entry')
     expect(mergeSummary({ fromLocal: 3, fromCloud: 2, merged: 4, deleted: 0 })).toBe('Merged 3 local + 2 cloud + 4 combined entries')
     expect(mergeSummary({ fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0 })).toBe('Nothing to merge')
+  })
+})
+
+describe('mergeWasTwoSided', () => {
+  it('is false for a plain pull, and for a copy both sides already agree on', () => {
+    const pull = mergeProgress({ local: {}, remote: [row(1, { solved: true, updatedAt: at('10') })], questionIds: IDS })
+    expect(mergeWasTwoSided(pull.stats)).toBe(false)
+    const same = mergeProgress({ local: { 1: { solved: true, updatedAt: at('10') } }, remote: [row(1, { solved: true, updatedAt: at('10') })], questionIds: IDS })
+    expect(mergeWasTwoSided(same.stats)).toBe(false)
+  })
+
+  it('is true when this device had something new, or both sides had a different version', () => {
+    const localOnly = mergeProgress({ local: { 1: { solved: true, updatedAt: at('10') } }, remote: [], questionIds: IDS })
+    expect(mergeWasTwoSided(localOnly.stats)).toBe(true)
+    const cloudWon = mergeProgress({ local: { 1: { solved: true, updatedAt: at('10') } }, remote: [row(1, { solved: false, updatedAt: at('11') })], questionIds: IDS })
+    expect(mergeWasTwoSided(cloudWon.stats)).toBe(true)
+    const unstamped = mergeProgress({ local: { 1: { solved: true } }, remote: [row(1, { bookmarked: true })], questionIds: IDS })
+    expect(mergeWasTwoSided(unstamped.stats)).toBe(true)
   })
 })

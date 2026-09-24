@@ -9,7 +9,7 @@ import {
   SYNC_CONFIGURED,
   takeAuthCallback,
 } from '../sync/client.js'
-import { mergeSummary } from '../sync/merge.js'
+import { mergeSummary, mergeWasTwoSided } from '../sync/merge.js'
 import { syncOnce } from '../sync/sync.js'
 
 // Local changes are pushed on a longer delay than they are saved. A save is
@@ -122,6 +122,8 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
   const userId = session?.user?.id ?? null
 
   const run = useCallback(
+    // announce: 'always' for a sync the user asked for, 'if-two-sided' for a
+    // sign-in, which only has news when the merge actually combined two sides.
     async ({ announce = false } = {}) => {
       if (!userId) return
       const client = await loadClient()
@@ -163,7 +165,9 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
         setLastSyncedAt(Date.now())
         setError(null)
         setStatus('idle')
-        if (announce) showToast(mergeSummary(merged.stats))
+        if (announce === 'always' || (announce === 'if-two-sided' && mergeWasTwoSided(merged.stats))) {
+          showToast(mergeSummary(merged.stats))
+        }
       } catch (cause) {
         // A failed round changes nothing: the progress in this browser is
         // untouched and the same merge is attempted again on the next trigger.
@@ -193,7 +197,7 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
     }
     const announce = announceNext.current
     announceNext.current = false
-    runRef.current({ announce })
+    runRef.current({ announce: announce && 'if-two-sided' })
   }, [userId])
 
   // A local change, once it has settled.
@@ -253,7 +257,7 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
     showToast('Signed out - your progress is still on this device')
   }, [showToast])
 
-  const syncNow = useCallback(() => runRef.current({ announce: true }), [])
+  const syncNow = useCallback(() => runRef.current({ announce: 'always' }), [])
 
   return {
     configured: SYNC_CONFIGURED,

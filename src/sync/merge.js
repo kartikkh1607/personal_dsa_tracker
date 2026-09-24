@@ -202,7 +202,10 @@ export function mergeProgress({ local = {}, tombstones = {}, remote = [], questi
   const progress = {}
   const nextTombstones = {}
   const push = []
-  const stats = { fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0 }
+  // localOnly and collided count the entries where two sides actually met:
+  // one the cloud had never seen, or one both sides held in different
+  // versions. A plain pull of the account has neither.
+  const stats = { fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0, localOnly: 0, collided: 0 }
 
   for (const id of ids) {
     const localEntry = local[id] ?? null
@@ -233,12 +236,28 @@ export function mergeProgress({ local = {}, tombstones = {}, remote = [], questi
     if (source === 'local') stats.fromLocal++
     else if (source === 'cloud') stats.fromCloud++
     else stats.merged++
+    if (localEntry && !remoteEntry) stats.localOnly++
+    else if (localEntry && remoteEntry && differ(localEntry, remoteEntry)) stats.collided++
 
     // Push anything the cloud doesn't already have in this exact form.
     if (source !== 'cloud') push.push(rowFromEntry(id, entry))
   }
 
   return { progress, tombstones: nextTombstones, push, cursor, stats }
+}
+
+// Two copies of an entry are the same version when they carry the same stamp.
+// Without a stamp on both there is no telling, so they count as different.
+function differ(a, b) {
+  const aAt = isoOf(a.updatedAt)
+  return !aAt || aAt !== isoOf(b.updatedAt)
+}
+
+// Whether a merge combined two sides, which is the only time a sign-in has
+// anything worth saying: this device held something the cloud didn't, or both
+// held an entry and one version won. Pulling the account down is not that.
+export function mergeWasTwoSided(stats) {
+  return (stats?.localOnly ?? 0) + (stats?.collided ?? 0) > 0
 }
 
 // "Merged 84 local + 12 cloud entries", for the toast after a first sign-in.
