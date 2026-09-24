@@ -202,7 +202,7 @@ Signing out leaves everything in this browser exactly where it was.
 | `src/data/questions.json` | The 922 questions, and the only copy. Source data the app never writes to; `check-links` updates `linkVerified` in place. |
 | `src/questions.js` | Fetches the question list as a separate asset and builds the indexes the app reads. |
 | `src/data/legacyIds.json` | Maps the old 570-problem ids to the new ids, for migrating older progress. |
-| `DSA_Master_Sheet.xlsx` | The same question list as an Excel workbook. |
+| `DSA_Master_Sheet.xlsx` | An offline companion, not an input: nothing in the app or `scripts/` reads it. Its Master tab holds the same 922 questions in the same order, next to plan, dashboard and pattern-coverage tabs, and **Export for Excel** writes a CSV laid out to paste into it. It is kept by hand, so `src/data/questions.json` is the source of truth; the workbook's links predate the last link update. |
 | `src/App.jsx` | Composition and layout: wires the hooks below to the views. |
 | `src/hooks/` | `useRoute` (hash and history), `useProgress` (saved state and every change to it), `useBackup` (export, import, reminder), `useSync` (signing in, and when to run a sync round), `useToast`, `useKeyboardShortcuts`, `useProblemLists` (counts and the filtered lists). |
 | `src/route.js` | Reads and writes the page and filters in the URL hash. |
