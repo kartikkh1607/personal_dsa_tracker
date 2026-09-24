@@ -41,17 +41,17 @@ function Thumbnail({ id, number, onOpen, onDelete }) {
         onClick={() => onOpen(id)}
         disabled={!ready}
         aria-label={`Open image ${number} full size`}
-        className="block h-20 w-20 overflow-hidden rounded-lg border border-line bg-tint transition-colors hover:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className="block h-[50px] w-[66px] overflow-hidden rounded-md border border-line bg-tint hover:border-accent"
       >
         {ready && <img src={url} alt="" className="h-full w-full object-cover" />}
-        {url === MISSING && <span className="grid h-full place-items-center px-1 text-center text-[11px] leading-4 text-muted">Image unavailable</span>}
+        {url === MISSING && <span className="grid h-full place-items-center px-1 text-center text-[10px] leading-3 text-muted">Unavailable</span>}
       </button>
       <button
         type="button"
         onClick={() => onDelete(id)}
         aria-label={`Delete image ${number}`}
         title="Delete image"
-        className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border border-line bg-card text-sm leading-none text-muted transition-colors hover:border-accent hover:text-accent"
+        className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full border border-rule bg-low text-xs leading-none text-muted hover:border-accent hover:text-accent"
       >
         ×
       </button>
@@ -87,13 +87,13 @@ function Lightbox({ id, onClose }) {
   }, [onClose])
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-label="Note image" className="fixed inset-0 z-[60] flex animate-fade-in items-center justify-center bg-black/80 p-4 sm:p-10" onClick={onClose}>
+    <div role="dialog" aria-modal="true" aria-label="Note image" className="fixed inset-0 z-[60] flex animate-fade-in items-center justify-center bg-canvas/95 p-4 sm:p-10" onClick={onClose}>
       <button
         ref={closeButtonRef}
         type="button"
         onClick={onClose}
         aria-label="Close image"
-        className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full bg-black/50 text-2xl leading-none text-white transition-colors hover:bg-black/70"
+        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-lg border border-rule bg-low text-xl leading-none text-ink hover:border-accent hover:text-accent"
       >
         ×
       </button>
@@ -105,18 +105,30 @@ function Lightbox({ id, onClose }) {
   )
 }
 
-// Attachment strip under the note text.
-export default function NoteImages({ ids, onDelete }) {
+// Thumbnails, then a dashed tile to add another.
+export default function NoteImages({ ids, onDelete, onAdd, canAdd }) {
   const [openId, setOpenId] = useState(null)
   const closeLightbox = useCallback(() => setOpenId(null), [])
 
-  if (ids.length === 0) return null
   return (
     <>
-      <ul className="mt-3 flex flex-wrap gap-3 pr-2 pt-2" aria-label="Note images">
+      <ul className="flex flex-wrap gap-2 pr-1.5 pt-1.5" aria-label="Note images">
         {ids.map((id, index) => (
           <Thumbnail key={id} id={id} number={index + 1} onOpen={setOpenId} onDelete={onDelete} />
         ))}
+        {canAdd && (
+          <li>
+            <button
+              type="button"
+              onClick={onAdd}
+              aria-label="Add image"
+              title="Add an image, or paste a screenshot into the note"
+              className="grid h-[50px] w-[66px] place-items-center rounded-md border border-dashed border-line text-base text-muted hover:border-accent hover:text-accent"
+            >
+              +
+            </button>
+          </li>
+        )}
       </ul>
       {openId && ids.includes(openId) && <Lightbox id={openId} onClose={closeLightbox} />}
     </>
