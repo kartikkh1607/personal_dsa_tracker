@@ -63,6 +63,18 @@ export function Difficulty({ difficulty }) {
   )
 }
 
+// The source mark's hover colours, in the table only. Each pair holds AA for
+// its letter. GeeksforGeeks is deliberately darker than its brand #2F8D46:
+// white on #2F8D46 is 4.18:1 and no letter colour reaches 4.5, so the green
+// is darkened to #237036 (6.10:1). Don't restore #2F8D46. LeetCode keeps its
+// brand #FFA116 with a fixed dark letter (9.13:1), not --ink, which turns
+// light in dark mode. The drawer's --fill button has no hover: an orange or
+// green square on its orange fill would be 1.4-2.1:1.
+const SOURCE_HOVER = {
+  GeeksforGeeks: 'group-hover/src:bg-[#237036] group-hover/src:text-white',
+  LeetCode: 'group-hover/src:bg-[#FFA116] group-hover/src:text-[#121413]',
+}
+
 // Working links open the problem page; unconfirmed ones search Google for the
 // problem instead, and say so.
 export function ProblemLink({ href, verified, platform, problem, variant = 'row', className = '' }) {
@@ -95,18 +107,21 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
       rel="noopener noreferrer"
       aria-label={`${action}: ${problem}`}
       title={action}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded text-xs text-muted hover:underline ${className}`}
+      className={`group/src inline-flex shrink-0 items-center gap-1.5 rounded text-xs text-muted ${className}`}
     >
       {/* The platform's initial in a small square. Text stays muted: with 900+
           rows, a coloured link per row would drown the "due today" signal. An
           unconfirmed link searches Google, so it keeps the search icon and
           gets no mark - a G there would read as GeeksforGeeks. */}
       {verified && (
-        <span aria-hidden="true" className="mono grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[3px] bg-tint text-[9px] font-semibold no-underline">
+        <span
+          aria-hidden="true"
+          className={`mono grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[3px] bg-tint text-[9px] font-semibold ${SOURCE_HOVER[platform] ?? ''}`}
+        >
           {platform[0]}
         </span>
       )}
-      <span className={variant === 'compact' ? 'hidden lg:inline' : ''}>{verified ? platform : 'Google'}</span>
+      <span className={`group-hover/src:underline ${variant === 'compact' ? 'hidden lg:inline' : ''}`}>{verified ? platform : 'Google'}</span>
       {icon}
     </a>
   )

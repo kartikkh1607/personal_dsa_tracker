@@ -471,6 +471,7 @@ export default function ProblemDetailDrawer({
                 ids={imageIds}
                 onDelete={handleDeleteImage}
                 onAdd={() => fileInputRef.current?.click()}
+                onDropFiles={attachImages}
                 canAdd={imageIds.length + attachingCount < MAX_NOTE_IMAGES}
               />
               {imageError?.questionId === question.id && (

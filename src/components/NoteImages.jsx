@@ -107,9 +107,34 @@ function Lightbox({ id, onClose }) {
 
 // Thumbnails, then a dashed tile to add another - or, with none yet, a drop
 // zone.
-export default function NoteImages({ ids, onDelete, onAdd, canAdd }) {
+export default function NoteImages({ ids, onDelete, onAdd, onDropFiles, canAdd }) {
   const [openId, setOpenId] = useState(null)
+  const [dragging, setDragging] = useState(false)
   const closeLightbox = useCallback(() => setOpenId(null), [])
+
+  // Dropped files go the same way as picked or pasted ones: onDropFiles keeps
+  // the images and says what it skipped. Only a drag carrying files is taken,
+  // so dragging text or a link over the zone does nothing.
+  const carriesFiles = (event) => [...event.dataTransfer.types].includes('Files')
+  const dropTarget = canAdd
+    ? {
+        onDragOver: (event) => {
+          if (!carriesFiles(event)) return
+          event.preventDefault()
+          event.dataTransfer.dropEffect = 'copy'
+          setDragging(true)
+        },
+        onDragLeave: (event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false)
+        },
+        onDrop: (event) => {
+          if (!carriesFiles(event)) return
+          event.preventDefault()
+          setDragging(false)
+          onDropFiles([...event.dataTransfer.files])
+        },
+      }
+    : {}
 
   // No images yet: one wide target that says both ways in, rather than a lone
   // + that says neither.
@@ -119,16 +144,23 @@ export default function NoteImages({ ids, onDelete, onAdd, canAdd }) {
       <button
         type="button"
         onClick={onAdd}
-        className="block w-full rounded-xl border border-dashed border-rule px-4 py-5 text-center text-[12.5px] text-muted hover:border-accent hover:text-accent"
+        {...dropTarget}
+        className={`block w-full rounded-xl border border-dashed px-4 py-5 text-center text-[12.5px] hover:border-accent hover:text-accent ${
+          dragging ? 'border-accent bg-tint text-accent' : 'border-rule text-muted'
+        }`}
       >
-        Paste a screenshot, or click to add
+        {dragging ? 'Drop to add' : 'Paste a screenshot, or click to add'}
       </button>
     )
   }
 
   return (
     <>
-      <ul className="flex flex-wrap gap-2 pr-1.5 pt-1.5" aria-label="Note images">
+      <ul
+        {...dropTarget}
+        className={`flex flex-wrap gap-2 rounded-md pr-1.5 pt-1.5 ${dragging ? 'outline-dashed outline-1 outline-offset-4 outline-accent' : ''}`}
+        aria-label="Note images"
+      >
         {ids.map((id, index) => (
           <Thumbnail key={id} id={id} number={index + 1} onOpen={setOpenId} onDelete={onDelete} />
         ))}
