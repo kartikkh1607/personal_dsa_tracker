@@ -129,7 +129,7 @@ export default function Filters({
 
         <DifficultyFilter value={difficulty} onChange={onDifficultyChange} any={ALL} />
 
-        <ToggleChip checked={coreOnly} onChange={onCoreOnlyChange} title="Core: two problems per pattern, the main track of the sheet">
+        <ToggleChip checked={coreOnly} onChange={onCoreOnlyChange} title="Core: the main track of the sheet. Advanced patterns are left to Depth and Stretch">
           Core only
         </ToggleChip>
 
