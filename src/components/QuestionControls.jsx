@@ -108,9 +108,3 @@ export function ProgressBar({ value, total, label, className = '' }) {
     </span>
   )
 }
-
-// A phase's index in Plex Mono: 01, 02... A finished phase shows a tick.
-export function PhaseIndex({ number, complete, current }) {
-  if (complete) return <CheckIcon className="h-3 w-3 shrink-0 text-accent" strokeWidth={2.4} />
-  return <span className={`mono shrink-0 text-[10.5px] ${current ? 'text-accent' : 'text-muted'}`}>{String(number).padStart(2, '0')}</span>
-}

@@ -10,7 +10,7 @@ export function groupId(key) {
 
 // One column that says where a problem stands: not started, due, how often it
 // has been struggled with, or when it next comes back.
-export function problemStatus(entry, today) {
+function problemStatus(entry, today) {
   if (!entry?.solved) return { text: '—', title: 'Not solved yet' }
   if (isDue(entry, today)) return { text: 'due today', title: 'Due for review today', due: true }
   const next = nextReviewDate(entry)
@@ -23,7 +23,7 @@ export function problemStatus(entry, today) {
 // One row per problem. Memoised on primitives, so ticking a problem re-renders
 // that row only rather than all 922. The data-* hooks are what the j/k/x/b
 // keyboard shortcuts look for.
-export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, status, statusTitle, statusDue, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
+const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, status, statusTitle, statusDue, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
     <tr data-problem-row data-question-id={question.id} className="scroll-mt-20">
       <td>
@@ -58,7 +58,7 @@ export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarke
 })
 
 // The optional Depth and Stretch tiers, marked after the name.
-export function problemMeta(question) {
+function problemMeta(question) {
   return question.tier !== 'Core' ? question.tier.toLowerCase() : ''
 }
 

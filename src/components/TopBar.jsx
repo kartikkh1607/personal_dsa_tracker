@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatDate } from '../progress.js'
 import { resolvesToDark } from '../theme.js'
-import AccountMenu from './AccountMenu.jsx'
+import AccountMenu, { MENU_ITEM_CLASS, MENU_SUB_CLASS } from './AccountMenu.jsx'
 import { CheckIcon, MoonIcon, SunIcon } from './icons.jsx'
 
 const TABS = [
@@ -10,7 +10,6 @@ const TABS = [
   { value: 'patterns', label: 'Patterns' },
 ]
 
-const MENU_ITEM_CLASS = 'flex w-full flex-col rounded-lg px-3 py-2 text-left text-sm text-muted transition-colors hover:bg-tint hover:text-ink'
 const ICON_BUTTON_CLASS = 'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-muted hover:bg-tint hover:text-ink'
 
 export default function TopBar({ view, onViewChange, solved, total, theme, onThemeChange, sync, lastBackup, onExport, onExportCsv, onImport }) {
@@ -108,27 +107,33 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
               </button>
 
               {menuOpen && (
-                <div role="menu" className="absolute right-0 top-full mt-2 w-80 animate-fade-up rounded-xl border border-line bg-card p-1.5">
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full mt-2 flex w-[296px] animate-fade-up flex-col gap-3 rounded-2xl border border-rule bg-low p-3.5"
+                >
                   <AccountMenu sync={sync} />
-                  <p className="px-3 pb-2 pt-1.5 text-xs leading-5 text-muted">
-                    {sync.signedIn ? 'Progress is saved in this browser and mirrored to your account.' : 'Progress is saved in this browser.'}{' '}
+                  {sync.configured && <hr className="border-line" />}
+                  <div>
+                    <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExport)}>
+                      Export backup
+                      <span className={MENU_SUB_CLASS}>A file you can import on any device</span>
+                    </button>
+                    <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExportCsv)}>
+                      Export for Excel
+                      <span className={MENU_SUB_CLASS}>CSV in the Master tab’s column order</span>
+                    </button>
+                    <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(() => fileInputRef.current?.click())}>
+                      Import backup…
+                      <span className={MENU_SUB_CLASS}>Merge it in, or replace what&rsquo;s here</span>
+                    </button>
+                  </div>
+                  <p className="border-t border-line px-2 pt-2.5 text-[11.5px] text-muted">
+                    {sync.configured ? '' : 'Progress is saved in this browser. '}
                     {lastBackup ? `Last backup: ${formatDate(lastBackup)}.` : 'Not backed up yet.'}
                   </p>
-                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExport)}>
-                    Export backup
-                    <span className="text-xs text-muted">A file you can import on any device</span>
-                  </button>
-                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExportCsv)}>
-                    Export for Excel
-                    <span className="text-xs text-muted">CSV in the Master tab’s column order</span>
-                  </button>
-                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(() => fileInputRef.current?.click())}>
-                    Import backup…
-                    <span className="text-xs text-muted">Merge it in, or replace what&rsquo;s here</span>
-                  </button>
                 </div>
               )}
-  
+
               <input
                 ref={fileInputRef}
                 type="file"

@@ -33,35 +33,10 @@ export function SearchIcon({ className = 'h-3.5 w-3.5' }) {
   )
 }
 
-export function ChevronIcon({ className = 'h-3.5 w-3.5' }) {
-  return (
-    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <path d="M6 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
 export function ArrowRightIcon({ className = 'h-4 w-4' }) {
   return (
     <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
       <path d="M3 8h10m-4-4 4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-export function FlameIcon({ className = 'h-3.5 w-3.5' }) {
-  return (
-    <svg viewBox="0 0 16 16" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M8.6 1.2c.3 2.1-.8 3.4-1.9 4.6C5.6 7 4.5 8.2 4.5 10.2A3.5 3.5 0 0 0 8 13.8a3.6 3.6 0 0 0 3.6-3.6c0-1.2-.5-2.2-1.1-3 .1 1-.3 1.9-1.1 2.3.4-2.9-.2-6-.8-8.3z" />
-    </svg>
-  )
-}
-
-export function CalendarIcon({ className = 'h-3.5 w-3.5' }) {
-  return (
-    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      <rect x="2.5" y="3.5" width="11" height="10" rx="1.5" />
-      <path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" strokeLinecap="round" />
     </svg>
   )
 }
@@ -95,16 +70,6 @@ export function NoteIcon({ className = 'h-3.5 w-3.5' }) {
   return (
     <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
       <path d="M3.5 2.5h9a1 1 0 0 1 1 1v6l-4 4h-6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zM13.5 9.5h-3a1 1 0 0 0-1 1v3M5.5 5.5h5M5.5 8h3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-export function ImageIcon({ className = 'h-3.5 w-3.5' }) {
-  return (
-    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      <rect x="2.5" y="3" width="11" height="10" rx="1.5" />
-      <circle cx="6" cy="6.5" r="1" />
-      <path d="m2.5 11 3-3 2.5 2.5 2-2 3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

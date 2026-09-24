@@ -7,8 +7,9 @@
 // built-in Supabase sender only delivers to members of the project, so for
 // everyone else a link was sent and never arrived.
 
-const ACTION_CLASS =
-  'inline-flex h-9 items-center justify-center rounded-lg border border-line bg-card px-3 text-sm font-medium text-muted transition-colors hover:border-rule hover:text-ink disabled:pointer-events-none disabled:opacity-40'
+// Shared with the backup items in TopBar: a row with an optional sub-line.
+export const MENU_ITEM_CLASS = 'block w-full rounded-md px-2 py-[7px] text-left text-[13px] text-ink hover:bg-tint disabled:pointer-events-none disabled:opacity-40'
+export const MENU_SUB_CLASS = 'mt-0.5 block text-[11.5px] text-muted'
 
 function statusLine({ status, lastSyncedAt, error }) {
   if (status === 'syncing') return 'Syncing…'
@@ -37,29 +38,43 @@ function GoogleMark() {
   )
 }
 
+function Who({ title, children, dot }) {
+  return (
+    <div className="px-2">
+      <p className="truncate text-[13px] font-semibold text-ink" title={title}>
+        {title}
+      </p>
+      <p className="mt-0.5 flex items-center gap-[7px] text-xs leading-5 text-muted">
+        {dot && <i aria-hidden="true" className={`block h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />}
+        <span className="min-w-0">{children}</span>
+      </p>
+    </div>
+  )
+}
+
 export default function AccountMenu({ sync }) {
   // A build with no Supabase project behaves exactly as it did before sync
   // existed, so there is nothing to show.
   if (!sync.configured) return null
 
   if (sync.signedIn) {
+    const dot = sync.status === 'syncing' ? 'bg-muted' : 'bg-accent'
     return (
-      <div className="border-b border-line px-3 pb-3 pt-1.5">
-        <p className="truncate text-sm font-medium text-ink" title={sync.email ?? undefined}>
-          {sync.email}
-        </p>
-        <p className={`mt-0.5 text-xs leading-5 ${sync.status === 'error' ? 'text-accent' : 'text-muted'}`}>
-          {statusLine(sync)}
-        </p>
-        <div className="mt-2 flex gap-2">
-          <button type="button" className={ACTION_CLASS} onClick={sync.syncNow} disabled={sync.status === 'syncing'}>
+      <>
+        <Who title={sync.email} dot={dot}>
+          <span className={sync.status === 'error' ? 'text-accent' : ''}>{statusLine(sync)}</span>
+        </Who>
+        <hr className="border-line" />
+        <div>
+          <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={sync.syncNow} disabled={sync.status === 'syncing'}>
             Sync now
           </button>
-          <button type="button" className={ACTION_CLASS} onClick={sync.signOut}>
+          <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={sync.signOut}>
             Sign out
+            <span className={MENU_SUB_CLASS}>Keeps this browser&rsquo;s progress</span>
           </button>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -67,32 +82,22 @@ export default function AccountMenu({ sync }) {
   // all. Saying that is better than an offer that cannot be taken.
   if (!sync.googleEnabled) {
     return (
-      <div className="border-b border-line px-3 pb-3 pt-1.5">
-        <p className="text-sm font-medium text-ink">Sync across devices</p>
-        <p className="mt-0.5 text-xs leading-5 text-muted">
-          Sign-in isn&rsquo;t available in this build. Your progress is saved in this browser as usual.
-        </p>
-      </div>
+      <Who title="Signed out">Sign-in isn&rsquo;t available in this build. Your progress is saved in this browser as usual.</Who>
     )
   }
 
   return (
-    <div className="border-b border-line px-3 pb-3 pt-1.5">
-      <p className="text-sm font-medium text-ink">Sync across devices</p>
-      <p className="mt-0.5 text-xs leading-5 text-muted">
-        Sign in to mirror this browser&rsquo;s progress to your other devices. It stays saved here either way.
-      </p>
-
+    <>
+      <Who title="Signed out">Progress is saved in this browser only. Sign in to mirror it to your other devices.</Who>
       <button
         type="button"
         onClick={sync.signInWithGoogle}
-        className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink transition-colors hover:border-rule hover:bg-tint"
+        className="flex items-center justify-center gap-[9px] rounded-lg border border-rule px-3 py-[9px] text-[13px] font-semibold text-ink hover:border-accent hover:text-accent"
       >
         <GoogleMark />
         Continue with Google
       </button>
-
-      {sync.error && <p className="mt-2 text-xs leading-5 text-accent">{sync.error}</p>}
-    </div>
+      {sync.error && <p className="px-2 text-xs leading-5 text-accent">{sync.error}</p>}
+    </>
   )
 }
