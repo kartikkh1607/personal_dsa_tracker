@@ -60,7 +60,7 @@ function Tracker({ data }) {
     today,
     extraReviews,
   })
-  const { visible, groupByPattern } = useFilteredProblems({
+  const { visible, groupByPattern, searching } = useFilteredProblems({
     questions,
     progress,
     today,
@@ -134,6 +134,7 @@ function Tracker({ data }) {
         today={today}
         visible={visible}
         groupByPattern={groupByPattern}
+        searching={searching}
         selectedTopic={selectedTopic}
         difficulty={difficulty}
         reviewCount={reviewBacklog.length}

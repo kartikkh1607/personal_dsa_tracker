@@ -22,7 +22,7 @@ function RowBar({ solved, total, onTint = false }) {
   return <ProgressBar value={solved} total={total} className={`mt-1 !h-[2px] ${onTint ? '!bg-line' : ''}`} />
 }
 
-function TopicItem({ label, solved, total, isSelected, onClick, indent = false, bar = false }) {
+function TopicItem({ label, solved, total, isSelected, overridden = false, onClick, indent = false, bar = false }) {
   return (
     <button
       type="button"
@@ -30,7 +30,8 @@ function TopicItem({ label, solved, total, isSelected, onClick, indent = false, 
       aria-current={isSelected ? 'page' : undefined}
       className={`block w-full rounded-md py-1.5 pr-2 text-left ${indent ? 'pl-5 text-[12.5px]' : 'pl-2 text-[13px]'} ${
         isSelected ? 'bg-tint text-ink' : 'text-muted hover:bg-low hover:text-ink'
-      }`}
+      } ${isSelected && overridden ? 'opacity-50' : ''}`}
+      title={isSelected && overridden ? 'Set aside while searching - clear the search to come back here' : undefined}
     >
       <span className="flex items-center gap-2">
         <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
@@ -67,7 +68,7 @@ function Search({ search, onSearchChange, searchInputRef, total }) {
 // Search, then the study plan as a tree: the six phases, each with its topics.
 // Only the phase you're working in starts open, so the list reads as a plan
 // rather than 23 empty bars.
-export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTopic, currentPhase, isNarrow, search, onSearchChange, searchInputRef }) {
+export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTopic, currentPhase, isNarrow, search, searching, onSearchChange, searchInputRef }) {
   const selectedPhase = phaseStats.find((phase) => phase.topics.some((topic) => topic.topic === selectedTopic))?.phase
   const [expanded, setExpanded] = useState(() => new Set([selectedPhase ?? currentPhase]))
 
@@ -85,7 +86,18 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
     })
   }
 
-  const searchBox = <Search search={search} onSearchChange={onSearchChange} searchInputRef={searchInputRef} total={overall.total} />
+  // While a search runs it covers the whole sheet, so the selected topic is
+  // set aside: dimmed rather than cleared, and back once the search is empty.
+  const searchBox = (
+    <>
+      <Search search={search} onSearchChange={onSearchChange} searchInputRef={searchInputRef} total={overall.total} />
+      {searching && (
+        <p className="lbl -mt-2 mb-4 text-accent" role="status">
+          Searching all problems
+        </p>
+      )}
+    </>
+  )
 
   // Narrow screens: the tree collapses into a dropdown under the search box.
   if (isNarrow) {
@@ -99,7 +111,7 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
           id="topic-select"
           value={selectedTopic}
           onChange={(event) => onSelectTopic(event.target.value)}
-          className="mt-1.5 h-10 w-full rounded-lg border border-line bg-canvas px-3 text-sm font-medium text-ink"
+          className={`mt-1.5 h-10 w-full rounded-lg border border-line bg-canvas px-3 text-sm font-medium text-ink ${searching ? 'opacity-50' : ''}`}
         >
           <option value={ALL_TOPICS}>
             All problems ({overall.solved}/{overall.total})
@@ -128,6 +140,7 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
           solved={overall.solved}
           total={overall.total}
           isSelected={selectedTopic === ALL_TOPICS}
+          overridden={searching}
           onClick={() => onSelectTopic(ALL_TOPICS)}
         />
         <ul className="mt-1">
@@ -160,6 +173,7 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
                           solved={topic.solved}
                           total={topic.total}
                           isSelected={selectedTopic === topic.topic}
+                          overridden={searching}
                           onClick={() => onSelectTopic(topic.topic)}
                         />
                       </li>

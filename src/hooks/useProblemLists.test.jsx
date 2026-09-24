@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { REVIEW_DAILY_CAP, useHomeLists } from './useProblemLists.js'
+import { ALL } from '../components/Filters.jsx'
+import { ALL_TOPICS } from '../components/Sidebar.jsx'
+import { REVIEW_DAILY_CAP, useFilteredProblems, useHomeLists } from './useProblemLists.js'
 
 const TODAY = '2026-09-21'
 
@@ -136,5 +138,72 @@ describe('the cap as a daily budget', () => {
 
     expect(reviewBacklog).toEqual([])
     expect(count).toBe(20)
+  })
+})
+
+// Two topics, each with a problem whose name matches "sum", so a search that
+// stays inside one topic and one that covers the sheet give different answers.
+const SHEET = [
+  { id: 1, topic: '01. Arrays', pattern: 'Two pointers', problem: 'Two Sum II', difficulty: 'Medium', tier: 'Core' },
+  { id: 2, topic: '01. Arrays', pattern: 'Two pointers', problem: 'Container With Most Water', difficulty: 'Medium', tier: 'Core' },
+  { id: 3, topic: '02. Prefix Sum', pattern: 'Prefix basics', problem: 'Range Sum Query', difficulty: 'Easy', tier: 'Core' },
+  { id: 4, topic: '02. Prefix Sum', pattern: 'Kadane', problem: 'Maximum Subarray', difficulty: 'Hard', tier: 'Depth' },
+]
+
+function filtered({ selectedTopic = '01. Arrays', search = '', difficulty = ALL, progress = {} } = {}) {
+  const { result } = renderHook(() =>
+    useFilteredProblems({ questions: SHEET, progress, today: TODAY, selectedTopic, difficulty, coreOnly: false, notesOnly: false, show: 'all', search }),
+  )
+  return result.current
+}
+
+const ids = (visible) => visible.map((question) => question.id)
+
+describe('searching past the selected topic', () => {
+  it('searches the whole sheet while a topic is selected, and groups by topic', () => {
+    const { visible, groupByPattern, searching } = filtered({ search: 'sum' })
+
+    // Range Sum Query lives in the other topic and is found anyway.
+    expect(ids(visible)).toEqual([1, 3])
+    expect(searching).toBe(true)
+    expect(groupByPattern).toBe(false)
+  })
+
+  it('still applies the filters that were chosen on purpose', () => {
+    // Difficulty is a deliberate filter, so it narrows a sheet-wide search.
+    expect(ids(filtered({ search: 'sum', difficulty: 'Easy' }).visible)).toEqual([3])
+  })
+
+  it('treats a blank search as no search at all', () => {
+    const { visible, searching } = filtered({ search: '   ' })
+
+    expect(ids(visible)).toEqual([1, 2])
+    expect(searching).toBe(false)
+  })
+
+  it('restores the topic filter exactly once the search is emptied', () => {
+    // One hook, rerendered through the whole round trip, the way typing and
+    // then clearing the search box drives it.
+    const { result, rerender } = renderHook((search) =>
+      useFilteredProblems({ questions: SHEET, progress: {}, today: TODAY, selectedTopic: '01. Arrays', difficulty: ALL, coreOnly: false, notesOnly: false, show: 'all', search }),
+      { initialProps: '' },
+    )
+    const before = { ids: ids(result.current.visible), groupByPattern: result.current.groupByPattern }
+
+    rerender('sum')
+    expect(ids(result.current.visible)).toEqual([1, 3])
+
+    rerender('')
+    // The same problems in the same order, grouped the same way, as if the
+    // search never happened.
+    expect(ids(result.current.visible)).toEqual(before.ids)
+    expect(before.ids).toEqual([1, 2])
+    expect(result.current.groupByPattern).toBe(before.groupByPattern)
+    expect(result.current.groupByPattern).toBe(true)
+    expect(result.current.searching).toBe(false)
+  })
+
+  it('behaves the same with no topic selected', () => {
+    expect(ids(filtered({ selectedTopic: ALL_TOPICS, search: 'sum' }).visible)).toEqual([1, 3])
   })
 })

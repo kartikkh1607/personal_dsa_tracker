@@ -120,13 +120,19 @@ export function useHomeLists({ questions, progress, today, extraReviews = 0 }) {
   return { upNext, reviewToday, reviewBacklog, reviewedToday, savedPreview, weakProblems }
 }
 
-// The filtered, grouped problem list. Topic, show, difficulty, Core-only,
-// notes-only and search all combine.
+// The filtered, grouped problem list. Show, difficulty, Core-only, notes-only
+// and search all combine.
+//
+// The topic is different: it is where you happen to be standing, not a filter
+// you chose, so a search looks past it and covers the whole sheet. The topic
+// stays in the route and applies again the moment the search is emptied.
 export function useFilteredProblems({ questions, progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, search }) {
+  const term = search.trim().toLowerCase()
+  const searching = term !== ''
+
   const visible = useMemo(() => {
-    const term = search.trim().toLowerCase()
     return questions.filter((question) => {
-      if (selectedTopic !== ALL_TOPICS && question.topic !== selectedTopic) return false
+      if (!searching && selectedTopic !== ALL_TOPICS && question.topic !== selectedTopic) return false
       if (difficulty !== ALL && question.difficulty !== difficulty) return false
       if (coreOnly && question.tier !== 'Core') return false
       const entry = progress[question.id]
@@ -138,12 +144,13 @@ export function useFilteredProblems({ questions, progress, today, selectedTopic,
       if (term && !question.problem.toLowerCase().includes(term) && !question.pattern.toLowerCase().includes(term)) return false
       return true
     })
-  }, [progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, search, questions])
+  }, [progress, today, selectedTopic, difficulty, coreOnly, notesOnly, show, term, searching, questions])
 
-  // A single topic groups by pattern; all problems group by topic.
-  const groupByPattern = selectedTopic !== ALL_TOPICS
+  // A single topic groups by pattern; all problems group by topic. So does a
+  // search, so each hit shows which topic it lives in.
+  const groupByPattern = selectedTopic !== ALL_TOPICS && !searching
 
-  return { visible, groupByPattern }
+  return { visible, groupByPattern, searching }
 }
 
 // Other problems in the same topic, closest first: same pattern, then the rest.

@@ -21,6 +21,7 @@ export default function ProblemsPage({
   today,
   visible,
   groupByPattern,
+  searching,
   selectedTopic,
   difficulty,
   reviewCount,
@@ -65,10 +66,12 @@ export default function ProblemsPage({
     navigate({ show: 'all', difficulty: null, core: false, notes: false, q: '' }, { replace: true })
   }
 
-  const topicStats = stats.topicStats.find((topic) => topic.topic === selectedTopic)
+  // A search covers the whole sheet whatever topic is selected, so while one
+  // is running the page speaks for all of it.
+  const topicStats = searching ? null : stats.topicStats.find((topic) => topic.topic === selectedTopic)
   const scope = topicStats
     ? { title: topicName(selectedTopic), solved: topicStats.solved, total: topicStats.total }
-    : { title: 'All problems', solved: stats.solved, total: stats.total }
+    : { title: searching ? `Searching all ${stats.total} problems` : 'All problems', solved: stats.solved, total: stats.total }
 
   return (
     <div ref={pageScrollRef} className="min-h-0 flex-1 overflow-y-auto">
@@ -81,6 +84,7 @@ export default function ProblemsPage({
           currentPhase={currentPhase?.phase}
           isNarrow={isNarrow}
           search={search}
+          searching={searching}
           onSearchChange={(value) => navigate({ q: value }, { replace: true })}
           searchInputRef={searchInputRef}
         />
@@ -128,8 +132,8 @@ export default function ProblemsPage({
 
           <p className="flex flex-wrap justify-between gap-3 px-0.5 pt-[9px] text-xs text-muted">
             <span>
-              Showing <b className="mono font-medium text-ink">{visible.length}</b> of <b className="mono font-medium text-ink">{scope.total}</b> in{' '}
-              {scope.title === 'All problems' ? 'all topics' : scope.title}
+              Showing <b className="mono font-medium text-ink">{visible.length}</b> of <b className="mono font-medium text-ink">{scope.total}</b>
+              {searching ? ' — searching all problems' : ` in ${topicStats ? scope.title : 'all topics'}`}
             </span>
             <span>
               Solved <b className="mono font-medium text-ink">{scope.solved}</b> · due <b className="mono font-medium text-ink">{reviewCount}</b>
