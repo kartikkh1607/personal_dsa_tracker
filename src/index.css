@@ -25,6 +25,12 @@
     --onfill: 255 247 243;
     --warn: 246 228 198;
     --onwarn: 107 74 16;
+    /* Difficulty letters, on --tint. Each is at least 4.5:1 against --tint,
+       --canvas and --low. Easy is darker than #1F7A3D on purpose: that was
+       4.23:1 on --tint. */
+    --easy: #1d723a;
+    --medium: #8a5a00;
+    --hard: #b3261e;
   }
 
   :root[data-theme='dark'] {
@@ -42,6 +48,9 @@
     --onfill: 242 168 130;
     --warn: 58 42 23;
     --onwarn: 233 192 138;
+    --easy: #6fc98c;
+    --medium: #e0b063;
+    --hard: #f08a80;
   }
 
   /* Follow the system setting unless the user picked a theme explicitly. */
@@ -61,6 +70,9 @@
       --onfill: 242 168 130;
       --warn: 58 42 23;
       --onwarn: 233 192 138;
+      --easy: #6fc98c;
+      --medium: #e0b063;
+      --hard: #f08a80;
     }
   }
 
@@ -271,7 +283,9 @@
     }
   }
 
-  /* Difficulty: the letter carries the meaning, the fill only reinforces it. */
+  /* Difficulty: an outlined mark. The letter carries the meaning and the
+     colour backs it up; the border and letter take the colour, the fill stays
+     --tint. No filled chips: fifteen of them would drown "due today". */
   .dif {
     display: inline-grid;
     place-items: center;
@@ -279,16 +293,21 @@
     height: 19px;
     flex: none;
     border-radius: 4px;
-    border: 1px solid rgb(var(--rule));
+    border: 1px solid currentColor;
+    background: rgb(var(--tint));
     font-family: theme('fontFamily.mono');
     font-size: 10.5px;
     font-weight: 600;
     color: rgb(var(--muted));
   }
+  .dif--e {
+    color: var(--easy);
+  }
+  .dif--m {
+    color: var(--medium);
+  }
   .dif--h {
-    background: rgb(var(--fill));
-    color: rgb(var(--onfill));
-    border-color: transparent;
+    color: var(--hard);
   }
 
   /* Review step (R1/3) and the relearn marker. */

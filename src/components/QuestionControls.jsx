@@ -52,11 +52,14 @@ export function BookmarkButton({ bookmarked, problem, onToggle, ...rest }) {
   )
 }
 
-// A 19px square with the difficulty's letter. The letter carries the meaning;
-// Hard's fill only reinforces it.
+// Written out in full so Tailwind keeps the classes in the build.
+const DIFFICULTY_CLASS = { Easy: 'dif--e', Medium: 'dif--m', Hard: 'dif--h' }
+
+// A 19px outlined square with the difficulty's letter, in its colour. The
+// letter carries the meaning; the colour only reinforces it.
 export function Difficulty({ difficulty }) {
   return (
-    <span className={`dif ${difficulty === 'Hard' ? 'dif--h' : ''}`} title={difficulty}>
+    <span className={`dif ${DIFFICULTY_CLASS[difficulty]}`} title={difficulty}>
       <span aria-hidden="true">{DIFFICULTY_LETTER[difficulty]}</span>
       <span className="sr-only">{difficulty}</span>
     </span>
