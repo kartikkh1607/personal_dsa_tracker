@@ -1,6 +1,6 @@
 import { memo } from 'react'
-import { hasNote } from '../progress.js'
-import { isDue } from '../review.js'
+import { daysBetween, formatDate, hasNote } from '../progress.js'
+import { isDue, isWeak, nextReviewDate, struggleCount } from '../review.js'
 import { BookmarkButton, Difficulty, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
 
 // Anchor id for a group, so the Patterns page can scroll straight to one.
@@ -8,87 +8,110 @@ export function groupId(key) {
   return `group-${key.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
 }
 
-// One row layout for every screen size. Memoised on primitives, so ticking a
-// problem re-renders that row only rather than all 922. The data-* hooks are
-// what the j/k/x/b keyboard shortcuts look for.
-export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, due, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
+// One column that says where a problem stands: not started, due, how often it
+// has been struggled with, or when it next comes back.
+export function problemStatus(entry, today) {
+  if (!entry?.solved) return { text: '—', title: 'Not solved yet' }
+  if (isDue(entry, today)) return { text: 'due today', title: 'Due for review today', due: true }
+  const next = nextReviewDate(entry)
+  const when = next ? `Next review ${formatDate(next)}` : 'All reviews done'
+  if (isWeak(entry)) return { text: `struggled ${struggleCount(entry)}×`, title: when }
+  if (next) return { text: `review in ${daysBetween(today, next)}d`, title: when }
+  return { text: 'solved', title: when }
+}
+
+// One row per problem. Memoised on primitives, so ticking a problem re-renders
+// that row only rather than all 922. The data-* hooks are what the j/k/x/b
+// keyboard shortcuts look for.
+export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, status, statusTitle, statusDue, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
-    <li
-      data-problem-row
-      data-question-id={question.id}
-      className={`group flex scroll-mt-10 items-center gap-3 px-5 py-3 transition-colors focus-within:bg-low hover:bg-low sm:gap-4 sm:px-6 `}
-    >
-      <SolvedCheck solved={solved} problem={question.problem} onToggle={() => onToggleSolved(question.id)} />
-      <button type="button" data-row-open onClick={() => onOpen(question.id)} className="min-w-0 flex-1 rounded text-left">
-        <span className="flex items-center gap-1.5">
-          <span
-            className={`line-clamp-2 min-w-0 text-sm font-medium leading-5 transition-colors sm:line-clamp-1 ${
-              solved ? 'text-muted' : 'text-ink group-hover:text-accent'
-            }`}
-          >
-            {question.problem}
-          </span>
+    <tr data-problem-row data-question-id={question.id} className="scroll-mt-20">
+      <td>
+        <SolvedCheck solved={solved} problem={question.problem} onToggle={() => onToggleSolved(question.id)} />
+      </td>
+      <td className="cell-name cell-name--after-tick w-full max-w-0">
+        <button type="button" data-row-open onClick={() => onOpen(question.id)} className="flex max-w-full items-center gap-1.5 rounded text-left hover:text-accent">
+          <span className="pname min-w-0 truncate">{question.problem}</span>
           {noted && <NoteMark />}
+          {meta && <span className="step shrink-0">{meta}</span>}
+        </button>
+      </td>
+      <td className="cell-wide whitespace-nowrap text-[12.5px] text-muted">
+        <span className="block max-w-[14rem] truncate">{question.pattern}</span>
+      </td>
+      <td>
+        <Difficulty difficulty={question.difficulty} />
+      </td>
+      <td>
+        <span className={`step ${statusDue ? 'step--due' : ''}`} title={statusTitle}>
+          {status}
         </span>
-        {(due || meta) && (
-          <span className="mt-0.5 block truncate text-xs text-muted">
-            {due && (
-              <span className="font-medium text-accent">
-                Review due{meta ? ' · ' : ''}
-              </span>
-            )}
-            {meta}
-          </span>
-        )}
-      </button>
-      <Difficulty difficulty={question.difficulty} />
-      <div className="-mr-2 flex shrink-0 items-center">
-        <BookmarkButton data-row-bookmark bookmarked={bookmarked} problem={question.problem} onToggle={() => onToggleBookmark(question.id)} />
-        <ProblemLink href={link} verified={question.linkVerified || link !== question.link} platform={question.platform} problem={question.problem} />
-      </div>
-    </li>
+      </td>
+      <td>
+        <span className="inline-flex items-center gap-1">
+          <ProblemLink href={link} verified={question.linkVerified || link !== question.link} platform={question.platform} problem={question.problem} />
+          <BookmarkButton data-row-bookmark bookmarked={bookmarked} problem={question.problem} onToggle={() => onToggleBookmark(question.id)} />
+        </span>
+      </td>
+    </tr>
   )
 })
 
-// Meta line under a problem name: its pattern (unless the group header already
-// says it) and a note for the optional Depth and Stretch tiers.
-export function problemMeta(question, showPattern) {
-  return [showPattern && question.pattern, question.tier !== 'Core' && question.tier].filter(Boolean).join(' · ')
+// The optional Depth and Stretch tiers, marked after the name.
+export function problemMeta(question) {
+  return question.tier !== 'Core' ? question.tier.toLowerCase() : ''
 }
 
-export default function ProblemList({ groups, progress, today, showPattern, onToggleSolved, onToggleBookmark, onOpen }) {
+export default function ProblemList({ groups, progress, today, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
-    <div className="pb-12">
+    <table className="board board--cards">
+      <thead>
+        <tr>
+          <th scope="col">
+            <span className="sr-only">Solved</span>
+          </th>
+          <th scope="col">Problem</th>
+          <th scope="col">Pattern</th>
+          <th scope="col">Dif</th>
+          <th scope="col">Status</th>
+          <th scope="col">Source</th>
+        </tr>
+      </thead>
       {groups.map((group) => (
-        <section key={group.key} id={groupId(group.key)} aria-label={group.label}>
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-canvas/90 px-5 py-2 backdrop-blur sm:px-6">
-            <h2 className="truncate text-xs font-semibold uppercase tracking-wider text-muted">{group.label}</h2>
-            <span className="shrink-0 text-xs tabular-nums text-muted">
-              {group.solved}/{group.items.length}
-            </span>
-          </div>
-          <ul className="divide-y divide-line/70">
-            {group.items.map((question) => {
-              const entry = progress[question.id]
-              return (
-                <ProblemRow
-                  key={question.id}
-                  question={question}
-                  solved={entry?.solved === true}
-                  bookmarked={entry?.bookmarked === true}
-                  due={isDue(entry, today)}
-                  noted={hasNote(entry)}
-                  link={entry?.link ?? question.link}
-                  meta={problemMeta(question, showPattern)}
-                  onToggleSolved={onToggleSolved}
-                  onToggleBookmark={onToggleBookmark}
-                  onOpen={onOpen}
-                />
-              )
-            })}
-          </ul>
-        </section>
+        <tbody key={group.key} id={groupId(group.key)} aria-label={group.label} className="scroll-mt-4">
+          <tr className="group-row">
+            <th colSpan={6} scope="colgroup" className="sticky top-0 z-10 !bg-canvas !pb-1.5 !pt-4 text-left">
+              <span className="flex items-baseline justify-between gap-3">
+                <span className="truncate">{group.label}</span>
+                <span className="shrink-0 tracking-normal">
+                  {group.solved}/{group.items.length}
+                </span>
+              </span>
+            </th>
+          </tr>
+          {group.items.map((question) => {
+            const entry = progress[question.id]
+            const status = problemStatus(entry, today)
+            return (
+              <ProblemRow
+                key={question.id}
+                question={question}
+                solved={entry?.solved === true}
+                bookmarked={entry?.bookmarked === true}
+                status={status.text}
+                statusTitle={status.title}
+                statusDue={status.due === true}
+                noted={hasNote(entry)}
+                link={entry?.link ?? question.link}
+                meta={problemMeta(question)}
+                onToggleSolved={onToggleSolved}
+                onToggleBookmark={onToggleBookmark}
+                onOpen={onOpen}
+              />
+            )
+          })}
+        </tbody>
       ))}
-    </div>
+    </table>
   )
 }

@@ -17,7 +17,6 @@ export default function ProblemsPage({
   route,
   navigate,
   stats,
-  topicCount,
   progress,
   today,
   visible,
@@ -35,7 +34,6 @@ export default function ProblemsPage({
 }) {
   const { show, core: coreOnly, notes: notesOnly, q: search } = route
   const pageScrollRef = useRef(null)
-  const listScrollRef = useRef(null)
 
   const groups = useMemo(() => {
     const byKey = new Map()
@@ -52,7 +50,6 @@ export default function ProblemsPage({
   // A new filter starts the list from the top rather than mid-scroll...
   useEffect(() => {
     pageScrollRef.current?.scrollTo({ top: 0 })
-    listScrollRef.current?.scrollTo({ top: 0 })
   }, [selectedTopic, difficulty, coreOnly, notesOnly, show, search])
 
   // ...unless a pattern was picked on the Patterns page: then jump to it.
@@ -69,57 +66,51 @@ export default function ProblemsPage({
   }
 
   const topicStats = stats.topicStats.find((topic) => topic.topic === selectedTopic)
-  const header = topicStats
-    ? { eyebrow: `Phase ${topicStats.phase} · ${topicStats.phaseName}`, title: topicName(selectedTopic), solved: topicStats.solved, total: topicStats.total }
-    : { eyebrow: `${stats.phaseStats.length} phases · ${topicCount} topics`, title: 'All problems', solved: stats.solved, total: stats.total }
+  const scope = topicStats
+    ? { title: topicName(selectedTopic), solved: topicStats.solved, total: topicStats.total }
+    : { title: 'All problems', solved: stats.solved, total: stats.total }
 
   return (
-    // Narrow screens scroll the whole page; wider ones scroll only the list.
-    <div ref={pageScrollRef} className="min-h-0 flex-1 overflow-y-auto md:flex md:overflow-hidden">
-      <Sidebar
-        phaseStats={stats.phaseStats}
-        overall={stats}
-        selectedTopic={selectedTopic}
-        onSelectTopic={(topic) => navigate({ topic: topic === ALL_TOPICS ? null : splitTopic(topic).number, pattern: null })}
-        currentPhase={currentPhase?.phase}
-        isNarrow={isNarrow}
-      />
-
-      <main id="main-content" tabIndex={-1} className="bg-card md:flex md:min-h-0 md:flex-1 md:flex-col">
-        <Filters
-          eyebrow={header.eyebrow}
-          title={header.title}
-          solvedCount={header.solved}
-          total={header.total}
+    <div ref={pageScrollRef} className="min-h-0 flex-1 overflow-y-auto">
+      <div className="shell grid grid-cols-1 gap-7 pt-5 min-[1001px]:grid-cols-[232px_minmax(0,1fr)]">
+        <Sidebar
+          phaseStats={stats.phaseStats}
+          overall={stats}
+          selectedTopic={selectedTopic}
+          onSelectTopic={(topic) => navigate({ topic: topic === ALL_TOPICS ? null : splitTopic(topic).number, pattern: null })}
+          currentPhase={currentPhase?.phase}
+          isNarrow={isNarrow}
           search={search}
           onSearchChange={(value) => navigate({ q: value }, { replace: true })}
           searchInputRef={searchInputRef}
-          show={show}
-          onShowChange={(value) => navigate({ show: value }, { replace: true })}
-          reviewCount={reviewCount}
-          difficulty={difficulty}
-          onDifficultyChange={(value) => navigate({ difficulty: value === ALL ? null : value }, { replace: true })}
-          coreOnly={coreOnly}
-          onCoreOnlyChange={(value) => navigate({ core: value }, { replace: true })}
-          notesOnly={notesOnly}
-          onNotesOnlyChange={(value) => navigate({ notes: value }, { replace: true })}
-          isFiltered={isFiltered}
-          onClearFilters={clearFilters}
-          onRandom={onPickRandom}
-          canPickRandom={visible.length > 0}
         />
 
-        <div ref={listScrollRef} className="md:min-h-0 md:flex-1 md:overflow-y-auto">
+        <main id="main-content" tabIndex={-1} className="min-w-0">
+          {/* The page's name, for screen readers and the document outline: the
+              sidebar and the footer line already say it on screen. */}
+          <h1 className="sr-only">{scope.title}</h1>
+          <Filters
+            show={show}
+            onShowChange={(value) => navigate({ show: value }, { replace: true })}
+            reviewCount={reviewCount}
+            difficulty={difficulty}
+            onDifficultyChange={(value) => navigate({ difficulty: value === ALL ? null : value }, { replace: true })}
+            coreOnly={coreOnly}
+            onCoreOnlyChange={(value) => navigate({ core: value }, { replace: true })}
+            notesOnly={notesOnly}
+            onNotesOnlyChange={(value) => navigate({ notes: value }, { replace: true })}
+            isFiltered={isFiltered}
+            onClearFilters={clearFilters}
+            onRandom={onPickRandom}
+            canPickRandom={visible.length > 0}
+          />
+
           {groups.length === 0 ? (
-            <div className="px-6 py-20 text-center">
+            <div className="border-b border-line px-6 py-16 text-center">
               <p className="font-semibold text-ink">{emptyState.title}</p>
-              <p className="mt-1 text-sm text-muted">{emptyState.body}</p>
+              <p className="mt-1 text-[13px] text-muted">{emptyState.body}</p>
               {isFiltered && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-5 h-9 rounded-lg border border-line px-3 text-sm font-medium text-ink transition-colors hover:bg-tint"
-                >
+                <button type="button" onClick={clearFilters} className="btn-line mt-5">
                   Clear filters
                 </button>
               )}
@@ -129,15 +120,25 @@ export default function ProblemsPage({
               groups={groups}
               progress={progress}
               today={today}
-              showPattern={!groupByPattern}
               onToggleSolved={onToggleSolved}
               onToggleBookmark={onToggleBookmark}
               onOpen={onOpenQuestion}
             />
           )}
+
+          <p className="flex flex-wrap justify-between gap-3 px-0.5 pt-[9px] text-xs text-muted">
+            <span>
+              Showing <b className="mono font-medium text-ink">{visible.length}</b> of <b className="mono font-medium text-ink">{scope.total}</b> in{' '}
+              {scope.title === 'All problems' ? 'all topics' : scope.title}
+            </span>
+            <span>
+              Solved <b className="mono font-medium text-ink">{scope.solved}</b> · due <b className="mono font-medium text-ink">{reviewCount}</b>
+            </span>
+          </p>
+
           <Credit className="pb-8" />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   )
 }

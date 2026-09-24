@@ -255,6 +255,17 @@
     .board--cards tbody td.cell-name {
       grid-column: 1 / -1;
     }
+    .board--cards tbody td.cell-name--after-tick {
+      grid-column: 2 / -1;
+    }
+    .board--cards tbody tr.group-row {
+      display: block;
+      padding: 0;
+    }
+    .board--cards tbody tr.group-row th {
+      display: block;
+      width: auto;
+    }
     .board--cards tbody td:last-child {
       justify-self: end;
     }

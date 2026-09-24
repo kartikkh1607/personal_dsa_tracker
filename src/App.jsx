@@ -130,7 +130,6 @@ function Tracker({ data }) {
         route={route}
         navigate={navigate}
         stats={stats}
-        topicCount={topics.length}
         progress={progress}
         today={today}
         visible={visible}
