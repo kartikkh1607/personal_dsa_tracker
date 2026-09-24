@@ -105,78 +105,19 @@ function Lightbox({ id, onClose }) {
   )
 }
 
-// Thumbnails, then a dashed tile to add another - or, with none yet, a drop
-// zone.
-export default function NoteImages({ ids, onDelete, onAdd, onDropFiles, canAdd }) {
+// The thumb row under the note. Adding goes through the note's own Add image
+// button, a paste, or a drop on the note.
+export default function NoteImages({ ids, onDelete }) {
   const [openId, setOpenId] = useState(null)
-  const [dragging, setDragging] = useState(false)
   const closeLightbox = useCallback(() => setOpenId(null), [])
 
-  // Dropped files go the same way as picked or pasted ones: onDropFiles keeps
-  // the images and says what it skipped. Only a drag carrying files is taken,
-  // so dragging text or a link over the zone does nothing.
-  const carriesFiles = (event) => [...event.dataTransfer.types].includes('Files')
-  const dropTarget = canAdd
-    ? {
-        onDragOver: (event) => {
-          if (!carriesFiles(event)) return
-          event.preventDefault()
-          event.dataTransfer.dropEffect = 'copy'
-          setDragging(true)
-        },
-        onDragLeave: (event) => {
-          if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false)
-        },
-        onDrop: (event) => {
-          if (!carriesFiles(event)) return
-          event.preventDefault()
-          setDragging(false)
-          onDropFiles([...event.dataTransfer.files])
-        },
-      }
-    : {}
-
-  // No images yet: one wide target that says both ways in, rather than a lone
-  // + that says neither.
-  if (ids.length === 0) {
-    if (!canAdd) return null
-    return (
-      <button
-        type="button"
-        onClick={onAdd}
-        {...dropTarget}
-        className={`block w-full rounded-xl border border-dashed px-4 py-5 text-center text-[12.5px] hover:border-accent hover:text-accent ${
-          dragging ? 'border-accent bg-tint text-accent' : 'border-rule text-muted'
-        }`}
-      >
-        {dragging ? 'Drop to add' : 'Paste a screenshot, or click to add'}
-      </button>
-    )
-  }
-
+  if (ids.length === 0) return null
   return (
     <>
-      <ul
-        {...dropTarget}
-        className={`flex flex-wrap gap-2 rounded-md pr-1.5 pt-1.5 ${dragging ? 'outline-dashed outline-1 outline-offset-4 outline-accent' : ''}`}
-        aria-label="Note images"
-      >
+      <ul className="mt-3 flex flex-wrap gap-2 pr-1.5 pt-1.5" aria-label="Note images">
         {ids.map((id, index) => (
           <Thumbnail key={id} id={id} number={index + 1} onOpen={setOpenId} onDelete={onDelete} />
         ))}
-        {canAdd && (
-          <li>
-            <button
-              type="button"
-              onClick={onAdd}
-              aria-label="Add image"
-              title="Add an image, or paste a screenshot into the note"
-              className="grid h-[50px] w-[66px] place-items-center rounded-md border border-dashed border-line text-base text-muted hover:border-accent hover:text-accent"
-            >
-              +
-            </button>
-          </li>
-        )}
       </ul>
       {openId && ids.includes(openId) && <Lightbox id={openId} onClose={closeLightbox} />}
     </>

@@ -73,3 +73,13 @@ export function NoteIcon({ className = 'h-3.5 w-3.5' }) {
     </svg>
   )
 }
+
+export function ImageIcon({ className = 'h-3.5 w-3.5' }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <rect x="2.5" y="3" width="11" height="10" rx="1.5" />
+      <circle cx="6" cy="6.5" r="1" />
+      <path d="m2.5 11 3-3 2.5 2.5 2-2 3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}

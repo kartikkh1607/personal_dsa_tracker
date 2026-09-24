@@ -174,13 +174,12 @@ function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestio
           </button>
         )}
       </div>
-      <table className="board board--cards" aria-labelledby="review-heading">
+      <table className="board board--cards board--roomy" aria-labelledby="review-heading">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">Problem</th>
-            <th scope="col">Topic</th>
-            <th scope="col">Dif</th>
+            <th scope="col">Difficulty</th>
             <th scope="col">Step</th>
             <th scope="col">Result</th>
           </tr>
@@ -193,17 +192,17 @@ function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestio
               <tr key={question.id} {...(gone ? { className: 'leaving' } : { 'data-review-row': true })}>
                 <td className="cell-wide mono text-[11.5px] text-muted">{String(index + 1).padStart(2, '0')}</td>
                 <td className="cell-name w-full max-w-0">
-                  <button type="button" onClick={() => onOpenQuestion(question.id)} className="flex max-w-full items-center gap-1.5 rounded text-left hover:text-accent">
-                    <span className="pname min-w-0 truncate">{question.problem}</span>
-                    {hasNote(entry) && <NoteMark />}
-                  </button>
-                  {isLapsed(entry) && (
-                    <span className="mt-0.5 block truncate text-[11.5px] text-muted">
-                      Struggled last time — back in {LAPSE_INTERVAL} days if it slips again
+                  <button type="button" onClick={() => onOpenQuestion(question.id)} className="block max-w-full rounded text-left hover:text-accent">
+                    <span className="flex items-center gap-1.5">
+                      <span className="pname min-w-0 truncate">{question.problem}</span>
+                      {hasNote(entry) && <NoteMark />}
                     </span>
-                  )}
+                    <span className="psub">
+                      {topicName(question.topic)} · {question.pattern}
+                      {isLapsed(entry) && ` · struggled last time, back in ${LAPSE_INTERVAL} days if it slips again`}
+                    </span>
+                  </button>
                 </td>
-                <td className="cell-wide whitespace-nowrap text-[12.5px] text-muted">{topicName(question.topic)}</td>
                 <td>
                   <Difficulty difficulty={question.difficulty} />
                 </td>

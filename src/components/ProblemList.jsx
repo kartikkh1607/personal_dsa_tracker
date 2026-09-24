@@ -30,14 +30,16 @@ const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, stat
         <SolvedCheck solved={solved} problem={question.problem} onToggle={() => onToggleSolved(question.id)} />
       </td>
       <td className="cell-name cell-name--after-tick w-full max-w-0">
-        <button type="button" data-row-open onClick={() => onOpen(question.id)} className="flex max-w-full items-center gap-1.5 rounded text-left hover:text-accent">
-          <span className="pname min-w-0 truncate">{question.problem}</span>
-          {noted && <NoteMark />}
-          {meta && <span className="step shrink-0">{meta}</span>}
+        <button type="button" data-row-open onClick={() => onOpen(question.id)} className="block max-w-full rounded text-left hover:text-accent">
+          <span className="flex items-center gap-1.5">
+            <span className="pname min-w-0 truncate">{question.problem}</span>
+            {noted && <NoteMark />}
+          </span>
+          <span className="psub">
+            {question.pattern}
+            {meta && ` · ${meta}`}
+          </span>
         </button>
-      </td>
-      <td className="cell-wide whitespace-nowrap text-[12.5px] text-muted">
-        <span className="block max-w-[14rem] truncate">{question.pattern}</span>
       </td>
       <td>
         <Difficulty difficulty={question.difficulty} />
@@ -57,22 +59,21 @@ const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, stat
   )
 })
 
-// The optional Depth and Stretch tiers, marked after the name.
+// The optional Depth and Stretch tiers, marked after the pattern.
 function problemMeta(question) {
-  return question.tier !== 'Core' ? question.tier.toLowerCase() : ''
+  return question.tier !== 'Core' ? question.tier : ''
 }
 
 export default function ProblemList({ groups, progress, today, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
-    <table className="board board--cards">
+    <table className="board board--cards board--roomy board--ticked">
       <thead>
         <tr>
           <th scope="col">
             <span className="sr-only">Solved</span>
           </th>
           <th scope="col">Problem</th>
-          <th scope="col">Pattern</th>
-          <th scope="col">Dif</th>
+          <th scope="col">Difficulty</th>
           <th scope="col">Status</th>
           <th scope="col">Source</th>
         </tr>
@@ -80,7 +81,7 @@ export default function ProblemList({ groups, progress, today, onToggleSolved, o
       {groups.map((group) => (
         <tbody key={group.key} id={groupId(group.key)} aria-label={group.label} className="scroll-mt-4">
           <tr className="group-row">
-            <th colSpan={6} scope="colgroup" className="sticky top-0 z-10 !bg-canvas !pb-1.5 !pt-4 text-left">
+            <th colSpan={5} scope="colgroup" className="sticky top-0 z-10 !bg-canvas !pb-1.5 !pt-4 text-left">
               <span className="flex items-baseline justify-between gap-3">
                 <span className="truncate">{group.label}</span>
                 <span className="shrink-0 tracking-normal">

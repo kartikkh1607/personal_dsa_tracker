@@ -26,8 +26,8 @@
     --warn: 246 228 198;
     --onwarn: 107 74 16;
     /* Difficulty letters, on --tint. Each is at least 4.5:1 against --tint,
-       --canvas and --low. Easy is darker than #1F7A3D on purpose: that was
-       4.23:1 on --tint. */
+       --canvas and --low (checked at the pill's 11px). Easy is darker than
+       #1F7A3D on purpose: that was 4.23:1 on --tint. */
     --easy: #1d723a;
     --medium: #8a5a00;
     --hard: #b3261e;
@@ -241,6 +241,22 @@
     font-weight: 550;
   }
 
+  /* Two-line rows: the name, and under it the pattern it practises, kept
+     together rather than a whole table apart. */
+  .board--roomy td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .psub {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: rgb(var(--muted));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* Under 760px a board row becomes the narrow card: the name gets the whole
      first line, and the controls sit under it. Cells marked .cell-wide are
      table-only extras (index, topic) and drop out. */
@@ -270,6 +286,14 @@
     .board--cards tbody td.cell-name--after-tick {
       grid-column: 2 / -1;
     }
+    /* Ticked rows: the tick keeps its own narrow column, and the name and
+       everything under it share one left edge, whatever the difficulty. */
+    .board--ticked tbody tr {
+      grid-template-columns: 24px auto auto minmax(0, 1fr);
+    }
+    .board--ticked tbody td:nth-child(3) {
+      grid-column-start: 2;
+    }
     .board--cards tbody tr.group-row {
       display: block;
       padding: 0;
@@ -283,21 +307,22 @@
     }
   }
 
-  /* Difficulty: an outlined mark. The letter carries the meaning and the
-     colour backs it up; the border and letter take the colour, the fill stays
-     --tint. No filled chips: fifteen of them would drown "due today". */
+  /* Difficulty: an outlined pill with the full word. The word carries the
+     meaning and the colour backs it up; the border and text take the colour,
+     the fill stays --tint. No filled chips: fifteen of them would drown
+     "due today". */
   .dif {
-    display: inline-grid;
-    place-items: center;
-    width: 19px;
-    height: 19px;
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 6px;
     flex: none;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid currentColor;
     background: rgb(var(--tint));
-    font-family: theme('fontFamily.mono');
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 600;
+    line-height: 1;
     color: rgb(var(--muted));
   }
   .dif--e {

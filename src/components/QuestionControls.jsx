@@ -1,4 +1,3 @@
-import { DIFFICULTY_LETTER } from '../constants.js'
 import { problemUrl } from '../links.js'
 import { BookmarkIcon, CheckIcon, ExternalIcon, NoteIcon, SearchIcon } from './icons.jsx'
 
@@ -12,8 +11,9 @@ export function NoteMark() {
   )
 }
 
-// The one way to record progress: a square tick. The button is larger than the
-// box (negative margin keeps layout tight) so it's easy to hit on touch.
+// The one way to record progress: a round tick, filled once solved - the
+// page's main sense of progress. The button is larger than the circle
+// (negative margin keeps layout tight) so it's easy to hit on touch.
 export function SolvedCheck({ solved, problem, onToggle }) {
   return (
     <button
@@ -23,14 +23,14 @@ export function SolvedCheck({ solved, problem, onToggle }) {
       aria-label={`Solved: ${problem}`}
       title={solved ? 'Solved. Click to undo' : 'Mark as solved'}
       onClick={onToggle}
-      className="group/check -m-2.5 grid h-9 w-9 shrink-0 place-items-center rounded-md"
+      className="group/check -m-2 grid h-10 w-10 shrink-0 place-items-center rounded-full"
     >
       <span
-        className={`grid h-4 w-4 place-items-center rounded border ${
+        className={`grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] ${
           solved ? 'border-transparent bg-fill text-onfill' : 'border-rule text-transparent group-hover/check:border-accent group-hover/check:text-accent'
         }`}
       >
-        <CheckIcon className="h-3 w-3" strokeWidth={2.4} />
+        <CheckIcon className="h-3 w-3" strokeWidth={2.6} />
       </span>
     </button>
   )
@@ -55,15 +55,10 @@ export function BookmarkButton({ bookmarked, problem, onToggle, ...rest }) {
 // Written out in full so Tailwind keeps the classes in the build.
 const DIFFICULTY_CLASS = { Easy: 'dif--e', Medium: 'dif--m', Hard: 'dif--h' }
 
-// A 19px outlined square with the difficulty's letter, in its colour. The
-// letter carries the meaning; the colour only reinforces it.
+// An outlined pill with the full word, in the difficulty's colour. The word
+// carries the meaning; the colour only reinforces it.
 export function Difficulty({ difficulty }) {
-  return (
-    <span className={`dif ${DIFFICULTY_CLASS[difficulty]}`} title={difficulty}>
-      <span aria-hidden="true">{DIFFICULTY_LETTER[difficulty]}</span>
-      <span className="sr-only">{difficulty}</span>
-    </span>
-  )
+  return <span className={`dif ${DIFFICULTY_CLASS[difficulty]}`}>{difficulty}</span>
 }
 
 // The source mark's hover colours, in the table only. Each pair holds AA for
@@ -85,20 +80,12 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
   const action = verified ? `Open on ${platform}` : 'Search on Google'
   const icon = verified ? <ExternalIcon className="h-3 w-3" /> : <SearchIcon className="h-3 w-3" />
 
-  // The drawer's main action: the source mark, what to do, and where it opens.
-  // The mark is outlined in the button's own text colour, so it holds the same
-  // contrast as the label on --fill.
+  // The drawer's main action: where to solve it, and that it opens elsewhere.
   if (variant === 'primary') {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={`btn-primary w-full !justify-start ${className}`}>
-        {verified && (
-          <span aria-hidden="true" className="mono grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[3px] border border-current text-[9px] font-semibold">
-            {platform[0]}
-          </span>
-        )}
-        {!verified && <SearchIcon className="h-3.5 w-3.5 shrink-0" />}
-        <span className="min-w-0 flex-1 truncate">{verified ? `Solve on ${platform}` : 'Search for this problem'}</span>
-        {verified && <ExternalIcon className="h-3.5 w-3.5 shrink-0" />}
+      <a href={url} target="_blank" rel="noopener noreferrer" className={`btn-primary h-11 w-full ${className}`}>
+        {verified ? `Open on ${platform}` : 'Search for this problem'}
+        {verified ? <ExternalIcon className="h-3.5 w-3.5 shrink-0" /> : <SearchIcon className="h-3.5 w-3.5 shrink-0" />}
       </a>
     )
   }

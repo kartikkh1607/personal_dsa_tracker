@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
 import { isImageFile, MAX_NOTE_IMAGES, storeImages } from '../images.js'
 import { daysBetween, formatDate, hasNote } from '../progress.js'
-import { isDue, isLapsed, LAPSE_INTERVAL, nextReviewDate, recordReview, REVIEW_INTERVALS, struggleCount } from '../review.js'
+import { isDue, isLapsed, LAPSE_INTERVAL, nextReviewDate, recordReview, struggleCount } from '../review.js'
 import { isTypingTarget, reviewOutcomeFor } from '../keyboard.js'
 import { isValidUrl } from '../storage.js'
 import NoteImages from './NoteImages.jsx'
 import { Difficulty, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
-import { BookmarkIcon } from './icons.jsx'
+import { BookmarkIcon, CheckIcon, ImageIcon } from './icons.jsx'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 const SWIPE_CLOSE_PX = 90
@@ -105,40 +105,14 @@ function consequences(entry, today) {
   }
 }
 
-// The review step as words for the chip row: "Review 2 of 3", or relearning.
-function stepLabel(entry) {
-  if (isLapsed(entry)) return 'Relearning'
-  const reviews = entry.reviews ?? 0
-  if (reviews >= REVIEW_INTERVALS.length) return 'Reviews done'
-  return `Review ${reviews + 1} of ${REVIEW_INTERVALS.length}`
-}
-
-function nextReviewText(entry, due, today) {
-  if (due) return 'today'
+// The schedule as one quiet line: when it was solved, and when it next comes
+// back - or that it is due now, relearning, or finished with.
+function scheduleLine(entry, due) {
+  const solvedPart = entry.solvedAt ? `Solved ${formatDate(entry.solvedAt)}` : 'Solved'
+  if (due) return `${solvedPart} · Due for review now`
   const next = nextReviewDate(entry)
-  if (!next) return entry.solvedAt ? 'all reviews done' : '—'
-  return `${shortDate(next)} · ${inDays(daysBetween(today, next))}`
-}
-
-function Block({ title, aside, children }) {
-  return (
-    <section>
-      <h3 className="lbl mb-2 flex items-center gap-2.5">
-        {title}
-        {aside && <span className="ml-auto font-mono text-[11px] normal-case tracking-normal">{aside}</span>}
-      </h3>
-      {children}
-    </section>
-  )
-}
-
-function Row({ label, children, accent = false }) {
-  return (
-    <div className="flex justify-between gap-3 border-b border-line py-[7px] text-[12.5px] last:border-b-0">
-      <span className="text-muted">{label}</span>
-      <b className={`mono text-right font-medium ${accent ? 'text-accent' : ''}`}>{children}</b>
-    </div>
-  )
+  if (!next) return entry.solvedAt ? `${solvedPart} · All reviews done` : solvedPart
+  return `${solvedPart} · Next review ${formatDate(next)}${isLapsed(entry) ? ' · relearning' : ''}`
 }
 
 // Every re-solve, newest first: an outcome mark, the outcome, the date.
@@ -188,6 +162,7 @@ export default function ProblemDetailDrawer({
   // Per problem, as the panel can switch problems while images still process.
   const [attaching, setAttaching] = useState({})
   const [imageError, setImageError] = useState(null)
+  const [dragging, setDragging] = useState(false)
 
   const entry = progress[question.id] ?? {}
   const solved = entry.solved === true
@@ -311,7 +286,30 @@ export default function ProblemDetailDrawer({
 
   const outcomes = due ? consequences(entry, today) : null
   const struggles = struggleCount(entry)
-  const lastOutcome = history.length > 0 ? history[history.length - 1].result : null
+  const strip = solved ? scheduleLine(entry, due) : null
+
+  // Files dropped anywhere on the note go the same way as picked or pasted
+  // ones. Only a drag carrying files is taken, so dragging text into the
+  // note still just moves text.
+  const carriesFiles = (event) => [...event.dataTransfer.types].includes('Files')
+  const canAdd = imageIds.length + attachingCount < MAX_NOTE_IMAGES
+  const noteDrop = {
+    onDragOver: (event) => {
+      if (!canAdd || !carriesFiles(event)) return
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'copy'
+      setDragging(true)
+    },
+    onDragLeave: (event) => {
+      if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false)
+    },
+    onDrop: (event) => {
+      if (!carriesFiles(event)) return
+      event.preventDefault()
+      setDragging(false)
+      attachImages([...event.dataTransfer.files])
+    },
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex animate-fade-in items-end bg-canvas/60 sm:items-stretch sm:justify-end" role="presentation" onMouseDown={onClose}>
@@ -328,15 +326,15 @@ export default function ProblemDetailDrawer({
           <div className="flex justify-center pt-2 sm:hidden" aria-hidden="true">
             <span className="h-1 w-10 rounded-full bg-line" />
           </div>
-          <div className="flex items-center gap-2 border-b border-line px-4 py-[11px]">
-            <p className="mono truncate text-[11px] tracking-[0.08em] text-muted">
-              Phase {question.phase} · {question.phaseName}
+          <div className="flex items-center gap-3 border-b border-line px-5 py-3">
+            <p className="truncate text-[13px] text-muted">
+              Phase {question.phase} · {topicName(question.topic)}
             </p>
             <button
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="ml-auto grid h-7 w-7 shrink-0 place-items-center rounded-md text-base leading-none text-muted hover:bg-tint hover:text-ink"
+              className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg text-base leading-none text-muted hover:bg-tint hover:text-ink"
               aria-label="Close problem details"
             >
               ✕
@@ -344,46 +342,58 @@ export default function ProblemDetailDrawer({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="px-5 pb-3.5 pt-4">
-            <p className="lbl truncate">
-              {topicName(question.topic)} · {question.pattern}
-              {question.tier !== 'Core' && ` · ${question.tier}`}
-            </p>
-            <h2 id="problem-detail-title" className="mt-[7px] text-[21px] font-[650] leading-[1.22] tracking-[-0.025em]">
-              {question.problem}
-            </h2>
-            <ProblemLink
-              href={link}
-              verified={question.linkVerified || Boolean(entry.link)}
-              platform={question.platform}
-              problem={question.problem}
-              variant="primary"
-              className="mt-3.5"
-            />
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Difficulty difficulty={question.difficulty} />
-              <span className="step">{solved ? stepLabel(entry) : 'Not solved'}</span>
-              {due && <span className="step step--re">Due today</span>}
-              <button
-                type="button"
-                onClick={() => onToggleBookmark(question.id)}
-                aria-pressed={bookmarked}
-                className={`inline-flex items-center gap-1.5 rounded-md border px-[9px] py-1 text-[11.5px] font-semibold ${
-                  bookmarked ? 'border-accent text-accent' : 'border-line text-muted hover:border-rule hover:text-ink'
-                }`}
-              >
-                <BookmarkIcon filled={bookmarked} className="h-3 w-3" />
-                {bookmarked ? 'Saved' : 'Save'}
-              </button>
-            </div>
-            {!question.linkVerified && <LinkFixer key={question.id} customLink={entry.link} onSave={(url) => onLinkChange(question.id, url)} />}
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 pt-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+            <Difficulty difficulty={question.difficulty} />
+            <span>{question.pattern}</span>
+            <span aria-hidden="true">·</span>
+            <span>{question.tier} track</span>
           </div>
+          <h2 id="problem-detail-title" className="mt-3 text-2xl font-[650] leading-tight tracking-[-0.02em]">
+            {question.problem}
+          </h2>
+
+          <ProblemLink
+            href={link}
+            verified={question.linkVerified || Boolean(entry.link)}
+            platform={question.platform}
+            problem={question.problem}
+            variant="primary"
+            className="mt-5"
+          />
+          {!question.linkVerified && <LinkFixer key={question.id} customLink={entry.link} onSave={(url) => onLinkChange(question.id, url)} />}
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => onToggleSolved(question.id)}
+              aria-pressed={solved}
+              className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg border text-[13px] font-semibold ${
+                solved ? 'border-transparent bg-fill text-onfill' : 'border-rule text-ink hover:border-accent hover:text-accent'
+              }`}
+            >
+              <CheckIcon className="h-4 w-4" strokeWidth={2.4} />
+              {solved ? 'Solved' : 'Mark solved'}
+            </button>
+            <button
+              type="button"
+              onClick={() => onToggleBookmark(question.id)}
+              aria-pressed={bookmarked}
+              className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg border text-[13px] font-semibold ${
+                bookmarked ? 'border-accent text-accent' : 'border-rule text-ink hover:border-accent hover:text-accent'
+              }`}
+            >
+              <BookmarkIcon filled={bookmarked} />
+              {bookmarked ? 'Saved' : 'Save'}
+            </button>
+          </div>
+
+          {strip && <p className="mt-3 rounded-lg bg-tint px-3.5 py-2.5 text-xs text-muted">{strip}</p>}
 
           {/* Only when due, so a review can never be recorded early. Each
               option says what it will do before it is pressed. */}
           {due && (
-            <div className="mx-5 rounded-xl border border-rule bg-canvas p-3.5">
+            <div className="mt-3 rounded-xl border border-rule bg-canvas p-3.5">
               <p className="text-[13px] text-muted">
                 Re-solve it from scratch, then say how it went. <strong className="font-semibold text-ink">Your answer sets the next date.</strong>
               </p>
@@ -416,46 +426,24 @@ export default function ProblemDetailDrawer({
             </div>
           )}
 
-          <div className="flex flex-col gap-5 px-5 pb-6 pt-4">
-            {solved && (
-              <Block title="Schedule">
-                <Row label="First solved">{entry.solvedAt ? formatDate(entry.solvedAt) : '—'}</Row>
-                <Row label="Last review">
-                  {entry.reviewedAt ? `${shortDate(entry.reviewedAt)}${lastOutcome ? ` — ${lastOutcome === 'got' ? 'got it' : 'struggled'}` : ''}` : '—'}
-                </Row>
-                <Row label="Next review" accent={due}>
-                  {nextReviewText(entry, due, today)}
-                </Row>
-              </Block>
-            )}
-
-            {history.length > 0 && (
-              <Block title="History" aside={`${struggles} of ${history.length} struggled`}>
-                <History history={history} />
-              </Block>
-            )}
-
-            <Block title={<label htmlFor="problem-notes">Notes</label>}>
-              <div className="overflow-hidden rounded-xl border border-line bg-canvas focus-within:border-accent">
-                <textarea
-                  id="problem-notes"
-                  value={entry.notes ?? ''}
-                  onChange={(event) => onNotesChange(question.id, event.target.value)}
-                  onPaste={handlePaste}
-                  rows={4}
-                  placeholder="Approach, complexity, edge cases… Paste a screenshot to attach it."
-                  className="block min-h-24 w-full resize-y bg-transparent px-3 py-[11px] text-[13px] leading-[1.55] text-ink placeholder:text-muted focus:outline-none"
-                />
-                <div className="flex items-center gap-2 border-t border-line px-2.5 py-[7px] text-[11.5px] text-muted">
-                  <span>Plain text</span>
-                  <span className="ml-auto" aria-live="polite">
-                    {attachingCount > 0 ? 'Adding image…' : 'Saved automatically in this browser'}
-                  </span>
-                </div>
-              </div>
-            </Block>
-
-            <Block title="Images" aside={imageIds.length > 0 ? String(imageIds.length) : null}>
+          <label htmlFor="problem-notes" className="mt-7 block text-sm font-semibold text-ink">
+            Notes
+          </label>
+          <div {...noteDrop} className={`mt-2 rounded-xl ${dragging ? 'outline-dashed outline-2 outline-offset-2 outline-accent' : ''}`}>
+            <textarea
+              id="problem-notes"
+              value={entry.notes ?? ''}
+              onChange={(event) => onNotesChange(question.id, event.target.value)}
+              onPaste={handlePaste}
+              rows={4}
+              placeholder="Approach, complexity, edge cases… Paste or drop a screenshot to attach it."
+              className="block w-full resize-y rounded-xl border border-line bg-canvas px-3 py-2.5 text-[13px] leading-6 text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+            />
+            <NoteImages ids={imageIds} onDelete={handleDeleteImage} />
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-muted">
+            <p aria-live="polite">{dragging ? 'Drop to add the image' : attachingCount > 0 ? 'Adding image…' : 'Saved automatically in this browser.'}</p>
+            <div className="flex items-center gap-3">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -467,61 +455,67 @@ export default function ProblemDetailDrawer({
                   event.target.value = ''
                 }}
               />
-              <NoteImages
-                ids={imageIds}
-                onDelete={handleDeleteImage}
-                onAdd={() => fileInputRef.current?.click()}
-                onDropFiles={attachImages}
-                canAdd={imageIds.length + attachingCount < MAX_NOTE_IMAGES}
-              />
-              {imageError?.questionId === question.id && (
-                <p role="alert" className="mt-1.5 text-xs text-accent">
-                  {imageError.message}
-                </p>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={!canAdd}
+                className="inline-flex h-7 items-center gap-1.5 rounded font-medium text-accent hover:underline disabled:opacity-40"
+              >
+                <ImageIcon className="h-3.5 w-3.5" />
+                Add image
+              </button>
+              {noted && (
+                <button type="button" onClick={handleClearNote} className="h-7 rounded font-medium text-muted hover:text-accent hover:underline">
+                  Clear note
+                </button>
               )}
-            </Block>
-
-            {relatedQuestions.length > 0 && (
-              <Block title={`More in ${topicName(question.topic)}`}>
-                <ul>
-                  {relatedQuestions.map((item) => (
-                    <li key={item.id} className="flex items-center gap-2.5 border-b border-line py-1.5 last:border-b-0">
-                      <SolvedCheck solved={progress[item.id]?.solved === true} problem={item.problem} onToggle={() => onToggleSolved(item.id)} />
-                      <button
-                        type="button"
-                        onClick={() => onSelectRelated(item.id)}
-                        className="flex min-w-0 flex-1 items-center gap-1.5 rounded text-left text-[13px] hover:text-accent"
-                      >
-                        <span className="truncate">{item.problem}</span>
-                        {hasNote(progress[item.id]) && <NoteMark />}
-                      </button>
-                      <Difficulty difficulty={item.difficulty} />
-                    </li>
-                  ))}
-                </ul>
-              </Block>
-            )}
+            </div>
           </div>
-        </div>
-
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line px-5 py-3">
-          <button type="button" onClick={() => onToggleSolved(question.id)} aria-pressed={solved} className="act">
-            {solved ? 'Mark unsolved' : 'Mark solved'}
-          </button>
-          {noted && (
-            <button type="button" onClick={handleClearNote} className="act">
-              Clear note
-            </button>
+          {imageError?.questionId === question.id && (
+            <p role="alert" className="mt-1 text-xs text-accent">
+              {imageError.message}
+            </p>
           )}
-          <span className="mono ml-auto hidden text-[10.5px] text-muted sm:inline" aria-hidden="true">
-            <kbd className="kbd mr-1">Esc</kbd>close
-            {due && (
-              <>
-                <kbd className="kbd ml-2.5 mr-1">g</kbd>
-                <kbd className="kbd mr-1">s</kbd>review
-              </>
-            )}
-          </span>
+
+          {relatedQuestions.length > 0 && (
+            <section className="mt-8">
+              <h3 className="text-sm font-semibold text-ink">More in {topicName(question.topic)}</h3>
+              <ul className="mt-2 border-t border-line">
+                {relatedQuestions.map((item) => (
+                  <li key={item.id} className="flex items-center gap-3 border-b border-line py-3.5">
+                    <SolvedCheck solved={progress[item.id]?.solved === true} problem={item.problem} onToggle={() => onToggleSolved(item.id)} />
+                    <button type="button" onClick={() => onSelectRelated(item.id)} className="block min-w-0 flex-1 rounded text-left hover:text-accent">
+                      <span className="flex items-center gap-1.5">
+                        <span className="pname min-w-0 truncate text-[13.5px]">{item.problem}</span>
+                        {hasNote(progress[item.id]) && <NoteMark />}
+                      </span>
+                      <span className="psub">{item.pattern}</span>
+                    </button>
+                    <Difficulty difficulty={item.difficulty} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Every re-solve, kept but folded away: useful when looking back,
+              not something to read on every visit. */}
+          {history.length > 0 && (
+            <details className="group mt-8">
+              <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                <span aria-hidden="true" className="text-xs text-muted transition-transform group-open:rotate-90">
+                  ›
+                </span>
+                History
+                <span className="mono ml-auto text-[11px] font-normal text-muted">
+                  {struggles} of {history.length} struggled
+                </span>
+              </summary>
+              <div className="mt-2">
+                <History history={history} />
+              </div>
+            </details>
+          )}
         </div>
       </aside>
     </div>
