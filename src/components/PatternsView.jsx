@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
 import Credit from './Credit.jsx'
 import { ProgressBar } from './QuestionControls.jsx'
@@ -25,8 +25,12 @@ const STATUS_TEXT = { untouched: 'not started', started: 'in progress', done: 'd
 export default function PatternsView({ patternStats, onOpenPattern }) {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
-  // A new filter brings its list in; typing in the search box doesn't.
+  // A new filter starts from the top, as on the Problems page, and brings its
+  // list in; typing in the search box does neither.
   const listRef = useRef(null)
+  useEffect(() => {
+    listRef.current?.closest('[data-view-root]')?.scrollTo({ top: 0 })
+  }, [filter])
   useEntrance(listRef, 'list-in', [filter])
 
   const counts = useMemo(() => {
@@ -109,7 +113,7 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
                     <button
                       type="button"
                       onClick={() => onOpenPattern(pattern.topic, pattern.pattern)}
-                      className="group flex w-full items-center gap-3 border-b border-line py-[9px] text-left text-[13px] hover:bg-low"
+                      className="group relative flex w-full items-center gap-3 border-b border-line py-[9px] text-left text-[13px] hover:bg-low"
                     >
                       <span className="min-w-0 flex-1 truncate group-hover:text-accent">{pattern.pattern}</span>
                       <span className="sr-only">, {STATUS_TEXT[statusOf(pattern)]},</span>

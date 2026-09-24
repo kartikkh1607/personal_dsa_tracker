@@ -137,6 +137,12 @@
       padding: 0 16px 48px;
     }
   }
+  /* Each page's scroll area keeps room for its scrollbar even when the content
+     fits. Otherwise a filter that shortens the list drops the scrollbar, the
+     page gets wider, and everything centred jumps sideways and back. */
+  [data-view-root] {
+    scrollbar-gutter: stable;
+  }
 
   /* A 2px rule and a label head stand in for most of what used to be cards. */
   .sec {
