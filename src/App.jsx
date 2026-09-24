@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { splitTopic } from './constants.js'
 import { cleanupOrphanImages, requestPersistentStorage } from './images.js'
 import { localDate } from './progress.js'
@@ -42,6 +42,16 @@ function Tracker({ data }) {
   const sync = useSync({ progress, tombstones, questionIds, applySynced, showToast })
 
   const { view } = route
+  // Switching page fades the new one in. Before paint, so it never shows at
+  // full strength first, and not for the page the app opens on.
+  const firstView = useRef(true)
+  useLayoutEffect(() => {
+    if (firstView.current) {
+      firstView.current = false
+      return
+    }
+    document.querySelector('[data-view-root]')?.classList.add('view-in')
+  }, [view])
   const selectedTopic = (route.topic && topicByNumber.get(route.topic)) || ALL_TOPICS
   const difficulty = route.difficulty ?? ALL
   const drawerQuestion = (route.problem != null && questionsById.get(route.problem)) || null
@@ -149,13 +159,13 @@ function Tracker({ data }) {
     )
   } else if (view === 'patterns') {
     content = (
-      <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
+      <main id="main-content" tabIndex={-1} data-view-root className="min-h-0 flex-1 overflow-y-auto">
         <PatternsView patternStats={stats.patternStats} onOpenPattern={(topic, pattern) => goToProblems({ topic, pattern })} />
       </main>
     )
   } else {
     content = (
-      <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
+      <main id="main-content" tabIndex={-1} data-view-root className="min-h-0 flex-1 overflow-y-auto">
         <Overview
           stats={stats}
           upNext={upNext}

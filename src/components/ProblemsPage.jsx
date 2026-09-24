@@ -54,6 +54,25 @@ export default function ProblemsPage({
     pageScrollRef.current?.scrollTo({ top: 0 })
   }, [selectedTopic, difficulty, coreOnly, notesOnly, show, search])
 
+  // A filter or topic change replays the list's entrance, so the new rows
+  // arrive rather than simply being there. Not on the first render, and not
+  // per keystroke in the search box, where it would only flicker. The class
+  // is removed and re-added, with a reflow between, to restart it; under
+  // reduced motion the class does nothing (index.css).
+  const listRef = useRef(null)
+  const listShown = useRef(false)
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    if (!listShown.current) {
+      listShown.current = true
+      return
+    }
+    list.classList.remove('list-in')
+    void list.offsetWidth
+    list.classList.add('list-in')
+  }, [selectedTopic, difficulty, coreOnly, notesOnly, show])
+
   // ...unless a pattern was picked on the Patterns page: then jump to it.
   useEffect(() => {
     if (!route.pattern) return
@@ -75,7 +94,7 @@ export default function ProblemsPage({
     : { title: searching ? `Searching all ${stats.total} problems` : 'All problems', solved: stats.solved, total: stats.total }
 
   return (
-    <div ref={pageScrollRef} className="min-h-0 flex-1 overflow-y-auto">
+    <div ref={pageScrollRef} data-view-root className="min-h-0 flex-1 overflow-y-auto">
       <div className="shell grid grid-cols-1 gap-7 pt-5 min-[1001px]:grid-cols-[232px_minmax(0,1fr)]">
         <Sidebar
           phaseStats={stats.phaseStats}
@@ -124,26 +143,28 @@ export default function ProblemsPage({
             canPickRandom={visible.length > 0}
           />
 
-          {groups.length === 0 ? (
-            <div className="border-b border-line px-6 py-16 text-center">
-              <p className="font-semibold text-ink">{emptyState.title}</p>
-              <p className="mt-1 text-[13px] text-muted">{emptyState.body}</p>
-              {isFiltered && (
-                <button type="button" onClick={clearFilters} className="btn-line mt-5">
-                  Clear filters
-                </button>
-              )}
-            </div>
-          ) : (
-            <ProblemList
-              groups={groups}
-              progress={progress}
-              today={today}
-              onToggleSolved={onToggleSolved}
-              onToggleBookmark={onToggleBookmark}
-              onOpen={onOpenQuestion}
-            />
-          )}
+          <div ref={listRef}>
+            {groups.length === 0 ? (
+              <div className="border-b border-line px-6 py-16 text-center">
+                <p className="font-semibold text-ink">{emptyState.title}</p>
+                <p className="mt-1 text-[13px] text-muted">{emptyState.body}</p>
+                {isFiltered && (
+                  <button type="button" onClick={clearFilters} className="btn-line mt-5">
+                    Clear filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <ProblemList
+                groups={groups}
+                progress={progress}
+                today={today}
+                onToggleSolved={onToggleSolved}
+                onToggleBookmark={onToggleBookmark}
+                onOpen={onOpenQuestion}
+              />
+            )}
+          </div>
 
           <p className="flex flex-wrap justify-between gap-3 px-0.5 pt-[9px] text-xs text-muted">
             <span>

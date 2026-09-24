@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import DifficultyFilter from './DifficultyFilter.jsx'
 import { SearchIcon, ShuffleIcon } from './icons.jsx'
 
@@ -47,6 +48,55 @@ function Search({ search, onSearchChange, searchInputRef, total }) {
   )
 }
 
+// The status switch. The highlight is one element that slides to whichever
+// option is pressed, so changing it reads as a move rather than a swap. It is
+// measured from the buttons themselves, and re-measured when they change size
+// (the review count coming and going, or the web font landing).
+function ShowSwitch({ show, onShowChange, reviewCount }) {
+  const groupRef = useRef(null)
+  const [thumb, setThumb] = useState(null)
+
+  useLayoutEffect(() => {
+    const group = groupRef.current
+    if (!group) return undefined
+    function measure() {
+      const pressed = group.querySelector('[aria-pressed="true"]')
+      if (pressed) setThumb((previous) => ({ left: pressed.offsetLeft, width: pressed.offsetWidth, moved: previous !== null }))
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    for (const button of group.querySelectorAll('button')) observer.observe(button)
+    return () => observer.disconnect()
+  }, [show, reviewCount])
+
+  return (
+    <div ref={groupRef} role="group" aria-label="Show" className="seg">
+      {/* No slide on the first measurement: it would sweep in from the left
+          edge on load. */}
+      {thumb && (
+        <span
+          className={`seg-thumb ${thumb.moved ? 'is-moving' : ''}`}
+          style={{ transform: `translateX(${thumb.left}px)`, width: thumb.width }}
+          aria-hidden="true"
+        />
+      )}
+      {SHOW_OPTIONS.map((option) => {
+        const count = option.value === 'review' && reviewCount > 0 ? reviewCount : null
+        return (
+          <button key={option.value} type="button" onClick={() => onShowChange(option.value)} aria-pressed={show === option.value}>
+            {option.label}
+            {count !== null && (
+              <span className="mono text-[10.5px] text-accent" aria-label={`${count} due`}>
+                {count}
+              </span>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function Kbd({ children }) {
   return <kbd className="kbd mr-1">{children}</kbd>
 }
@@ -75,21 +125,7 @@ export default function Filters({
     <div className="shrink-0">
       <div className="flex flex-wrap items-center gap-2 border-b border-line pb-3">
         <Search search={search} onSearchChange={onSearchChange} searchInputRef={searchInputRef} total={total} />
-        <div role="group" aria-label="Show" className="seg">
-          {SHOW_OPTIONS.map((option) => {
-            const count = option.value === 'review' && reviewCount > 0 ? reviewCount : null
-            return (
-              <button key={option.value} type="button" onClick={() => onShowChange(option.value)} aria-pressed={show === option.value}>
-                {option.label}
-                {count !== null && (
-                  <span className="mono text-[10.5px] text-accent" aria-label={`${count} due`}>
-                    {count}
-                  </span>
-                )}
-              </button>
-            )
-          })}
-        </div>
+        <ShowSwitch show={show} onShowChange={onShowChange} reviewCount={reviewCount} />
 
         <DifficultyFilter value={difficulty} onChange={onDifficultyChange} any={ALL} />
 
