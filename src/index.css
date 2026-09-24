@@ -214,10 +214,15 @@
     color: rgb(var(--muted));
     white-space: nowrap;
   }
-  /* A group heading labels the rows under it, so it can't be quieter than
-     them. The column headers above stay muted: they're chrome, not content. */
+  /* A group heading labels the rows under it, so it can't be quieter or
+     smaller than them. The column headers above stay muted at 10px: they're
+     chrome, not content. 12px keeps the heading under the 13.5px names so it
+     still reads as a label, and at that size the headers' 0.14em tracking is
+     too airy. */
   .board tbody tr.group-row th {
     color: rgb(var(--ink));
+    font-size: 12px;
+    letter-spacing: 0.1em;
   }
   /* ...but its solved count stays muted. The label says what the group is, the
      count how far along it is: a bright count on every group down the page is
