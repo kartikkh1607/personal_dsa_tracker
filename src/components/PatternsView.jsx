@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { topicName } from '../constants.js'
 import Credit from './Credit.jsx'
 import { ProgressBar } from './QuestionControls.jsx'
 import { SearchIcon } from './icons.jsx'
+import SegmentedSwitch from './SegmentedSwitch.jsx'
+import { useEntrance } from '../hooks/useEntrance.js'
 
 const FILTERS = [
   { value: 'all', label: 'All' },
@@ -23,6 +25,9 @@ const STATUS_TEXT = { untouched: 'not started', started: 'in progress', done: 'd
 export default function PatternsView({ patternStats, onOpenPattern }) {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  // A new filter brings its list in; typing in the search box doesn't.
+  const listRef = useRef(null)
+  useEntrance(listRef, 'list-in', [filter])
 
   const counts = useMemo(() => {
     const tally = { all: patternStats.length, untouched: 0, started: 0, done: 0 }
@@ -82,48 +87,44 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
             className="w-full min-w-0 bg-transparent text-[13px] text-ink placeholder:text-muted focus:outline-none"
           />
         </div>
-        <div role="group" aria-label="Show patterns" className="seg">
-          {FILTERS.map((option) => (
-            <button key={option.value} type="button" onClick={() => setFilter(option.value)} aria-pressed={filter === option.value}>
-              {option.label}
-            </button>
-          ))}
-        </div>
+        <SegmentedSwitch label="Show patterns" options={FILTERS} value={filter} onChange={setFilter} />
       </div>
 
-      {groups.length === 0 && <p className="sec text-[13px] text-muted">No patterns match.</p>}
-      {groups.map(([topic, patterns]) => {
-        const all = patternStats.filter((pattern) => pattern.topic === topic)
-        const topicStarted = all.filter((pattern) => pattern.solved > 0).length
-        return (
-          <section key={topic} className="sec" aria-label={topicName(topic)}>
-            <div className="sech">
-              <h2 className="lbl">{topicName(topic)}</h2>
-              <p className="lbl ml-auto">
-                {topicStarted} of {all.length} started
-              </p>
-            </div>
-            <ul className="grid grid-cols-1 gap-x-9 min-[760px]:grid-cols-2">
-              {patterns.map((pattern) => (
-                <li key={pattern.key}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenPattern(pattern.topic, pattern.pattern)}
-                    className="group flex w-full items-center gap-3 border-b border-line py-[9px] text-left text-[13px] hover:bg-low"
-                  >
-                    <span className="min-w-0 flex-1 truncate group-hover:text-accent">{pattern.pattern}</span>
-                    <span className="sr-only">, {STATUS_TEXT[statusOf(pattern)]},</span>
-                    <ProgressBar value={pattern.solved} total={pattern.total} className="w-[84px] shrink-0" />
-                    <span className="mono min-w-[42px] shrink-0 text-right text-[11.5px] text-muted">
-                      {pattern.solved}/{pattern.total}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      })}
+      <div ref={listRef}>
+        {groups.length === 0 && <p className="sec text-[13px] text-muted">No patterns match.</p>}
+        {groups.map(([topic, patterns]) => {
+          const all = patternStats.filter((pattern) => pattern.topic === topic)
+          const topicStarted = all.filter((pattern) => pattern.solved > 0).length
+          return (
+            <section key={topic} className="sec" aria-label={topicName(topic)}>
+              <div className="sech">
+                <h2 className="lbl">{topicName(topic)}</h2>
+                <p className="lbl ml-auto">
+                  {topicStarted} of {all.length} started
+                </p>
+              </div>
+              <ul className="grid grid-cols-1 gap-x-9 min-[760px]:grid-cols-2">
+                {patterns.map((pattern) => (
+                  <li key={pattern.key}>
+                    <button
+                      type="button"
+                      onClick={() => onOpenPattern(pattern.topic, pattern.pattern)}
+                      className="group flex w-full items-center gap-3 border-b border-line py-[9px] text-left text-[13px] hover:bg-low"
+                    >
+                      <span className="min-w-0 flex-1 truncate group-hover:text-accent">{pattern.pattern}</span>
+                      <span className="sr-only">, {STATUS_TEXT[statusOf(pattern)]},</span>
+                      <ProgressBar value={pattern.solved} total={pattern.total} className="w-[84px] shrink-0" />
+                      <span className="mono min-w-[42px] shrink-0 text-right text-[11.5px] text-muted">
+                        {pattern.solved}/{pattern.total}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        })}
+      </div>
 
       <Credit />
     </div>

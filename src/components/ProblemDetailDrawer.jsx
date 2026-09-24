@@ -5,6 +5,7 @@ import { daysBetween, formatDate, hasNote } from '../progress.js'
 import { isDue, isLapsed, LAPSE_INTERVAL, nextReviewDate, recordReview, struggleCount } from '../review.js'
 import { isTypingTarget, reviewOutcomeFor } from '../keyboard.js'
 import { isValidUrl } from '../storage.js'
+import { useEntrance } from '../hooks/useEntrance.js'
 import NoteImages from './NoteImages.jsx'
 import { Difficulty, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
 import { BookmarkIcon, CheckIcon, ImageIcon } from './icons.jsx'
@@ -156,6 +157,7 @@ export default function ProblemDetailDrawer({
 }) {
   const dialogRef = useRef(null)
   const closeButtonRef = useRef(null)
+  const bodyRef = useRef(null)
   const dragStartRef = useRef(null)
   const [dragOffset, setDragOffset] = useState(0)
   const fileInputRef = useRef(null)
@@ -230,6 +232,13 @@ export default function ProblemDetailDrawer({
   useEffect(() => {
     closeButtonRef.current?.focus()
   }, [question.id])
+
+  // Picking another problem from More in starts it at the top and brings it
+  // in, rather than swapping the text under wherever you had scrolled to.
+  useEffect(() => {
+    bodyRef.current?.scrollTo({ top: 0 })
+  }, [question.id])
+  useEntrance(bodyRef, 'list-in', [question.id])
 
   // Escape closes; Tab and Shift+Tab cycle within the panel instead of
   // wandering into the page hidden behind it.
@@ -342,7 +351,7 @@ export default function ProblemDetailDrawer({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 pt-5">
+        <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 pt-5">
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
             <Difficulty difficulty={question.difficulty} />
             <span>{question.pattern}</span>

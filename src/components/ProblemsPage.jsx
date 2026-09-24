@@ -5,6 +5,7 @@ import Filters, { ALL } from './Filters.jsx'
 import ProblemList, { groupId } from './ProblemList.jsx'
 import Credit from './Credit.jsx'
 import { ProgressBar } from './QuestionControls.jsx'
+import { useEntrance } from '../hooks/useEntrance.js'
 
 const EMPTY_STATES = {
   all: { title: 'No problems match', body: 'Try a different search or clear the filters.' },
@@ -54,24 +55,10 @@ export default function ProblemsPage({
     pageScrollRef.current?.scrollTo({ top: 0 })
   }, [selectedTopic, difficulty, coreOnly, notesOnly, show, search])
 
-  // A filter or topic change replays the list's entrance, so the new rows
-  // arrive rather than simply being there. Not on the first render, and not
-  // per keystroke in the search box, where it would only flicker. The class
-  // is removed and re-added, with a reflow between, to restart it; under
-  // reduced motion the class does nothing (index.css).
+  // A filter or topic change replays the list's entrance. Not per keystroke
+  // in the search box, where it would only flicker.
   const listRef = useRef(null)
-  const listShown = useRef(false)
-  useEffect(() => {
-    const list = listRef.current
-    if (!list) return
-    if (!listShown.current) {
-      listShown.current = true
-      return
-    }
-    list.classList.remove('list-in')
-    void list.offsetWidth
-    list.classList.add('list-in')
-  }, [selectedTopic, difficulty, coreOnly, notesOnly, show])
+  useEntrance(listRef, 'list-in', [selectedTopic, difficulty, coreOnly, notesOnly, show])
 
   // ...unless a pattern was picked on the Patterns page: then jump to it.
   useEffect(() => {
