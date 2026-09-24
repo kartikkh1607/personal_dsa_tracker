@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import globals from 'globals'
+import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default [
@@ -12,12 +13,15 @@ export default [
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-    plugins: { 'react-hooks': reactHooks },
+    plugins: { react, 'react-hooks': reactHooks },
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       // Components are only referenced from JSX, which core ESLint doesn't count as a use.
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Core no-undef doesn't look inside JSX either, so a component used but
+      // never imported only showed up as a crash in the browser.
+      'react/jsx-no-undef': 'error',
     },
   },
   {
