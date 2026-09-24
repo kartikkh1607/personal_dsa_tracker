@@ -1,22 +1,19 @@
-import { DIFFICULTY_PILL } from '../constants.js'
+import { DIFFICULTY_LETTER } from '../constants.js'
 import { problemUrl } from '../links.js'
 import { BookmarkIcon, CheckIcon, ExternalIcon, NoteIcon, SearchIcon } from './icons.jsx'
 
-// Marks a problem that has a note: a faint green bar on the row's left edge
-// (NOTE_ACCENT) and a small icon after the name (NoteMark).
-export const NOTE_ACCENT = 'shadow-[inset_2px_0_0_rgb(var(--brand)/0.55)]'
-
+// Marks a problem that has a note: a small icon after the name.
 export function NoteMark() {
   return (
-    <span title="Has notes" className="inline-flex shrink-0 text-brand">
+    <span title="Has notes" className="inline-flex shrink-0 text-muted">
       <NoteIcon className="h-3.5 w-3.5" />
       <span className="sr-only">(has notes)</span>
     </span>
   )
 }
 
-// The one way to record progress: a round tick. The button is larger than the
-// circle (negative margin keeps layout tight) so it's easy to hit on touch.
+// The one way to record progress: a square tick. The button is larger than the
+// box (negative margin keeps layout tight) so it's easy to hit on touch.
 export function SolvedCheck({ solved, problem, onToggle }) {
   return (
     <button
@@ -26,16 +23,14 @@ export function SolvedCheck({ solved, problem, onToggle }) {
       aria-label={`Solved: ${problem}`}
       title={solved ? 'Solved. Click to undo' : 'Mark as solved'}
       onClick={onToggle}
-      className="group/check -m-2 grid h-10 w-10 shrink-0 place-items-center rounded-full"
+      className="group/check -m-2.5 grid h-9 w-9 shrink-0 place-items-center rounded-md"
     >
       <span
-        className={`grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] transition-[background-color,border-color,color,transform] duration-200 group-active/check:scale-90 ${
-          solved
-            ? 'border-brand bg-brand text-brand-contrast'
-            : 'border-ink-3/50 bg-surface text-transparent group-hover/check:border-brand group-hover/check:text-brand/50'
+        className={`grid h-4 w-4 place-items-center rounded border ${
+          solved ? 'border-transparent bg-fill text-onfill' : 'border-rule text-transparent group-hover/check:border-accent group-hover/check:text-accent'
         }`}
       >
-        <CheckIcon className="h-3 w-3" strokeWidth={2.6} />
+        <CheckIcon className="h-3 w-3" strokeWidth={2.4} />
       </span>
     </button>
   )
@@ -50,19 +45,20 @@ export function BookmarkButton({ bookmarked, problem, onToggle, ...rest }) {
       aria-pressed={bookmarked}
       aria-label={`Save for revision: ${problem}`}
       title={bookmarked ? 'Saved for revision. Click to remove' : 'Save for revision'}
-      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition-colors hover:bg-subtle ${
-        bookmarked ? 'text-mark' : 'text-ink-3/60 hover:text-ink'
-      }`}
+      className={`grid h-7 w-7 shrink-0 place-items-center rounded-md hover:bg-tint ${bookmarked ? 'text-accent' : 'text-muted hover:text-ink'}`}
     >
-      <BookmarkIcon filled={bookmarked} />
+      <BookmarkIcon filled={bookmarked} className="h-3.5 w-3.5" />
     </button>
   )
 }
 
-export function DifficultyPill({ difficulty }) {
+// A 19px square with the difficulty's letter. The letter carries the meaning;
+// Hard's fill only reinforces it.
+export function Difficulty({ difficulty }) {
   return (
-    <span className={`inline-flex h-5 shrink-0 items-center rounded-md px-1.5 text-[11px] font-semibold ${DIFFICULTY_PILL[difficulty]}`}>
-      {difficulty}
+    <span className={`dif ${difficulty === 'Hard' ? 'dif--h' : ''}`} title={difficulty}>
+      <span aria-hidden="true">{DIFFICULTY_LETTER[difficulty]}</span>
+      <span className="sr-only">{difficulty}</span>
     </span>
   )
 }
@@ -72,16 +68,11 @@ export function DifficultyPill({ difficulty }) {
 export function ProblemLink({ href, verified, platform, problem, variant = 'row', className = '' }) {
   const url = problemUrl({ link: href, verified, problem, platform })
   const action = verified ? `Open on ${platform}` : 'Search on Google'
-  const icon = verified ? <ExternalIcon /> : <SearchIcon />
+  const icon = verified ? <ExternalIcon className="h-3 w-3" /> : <SearchIcon className="h-3 w-3" />
 
   if (variant === 'primary') {
     return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-semibold text-brand-contrast shadow-sm transition-colors hover:bg-brand-strong ${className}`}
-      >
+      <a href={url} target="_blank" rel="noopener noreferrer" className={`btn-primary ${className}`}>
         {action}
         {icon}
       </a>
@@ -95,39 +86,31 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
       rel="noopener noreferrer"
       aria-label={`${action}: ${problem}`}
       title={action}
-      className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
+      className={`inline-flex shrink-0 items-center gap-1 rounded text-xs text-muted hover:text-accent hover:underline ${className}`}
     >
-      <span className="hidden lg:inline">{verified ? platform : 'Google'}</span>
+      <span className={variant === 'compact' ? 'hidden lg:inline' : ''}>{verified ? platform : 'Google'}</span>
       {icon}
     </a>
   )
 }
 
-export function ProgressBar({ value, total, label, className = 'h-1.5', barClassName = 'bg-brand' }) {
+// 3px, flat, accent on --tint. Labelled bars are exposed as a progressbar;
+// the rest are decoration beside a count that already says the same thing.
+export function ProgressBar({ value, total, label, className = '' }) {
   const percent = total ? (value / total) * 100 : 0
   const a11y = label
     ? { role: 'progressbar', 'aria-label': label, 'aria-valuemin': 0, 'aria-valuemax': total, 'aria-valuenow': value }
     : { 'aria-hidden': true }
 
   return (
-    <div className={`overflow-hidden rounded-full bg-subtle ${className}`} {...a11y}>
-      <div className={`h-full rounded-full transition-[width] duration-500 ${barClassName}`} style={{ width: `${percent}%` }} />
-    </div>
+    <span className={`track ${className}`} {...a11y}>
+      <i style={{ width: `${percent}%` }} />
+    </span>
   )
 }
 
-export function PhaseBadge({ number, complete, current }) {
-  return (
-    <span
-      className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11px] font-semibold tabular-nums ${
-        complete
-          ? 'bg-brand text-brand-contrast'
-          : current
-            ? 'bg-brand-soft text-brand-strong ring-1 ring-inset ring-brand/40'
-            : 'bg-subtle text-ink-3'
-      }`}
-    >
-      {complete ? <CheckIcon className="h-3 w-3" strokeWidth={2.6} /> : number}
-    </span>
-  )
+// A phase's index in Plex Mono: 01, 02... A finished phase shows a tick.
+export function PhaseIndex({ number, complete, current }) {
+  if (complete) return <CheckIcon className="h-3 w-3 shrink-0 text-accent" strokeWidth={2.4} />
+  return <span className={`mono shrink-0 text-[10.5px] ${current ? 'text-accent' : 'text-muted'}`}>{String(number).padStart(2, '0')}</span>
 }

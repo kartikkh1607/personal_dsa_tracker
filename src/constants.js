@@ -1,14 +1,8 @@
 export const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 
-export const DIFFICULTY_PILL = {
-  Easy: 'bg-easy/10 text-easy',
-  Medium: 'bg-medium/10 text-medium',
-  Hard: 'bg-hard/10 text-hard',
-}
-
-export const DIFFICULTY_TEXT = { Easy: 'text-easy', Medium: 'text-medium', Hard: 'text-hard' }
-
-export const DIFFICULTY_BAR = { Easy: 'bg-easy', Medium: 'bg-medium', Hard: 'bg-hard' }
+// Difficulty is shown as its letter in a small square, so the letter carries
+// the meaning rather than a colour.
+export const DIFFICULTY_LETTER = { Easy: 'E', Medium: 'M', Hard: 'H' }
 
 // Core covers every pattern and is the real target; Depth adds reps on shaky
 // patterns; Stretch (Hard + Advanced DS) waits until Core is mostly done.

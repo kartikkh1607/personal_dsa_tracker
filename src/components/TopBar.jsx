@@ -10,8 +10,8 @@ const TABS = [
   { value: 'patterns', label: 'Patterns' },
 ]
 
-const MENU_ITEM_CLASS = 'flex w-full flex-col rounded-lg px-3 py-2 text-left text-sm text-ink-2 transition-colors hover:bg-subtle hover:text-ink'
-const ICON_BUTTON_CLASS = 'grid h-9 w-9 shrink-0 place-items-center rounded-lg text-ink-3 transition-colors hover:bg-subtle hover:text-ink'
+const MENU_ITEM_CLASS = 'flex w-full flex-col rounded-lg px-3 py-2 text-left text-sm text-muted transition-colors hover:bg-tint hover:text-ink'
+const ICON_BUTTON_CLASS = 'grid h-7 w-7 shrink-0 place-items-center rounded-lg text-muted hover:bg-tint hover:text-ink'
 
 export default function TopBar({ view, onViewChange, solved, total, theme, onThemeChange, sync, lastBackup, onExport, onExportCsv, onImport }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -48,95 +48,97 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
   }
 
   return (
-    <header className="relative z-30 shrink-0 border-b border-line bg-surface">
-      <div className="flex h-14 items-center gap-2 px-3 sm:gap-8 sm:px-6">
-        <button type="button" onClick={() => onViewChange('home')} className="flex shrink-0 items-center gap-2.5 rounded-lg" aria-label="DSA Tracker home">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-contrast">
-            <CheckIcon className="h-4 w-4" strokeWidth={2.6} />
-          </span>
-          <span className="hidden text-[15px] font-semibold tracking-tight text-ink md:block">DSA Tracker</span>
-        </button>
-
-        <nav className="flex h-full min-w-0 items-stretch" aria-label="Main">
-          {TABS.map((tab) => {
-            const active = view === tab.value
-            return (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => onViewChange(tab.value)}
-                aria-current={active ? 'page' : undefined}
-                className={`relative px-2.5 text-sm font-medium transition-colors sm:px-3 ${active ? 'text-ink' : 'text-ink-3 hover:text-ink'}`}
-              >
-                {tab.label}
-                {active && <span className="absolute inset-x-2.5 bottom-0 h-0.5 rounded-full bg-brand sm:inset-x-3" aria-hidden="true" />}
-              </button>
-            )
-          })}
-        </nav>
-
-        <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <span className="mr-1 hidden rounded-full bg-subtle px-2.5 py-1 text-xs font-medium tabular-nums text-ink-2 lg:inline-flex">
-            {solved} / {total} solved
-          </span>
-
-          <button
-            type="button"
-            onClick={() => onThemeChange(isDark ? 'light' : 'dark')}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            title={isDark ? 'Light theme' : 'Dark theme'}
-            className={ICON_BUTTON_CLASS}
-          >
-            {isDark ? <SunIcon /> : <MoonIcon />}
+    <header className="relative z-30 shrink-0">
+      <div className="shell !pb-0">
+        <div className="flex h-[54px] items-center gap-3 border-b border-line sm:gap-7">
+          <button type="button" onClick={() => onViewChange('home')} className="flex shrink-0 items-center gap-[9px] rounded-md" aria-label="DSA Tracker home">
+            <span className="grid h-[21px] w-[21px] place-items-center rounded-[5px] bg-fill text-onfill">
+              <CheckIcon className="h-3 w-3" strokeWidth={2.6} />
+            </span>
+            <span className="hidden text-sm font-bold tracking-[-0.01em] text-ink md:block">DSA Tracker</span>
           </button>
 
-          <div ref={menuRef} className="relative">
+          <nav className="flex h-full min-w-0 items-stretch" aria-label="Main">
+            {TABS.map((tab) => {
+              const active = view === tab.value
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => onViewChange(tab.value)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`relative px-2.5 text-[13px] font-medium sm:px-[13px] ${active ? 'text-ink' : 'text-muted hover:text-ink'}`}
+                >
+                  {tab.label}
+                  {active && <span className="absolute inset-x-2.5 -bottom-px h-0.5 bg-accent sm:inset-x-[13px]" aria-hidden="true" />}
+                </button>
+              )
+            })}
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2.5">
+            <span className="mono hidden text-[12.5px] text-muted sm:inline" aria-label={`${solved} of ${total} solved`}>
+              <b className="font-semibold text-ink">{solved}</b> / {total}
+            </span>
+
             <button
               type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label={sync.configured ? 'Account and backup options' : 'Backup options'}
+              onClick={() => onThemeChange(isDark ? 'light' : 'dark')}
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={isDark ? 'Light theme' : 'Dark theme'}
               className={ICON_BUTTON_CLASS}
             >
-              <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-                <circle cx="3" cy="8" r="1.4" />
-                <circle cx="8" cy="8" r="1.4" />
-                <circle cx="13" cy="8" r="1.4" />
-              </svg>
+              {isDark ? <SunIcon className="h-3.5 w-3.5" /> : <MoonIcon className="h-3.5 w-3.5" />}
             </button>
 
-            {menuOpen && (
-              <div role="menu" className="absolute right-0 top-full mt-2 w-80 animate-fade-up rounded-xl border border-line bg-surface p-1.5 shadow-lg">
-                <AccountMenu sync={sync} />
-                <p className="px-3 pb-2 pt-1.5 text-xs leading-5 text-ink-3">
-                  {sync.signedIn ? 'Progress is saved in this browser and mirrored to your account.' : 'Progress is saved in this browser.'}{' '}
-                  {lastBackup ? `Last backup: ${formatDate(lastBackup)}.` : 'Not backed up yet.'}
-                </p>
-                <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExport)}>
-                  Export backup
-                  <span className="text-xs text-ink-3">A file you can import on any device</span>
-                </button>
-                <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExportCsv)}>
-                  Export for Excel
-                  <span className="text-xs text-ink-3">CSV in the Master tab’s column order</span>
-                </button>
-                <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(() => fileInputRef.current?.click())}>
-                  Import backup…
-                  <span className="text-xs text-ink-3">Merge it in, or replace what&rsquo;s here</span>
-                </button>
-              </div>
-            )}
+            <div ref={menuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                aria-label={sync.configured ? 'Account and backup options' : 'Backup options'}
+                className={ICON_BUTTON_CLASS}
+              >
+                <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                  <circle cx="3" cy="8" r="1.3" />
+                  <circle cx="8" cy="8" r="1.3" />
+                  <circle cx="13" cy="8" r="1.3" />
+                </svg>
+              </button>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/json,.json"
-              className="hidden"
-              onChange={handleFileChange}
-              tabIndex={-1}
-              aria-hidden="true"
-            />
+              {menuOpen && (
+                <div role="menu" className="absolute right-0 top-full mt-2 w-80 animate-fade-up rounded-xl border border-line bg-card p-1.5">
+                  <AccountMenu sync={sync} />
+                  <p className="px-3 pb-2 pt-1.5 text-xs leading-5 text-muted">
+                    {sync.signedIn ? 'Progress is saved in this browser and mirrored to your account.' : 'Progress is saved in this browser.'}{' '}
+                    {lastBackup ? `Last backup: ${formatDate(lastBackup)}.` : 'Not backed up yet.'}
+                  </p>
+                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExport)}>
+                    Export backup
+                    <span className="text-xs text-muted">A file you can import on any device</span>
+                  </button>
+                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(onExportCsv)}>
+                    Export for Excel
+                    <span className="text-xs text-muted">CSV in the Master tab’s column order</span>
+                  </button>
+                  <button type="button" role="menuitem" className={MENU_ITEM_CLASS} onClick={() => runMenuAction(() => fileInputRef.current?.click())}>
+                    Import backup…
+                    <span className="text-xs text-muted">Merge it in, or replace what&rsquo;s here</span>
+                  </button>
+                </div>
+              )}
+  
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json,.json"
+                className="hidden"
+                onChange={handleFileChange}
+                tabIndex={-1}
+                aria-hidden="true"
+              />
+            </div>
           </div>
         </div>
       </div>

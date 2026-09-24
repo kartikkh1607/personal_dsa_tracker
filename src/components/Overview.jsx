@@ -1,13 +1,13 @@
-import { DIFFICULTIES, DIFFICULTY_BAR, DIFFICULTY_TEXT, topicName } from '../constants.js'
+import { DIFFICULTIES, topicName } from '../constants.js'
 import { formatDate, hasNote } from '../progress.js'
 import { isLapsed, REVIEW_INTERVALS, struggleCount } from '../review.js'
 import Heatmap from './Heatmap.jsx'
 import { ProblemRow } from './ProblemList.jsx'
-import { DifficultyPill, NOTE_ACCENT, NoteMark, PhaseBadge, ProblemLink, ProgressBar } from './QuestionControls.jsx'
+import { Difficulty, NoteMark, PhaseIndex, ProblemLink, ProgressBar } from './QuestionControls.jsx'
 import Credit from './Credit.jsx'
 import { ArrowRightIcon, BookmarkIcon, CalendarIcon, CheckIcon, FlameIcon } from './icons.jsx'
 
-const CARD = 'rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] sm:p-6'
+const CARD = 'rounded-2xl border border-line bg-card p-5 sm:p-6'
 const REVIEW_PREVIEW_COUNT = 5
 
 // The two review outcomes sit side by side, so they read as one question -
@@ -22,7 +22,7 @@ function ReviewActions({ onGotIt, onStruggled, problem, stacked = false }) {
         type="button"
         onClick={onGotIt}
         aria-label={`Got it: ${problem}. Schedules the next review further out.`}
-        className={`rounded-lg border border-line font-semibold text-ink transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong ${shape}`}
+        className={`rounded-lg border border-line font-semibold text-ink transition-colors hover:border-accent hover:bg-tint hover:text-accent ${shape}`}
       >
         Got it
       </button>
@@ -31,7 +31,7 @@ function ReviewActions({ onGotIt, onStruggled, problem, stacked = false }) {
         onClick={onStruggled}
         aria-label={`Struggled with: ${problem}. Comes back in 3 days, and is saved for revision.`}
         title="Back in 3 days, and saved for revision"
-        className={`rounded-lg border border-line font-semibold text-ink-2 transition-colors hover:border-medium hover:bg-medium/10 hover:text-medium ${shape}`}
+        className={`rounded-lg border border-line font-semibold text-muted transition-colors hover:border-transparent hover:bg-warn hover:text-onwarn ${shape}`}
       >
         Struggled
       </button>
@@ -53,7 +53,7 @@ function CardHeader({ id, title, subtitle, action }) {
         <h2 id={id} className="text-base font-semibold text-ink">
           {title}
         </h2>
-        {subtitle && <p className="mt-0.5 text-sm text-ink-3">{subtitle}</p>}
+        {subtitle && <p className="mt-0.5 text-sm text-muted">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -62,7 +62,7 @@ function CardHeader({ id, title, subtitle, action }) {
 
 function TextButton({ onClick, children }) {
   return (
-    <button type="button" onClick={onClick} className="shrink-0 rounded-md text-sm font-medium text-brand-strong hover:underline">
+    <button type="button" onClick={onClick} className="shrink-0 rounded-md text-sm font-medium text-accent hover:underline">
       {children}
     </button>
   )
@@ -70,7 +70,7 @@ function TextButton({ onClick, children }) {
 
 function Chip({ icon, children }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-subtle px-2.5 py-1 text-xs font-medium text-ink-2">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-1 text-xs font-medium text-muted">
       {icon}
       {children}
     </span>
@@ -79,8 +79,8 @@ function Chip({ icon, children }) {
 
 function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
   return (
-    <div role="status" className="mt-6 flex flex-col gap-3 rounded-2xl border border-medium/30 bg-medium/10 px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
-      <p className="flex-1 text-sm leading-6 text-ink-2">
+    <div role="status" className="mt-6 flex flex-col gap-3 rounded-2xl border border-warn bg-warn px-5 py-4 sm:flex-row sm:items-center sm:gap-6">
+      <p className="flex-1 text-sm leading-6 text-muted">
         <span className="font-semibold text-ink">Back up your progress. </span>
         {lastBackup
           ? `Your last backup was on ${formatDate(lastBackup)}.`
@@ -90,7 +90,7 @@ function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
         <button type="button" onClick={onBackupNow} className="h-9 rounded-lg bg-ink px-3.5 text-sm font-semibold text-canvas transition-opacity hover:opacity-85">
           Export backup
         </button>
-        <button type="button" onClick={onSnooze} className="h-9 rounded-lg px-3 text-sm font-medium text-ink-2 transition-colors hover:bg-subtle hover:text-ink">
+        <button type="button" onClick={onSnooze} className="h-9 rounded-lg px-3 text-sm font-medium text-muted transition-colors hover:bg-tint hover:text-ink">
           Later
         </button>
       </div>
@@ -107,7 +107,7 @@ function BackupBanner({ lastBackup, onBackupNow, onSnooze }) {
 // just a banner.
 function GettingStartedCard({ total, onDismiss }) {
   return (
-    <section className={`${CARD} border-brand/30`} aria-labelledby="getting-started-heading">
+    <section className={`${CARD} border-accent/30`} aria-labelledby="getting-started-heading">
       <CardHeader
         id="getting-started-heading"
         title="How this works"
@@ -115,28 +115,28 @@ function GettingStartedCard({ total, onDismiss }) {
       />
       <ul className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
         <li className="flex gap-3">
-          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-tint text-[11px] font-bold text-accent">
             1
           </span>
-          <p className="text-sm leading-6 text-ink-2">
+          <p className="text-sm leading-6 text-muted">
             <span className="font-medium text-ink">Tick a problem when you solve it.</span> That is the only thing you have to do — all{' '}
             {total} are listed under Problems, in the order the sheet intends.
           </p>
         </li>
         <li className="flex gap-3">
-          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-tint text-[11px] font-bold text-accent">
             2
           </span>
-          <p className="text-sm leading-6 text-ink-2">
+          <p className="text-sm leading-6 text-muted">
             <span className="font-medium text-ink">Solved problems come back.</span> Each returns after 7, 30 and 90 days to be re-solved
             from scratch. Say how it went and the schedule adjusts — a capped handful a day, so it stays finishable.
           </p>
         </li>
         <li className="flex gap-3">
-          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-soft text-[11px] font-bold text-brand-strong">
+          <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-tint text-[11px] font-bold text-accent">
             3
           </span>
-          <p className="text-sm leading-6 text-ink-2">
+          <p className="text-sm leading-6 text-muted">
             <span className="font-medium text-ink">Your progress stays in this browser.</span> No account needed. Export a backup from the{' '}
             <span className="font-medium text-ink">⋯</span> menu, or sign in there to mirror it to your other devices.
           </p>
@@ -151,7 +151,7 @@ function GettingStartedCard({ total, onDismiss }) {
 // disappears reads as something broken rather than something finished.
 function CaughtUpCard() {
   return (
-    <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
+    <section className={`${CARD} border-accent/30`} aria-labelledby="review-heading">
       <CardHeader
         id="review-heading"
         title="You’re caught up"
@@ -166,7 +166,7 @@ function CaughtUpCard() {
 // deliberate act rather than the list quietly refilling itself.
 function DoneForTodayCard({ reviewedToday, remaining, onReviewMore }) {
   return (
-    <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
+    <section className={`${CARD} border-accent/30`} aria-labelledby="review-heading">
       <CardHeader
         id="review-heading"
         title="Done for today"
@@ -175,7 +175,7 @@ function DoneForTodayCard({ reviewedToday, remaining, onReviewMore }) {
       <button
         type="button"
         onClick={onReviewMore}
-        className="mt-4 h-9 rounded-lg border border-line bg-surface px-3.5 text-sm font-medium text-ink-2 transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand-strong"
+        className="mt-4 h-9 rounded-lg border border-line bg-card px-3.5 text-sm font-medium text-muted transition-colors hover:border-accent hover:bg-tint hover:text-accent"
       >
         Review more
       </button>
@@ -187,7 +187,7 @@ function ReviewCard({ reviewToday, backlogCount, progress, onReview, onOpenQuest
   const preview = reviewToday.slice(0, REVIEW_PREVIEW_COUNT)
   const held = backlogCount - reviewToday.length
   return (
-    <section className={`${CARD} border-brand/30`} aria-labelledby="review-heading">
+    <section className={`${CARD} border-accent/30`} aria-labelledby="review-heading">
       <CardHeader
         id="review-heading"
         title={`Today’s reviews · ${reviewToday.length}`}
@@ -202,23 +202,23 @@ function ReviewCard({ reviewToday, backlogCount, progress, onReview, onOpenQuest
         {preview.map((question) => {
           const entry = progress[question.id]
           return (
-            <li key={question.id} data-review-row className={`px-5 py-3 sm:px-6 ${hasNote(entry) ? NOTE_ACCENT : ''}`}>
+            <li key={question.id} data-review-row className={`px-5 py-3 sm:px-6`}>
               <div className="flex items-center gap-3 sm:gap-4">
               <button type="button" onClick={() => onOpenQuestion(question.id)} className="group min-w-0 flex-1 text-left">
                 <span className="flex items-center gap-1.5">
-                  <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                  <span className="truncate text-sm font-medium text-ink group-hover:text-accent">{question.problem}</span>
                   {hasNote(entry) && <NoteMark />}
                 </span>
-                <span className="block truncate text-xs text-ink-3">
+                <span className="block truncate text-xs text-muted">
                   {isLapsed(entry) ? (
-                    <span className="font-medium text-medium">Relearn · struggled last time</span>
+                    <span className="font-medium text-onwarn">Relearn · struggled last time</span>
                   ) : (
                     `${topicName(question.topic)} · review ${(entry.reviews ?? 0) + 1} of ${REVIEW_INTERVALS.length}`
                   )}
                 </span>
               </button>
               <span className="hidden sm:inline-flex">
-                <DifficultyPill difficulty={question.difficulty} />
+                <Difficulty difficulty={question.difficulty} />
               </span>
               <ProblemLink
                 href={entry.link ?? question.link}
@@ -269,7 +269,7 @@ function WeakCard({ weakProblems, weakCount, progress, onOpenQuestion }) {
   }
 
   return (
-    <section className={`${CARD} border-medium/30`} aria-labelledby="weak-heading">
+    <section className={`${CARD} border-warn`} aria-labelledby="weak-heading">
       <CardHeader
         id="weak-heading"
         title={`Weak spots · ${weakCount}`}
@@ -280,25 +280,25 @@ function WeakCard({ weakProblems, weakCount, progress, onOpenQuestion }) {
           const entry = progress[question.id]
           const struggles = struggleCount(entry)
           return (
-            <li key={question.id} className={hasNote(entry) ? NOTE_ACCENT : ''}>
+            <li key={question.id}>
               <button
                 type="button"
                 onClick={() => onOpenQuestion(question.id)}
-                className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6"
+                className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-low sm:px-6"
               >
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1.5">
-                    <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                    <span className="truncate text-sm font-medium text-ink group-hover:text-accent">{question.problem}</span>
                     {hasNote(entry) && <NoteMark />}
                   </span>
-                  <span className="block truncate text-xs text-ink-3">
+                  <span className="block truncate text-xs text-muted">
                     {topicName(question.topic)} · {question.pattern}
                   </span>
                 </span>
-                <span className="shrink-0 rounded-md bg-medium/10 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-medium">
+                <span className="shrink-0 rounded-md bg-warn px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-onwarn">
                   {struggles}×
                 </span>
-                <DifficultyPill difficulty={question.difficulty} />
+                <Difficulty difficulty={question.difficulty} />
               </button>
             </li>
           )
@@ -337,12 +337,12 @@ function UpNextCard({ upNext, progress, onSolve, onToggleBookmark, onOpenQuestio
           ))}
         </ul>
       ) : (
-        <div className="mt-5 rounded-xl bg-brand-soft px-4 py-8 text-center">
-          <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-brand text-brand-contrast">
+        <div className="mt-5 rounded-xl bg-tint px-4 py-8 text-center">
+          <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-fill text-onfill">
             <CheckIcon className="h-5 w-5" />
           </span>
           <p className="mt-3 font-semibold text-ink">Every problem is solved</p>
-          <p className="mt-1 text-sm text-ink-2">Keep up with your reviews to keep them fresh.</p>
+          <p className="mt-1 text-sm text-muted">Keep up with your reviews to keep them fresh.</p>
         </div>
       )}
     </section>
@@ -354,34 +354,34 @@ function ProgressCard({ stats, today }) {
     <section className={CARD} aria-labelledby="progress-heading">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 id="progress-heading" className="text-sm font-medium text-ink-2">
+          <h2 id="progress-heading" className="text-sm font-medium text-muted">
             Problems solved
           </h2>
           <p className="mt-1 flex items-baseline gap-1.5">
             <span className="text-4xl font-semibold tabular-nums tracking-tight text-ink">{stats.solved}</span>
-            <span className="text-lg tabular-nums text-ink-3">/ {stats.total}</span>
+            <span className="text-lg tabular-nums text-muted">/ {stats.total}</span>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Chip icon={<FlameIcon className="h-3.5 w-3.5 text-medium" />}>
+          <Chip icon={<FlameIcon className="h-3.5 w-3.5 text-onwarn" />}>
             {stats.streak > 0 ? `${stats.streak}-day streak` : 'Solve or review one today to start a streak'}
           </Chip>
-          <Chip icon={<CalendarIcon className="h-3.5 w-3.5 text-ink-3" />}>{stats.thisWeek} this week</Chip>
+          <Chip icon={<CalendarIcon className="h-3.5 w-3.5 text-muted" />}>{stats.thisWeek} this week</Chip>
         </div>
       </div>
 
-      <ProgressBar value={stats.solved} total={stats.total} label="Overall progress" className="mt-5 h-2" />
+      <ProgressBar value={stats.solved} total={stats.total} label="Overall progress" className="mt-5" />
 
       <dl className="mt-6 grid grid-cols-3 gap-4 sm:gap-6">
         {DIFFICULTIES.map((level) => {
           const counts = stats.difficulties[level]
           return (
             <div key={level}>
-              <dt className={`text-xs font-semibold ${DIFFICULTY_TEXT[level]}`}>{level}</dt>
-              <dd className="mt-1 text-sm tabular-nums text-ink-3">
+              <dt className="text-xs font-semibold text-muted">{level}</dt>
+              <dd className="mt-1 text-sm tabular-nums text-muted">
                 <span className="font-semibold text-ink">{counts.solved}</span> / {counts.total}
               </dd>
-              <ProgressBar value={counts.solved} total={counts.total} className="mt-2 h-1" barClassName={DIFFICULTY_BAR[level]} />
+              <ProgressBar value={counts.solved} total={counts.total} className="mt-2" />
             </div>
           )
         })}
@@ -407,19 +407,19 @@ function StudyPlanCard({ phaseStats, currentPhase, onSelectPhase }) {
                 type="button"
                 onClick={() => onSelectPhase(phase.phase)}
                 aria-current={current ? 'step' : undefined}
-                className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-subtle/70"
+                className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-low"
               >
-                <PhaseBadge number={phase.phase} complete={phase.solved === phase.total} current={current} />
+                <PhaseIndex number={phase.phase} complete={phase.solved === phase.total} current={current} />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
-                    <span className={`truncate text-sm group-hover:text-ink ${current ? 'font-semibold text-ink' : 'font-medium text-ink-2'}`}>
+                    <span className={`truncate text-sm group-hover:text-ink ${current ? 'font-semibold text-ink' : 'font-medium text-muted'}`}>
                       {phase.name}
                     </span>
-                    <span className="shrink-0 text-xs tabular-nums text-ink-3">
+                    <span className="shrink-0 text-xs tabular-nums text-muted">
                       {phase.solved}/{phase.total}
                     </span>
                   </span>
-                  <ProgressBar value={phase.solved} total={phase.total} className="mt-1.5 h-1" />
+                  <ProgressBar value={phase.solved} total={phase.total} className="mt-1.5" />
                 </span>
               </button>
             </li>
@@ -442,10 +442,10 @@ function PatternCard({ patternStats, onShowPatterns }) {
         subtitle={`${started} of ${patternStats.length} patterns started`}
         action={<TextButton onClick={onShowPatterns}>View all</TextButton>}
       />
-      <ProgressBar value={started} total={patternStats.length} className="mt-4 h-1.5" />
+      <ProgressBar value={started} total={patternStats.length} className="mt-4" />
       {untouched.length > 0 && (
-        <p className="mt-3 text-xs leading-5 text-ink-3">
-          Next untouched: <span className="text-ink-2">{untouched.map((pattern) => pattern.pattern).join(', ')}</span>
+        <p className="mt-3 text-xs leading-5 text-muted">
+          Next untouched: <span className="text-muted">{untouched.map((pattern) => pattern.pattern).join(', ')}</span>
         </p>
       )}
     </section>
@@ -469,26 +469,24 @@ function SavedCard({ savedPreview, savedCount, progress, onOpenQuestion, onShowS
               <button
                 type="button"
                 onClick={() => onOpenQuestion(question.id)}
-                className={`group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:px-6 ${
-                  hasNote(progress[question.id]) ? NOTE_ACCENT : ''
-                }`}
+                className={`group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-low sm:px-6 `}
               >
-                <BookmarkIcon filled className="h-4 w-4 shrink-0 text-mark" />
+                <BookmarkIcon filled className="h-4 w-4 shrink-0 text-accent" />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1.5">
-                    <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{question.problem}</span>
+                    <span className="truncate text-sm font-medium text-ink group-hover:text-accent">{question.problem}</span>
                     {hasNote(progress[question.id]) && <NoteMark />}
                   </span>
-                  <span className="block truncate text-xs text-ink-3">{topicName(question.topic)}</span>
+                  <span className="block truncate text-xs text-muted">{topicName(question.topic)}</span>
                 </span>
-                {progress[question.id]?.solved && <CheckIcon className="h-4 w-4 shrink-0 text-brand" />}
-                <DifficultyPill difficulty={question.difficulty} />
+                {progress[question.id]?.solved && <CheckIcon className="h-4 w-4 shrink-0 text-accent" />}
+                <Difficulty difficulty={question.difficulty} />
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="mt-4 rounded-xl border border-dashed border-line px-4 py-5 text-center text-sm leading-6 text-ink-3">
+        <p className="mt-4 rounded-xl border border-dashed border-line px-4 py-5 text-center text-sm leading-6 text-muted">
           Tap the <BookmarkIcon className="inline h-3.5 w-3.5 align-[-2px]" /> on a tricky problem and it will wait for you here.
         </p>
       )}
@@ -557,15 +555,15 @@ export default function Overview({
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
       <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-ink-3">{greeting()}</p>
+          <p className="text-sm font-medium text-muted">{greeting()}</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{headline}</h1>
-          <p className="mt-1.5 max-w-xl text-sm text-ink-2 sm:text-base">{subline}</p>
+          <p className="mt-1.5 max-w-xl text-sm text-muted sm:text-base">{subline}</p>
         </div>
         {upNext.length > 0 && (
           <button
             type="button"
             onClick={onContinue}
-            className="inline-flex h-11 items-center gap-2 rounded-xl bg-brand px-5 text-sm font-semibold text-brand-contrast shadow-sm transition-colors hover:bg-brand-strong"
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-fill px-5 text-sm font-semibold text-onfill transition-colors hover:brightness-110"
           >
             {isNew ? 'Start practicing' : 'Continue practicing'}
             <ArrowRightIcon />

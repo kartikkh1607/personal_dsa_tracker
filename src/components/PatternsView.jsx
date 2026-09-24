@@ -19,15 +19,15 @@ function statusOf(pattern) {
 function StatusMark({ status }) {
   if (status === 'done') {
     return (
-      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-brand-contrast" aria-label="Done">
+      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-fill text-onfill" aria-label="Done">
         <CheckIcon className="h-3 w-3" strokeWidth={2.6} />
       </span>
     )
   }
   if (status === 'started') {
-    return <span className="h-5 w-5 shrink-0 rounded-full border-2 border-brand bg-brand-soft" aria-label="In progress" />
+    return <span className="h-5 w-5 shrink-0 rounded-full border-2 border-accent bg-tint" aria-label="In progress" />
   }
-  return <span className="h-5 w-5 shrink-0 rounded-full border-2 border-dashed border-ink-3/40" aria-label="Untouched" />
+  return <span className="h-5 w-5 shrink-0 rounded-full border-2 border-dashed border-rule" aria-label="Untouched" />
 }
 
 // Topic percentages can hide gaps; this lists every pattern in the sheet so the
@@ -58,7 +58,7 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:py-12">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Patterns</h1>
-        <p className="mt-1.5 max-w-2xl text-sm text-ink-2 sm:text-base">
+        <p className="mt-1.5 max-w-2xl text-sm text-muted sm:text-base">
           Topic progress can hide gaps: most of Graphs done can still mean you’ve never written Dijkstra. Aim to solve at least one problem in every pattern.
         </p>
       </header>
@@ -67,32 +67,32 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
         {[
           { label: 'Untouched', value: counts.untouched, className: 'text-ink' },
           { label: 'In progress', value: counts.started, className: 'text-ink' },
-          { label: 'Done', value: counts.done, className: 'text-brand-strong' },
+          { label: 'Done', value: counts.done, className: 'text-accent' },
         ].map((tile) => (
-          <div key={tile.label} className="rounded-2xl border border-line bg-surface px-4 py-3 sm:px-5 sm:py-4">
-            <dt className="text-xs font-medium text-ink-3">{tile.label}</dt>
+          <div key={tile.label} className="rounded-2xl border border-line bg-card px-4 py-3 sm:px-5 sm:py-4">
+            <dt className="text-xs font-medium text-muted">{tile.label}</dt>
             <dd className={`mt-1 text-2xl font-semibold tabular-nums ${tile.className}`}>{tile.value}</dd>
           </div>
         ))}
       </dl>
-      <ProgressBar value={counts.all - counts.untouched} total={counts.all} label="Patterns started" className="mt-4 h-1.5" />
-      <p className="mt-2 text-xs text-ink-3">
+      <ProgressBar value={counts.all - counts.untouched} total={counts.all} label="Patterns started" className="mt-4" />
+      <p className="mt-2 text-xs text-muted">
         {counts.all - counts.untouched} of {counts.all} patterns started
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <div className="relative w-full sm:w-auto sm:min-w-[12rem] sm:flex-1">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-3" />
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search patterns"
             aria-label="Search patterns"
-            className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-ink-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            className="h-9 w-full rounded-lg border border-line bg-card pl-9 pr-3 text-sm text-ink placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
           />
         </div>
-        <div role="group" aria-label="Show patterns" className="grid h-9 w-full grid-cols-4 items-center rounded-lg bg-subtle p-1 sm:inline-grid sm:w-auto">
+        <div role="group" aria-label="Show patterns" className="grid h-9 w-full grid-cols-4 items-center rounded-lg bg-tint p-1 sm:inline-grid sm:w-auto">
           {FILTERS.map((option) => {
             const active = filter === option.value
             return (
@@ -101,7 +101,7 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
                 type="button"
                 onClick={() => setFilter(option.value)}
                 aria-pressed={active}
-                className={`h-7 truncate rounded-md px-1.5 text-sm font-medium transition-colors sm:px-3 ${active ? 'bg-surface text-ink shadow-sm' : 'text-ink-3 hover:text-ink'}`}
+                className={`h-7 truncate rounded-md px-1.5 text-sm font-medium transition-colors sm:px-3 ${active ? 'bg-card text-ink' : 'text-muted hover:text-ink'}`}
               >
                 {option.label}
               </button>
@@ -110,12 +110,12 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
         </div>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-surface">
-        {groups.length === 0 && <p className="px-6 py-14 text-center text-sm text-ink-3">No patterns match.</p>}
+      <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-card">
+        {groups.length === 0 && <p className="px-6 py-14 text-center text-sm text-muted">No patterns match.</p>}
         {groups.map(([topic, patterns]) => (
           <section key={topic} aria-label={topicName(topic)}>
             <div className="flex items-center justify-between gap-3 border-b border-line bg-canvas/70 px-5 py-2 sm:px-6">
-              <h2 className="truncate text-xs font-semibold uppercase tracking-wider text-ink-3">{topicName(topic)}</h2>
+              <h2 className="truncate text-xs font-semibold uppercase tracking-wider text-muted">{topicName(topic)}</h2>
             </div>
             <ul className="divide-y divide-line/70 border-b border-line last:border-b-0">
               {patterns.map((pattern) => (
@@ -123,15 +123,15 @@ export default function PatternsView({ patternStats, onOpenPattern }) {
                   <button
                     type="button"
                     onClick={() => onOpenPattern(pattern.topic, pattern.pattern)}
-                    className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-subtle/50 sm:gap-4 sm:px-6"
+                    className="group flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-low sm:gap-4 sm:px-6"
                   >
                     <StatusMark status={statusOf(pattern)} />
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink group-hover:text-brand-strong">{pattern.pattern}</span>
-                    <ProgressBar value={pattern.solved} total={pattern.total} className="hidden h-1.5 w-24 sm:block" />
-                    <span className="w-10 shrink-0 text-right text-xs tabular-nums text-ink-3">
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink group-hover:text-accent">{pattern.pattern}</span>
+                    <ProgressBar value={pattern.solved} total={pattern.total} className="hidden w-24 sm:block" />
+                    <span className="w-10 shrink-0 text-right text-xs tabular-nums text-muted">
                       {pattern.solved}/{pattern.total}
                     </span>
-                    <ChevronIcon className="h-3.5 w-3.5 shrink-0 text-ink-3" />
+                    <ChevronIcon className="h-3.5 w-3.5 shrink-0 text-muted" />
                   </button>
                 </li>
               ))}

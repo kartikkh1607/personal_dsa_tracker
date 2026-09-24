@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { hasNote } from '../progress.js'
 import { isDue } from '../review.js'
-import { BookmarkButton, DifficultyPill, NOTE_ACCENT, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
+import { BookmarkButton, Difficulty, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
 
 // Anchor id for a group, so the Patterns page can scroll straight to one.
 export function groupId(key) {
@@ -16,16 +16,14 @@ export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarke
     <li
       data-problem-row
       data-question-id={question.id}
-      className={`group flex scroll-mt-10 items-center gap-3 px-5 py-3 transition-colors focus-within:bg-subtle/50 hover:bg-subtle/50 sm:gap-4 sm:px-6 ${
-        noted ? NOTE_ACCENT : ''
-      }`}
+      className={`group flex scroll-mt-10 items-center gap-3 px-5 py-3 transition-colors focus-within:bg-low hover:bg-low sm:gap-4 sm:px-6 `}
     >
       <SolvedCheck solved={solved} problem={question.problem} onToggle={() => onToggleSolved(question.id)} />
       <button type="button" data-row-open onClick={() => onOpen(question.id)} className="min-w-0 flex-1 rounded text-left">
         <span className="flex items-center gap-1.5">
           <span
             className={`line-clamp-2 min-w-0 text-sm font-medium leading-5 transition-colors sm:line-clamp-1 ${
-              solved ? 'text-ink-3' : 'text-ink group-hover:text-brand-strong'
+              solved ? 'text-muted' : 'text-ink group-hover:text-accent'
             }`}
           >
             {question.problem}
@@ -33,9 +31,9 @@ export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarke
           {noted && <NoteMark />}
         </span>
         {(due || meta) && (
-          <span className="mt-0.5 block truncate text-xs text-ink-3">
+          <span className="mt-0.5 block truncate text-xs text-muted">
             {due && (
-              <span className="font-medium text-brand-strong">
+              <span className="font-medium text-accent">
                 Review due{meta ? ' · ' : ''}
               </span>
             )}
@@ -43,7 +41,7 @@ export const ProblemRow = memo(function ProblemRow({ question, solved, bookmarke
           </span>
         )}
       </button>
-      <DifficultyPill difficulty={question.difficulty} />
+      <Difficulty difficulty={question.difficulty} />
       <div className="-mr-2 flex shrink-0 items-center">
         <BookmarkButton data-row-bookmark bookmarked={bookmarked} problem={question.problem} onToggle={() => onToggleBookmark(question.id)} />
         <ProblemLink href={link} verified={question.linkVerified || link !== question.link} platform={question.platform} problem={question.problem} />
@@ -64,8 +62,8 @@ export default function ProblemList({ groups, progress, today, showPattern, onTo
       {groups.map((group) => (
         <section key={group.key} id={groupId(group.key)} aria-label={group.label}>
           <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-canvas/90 px-5 py-2 backdrop-blur sm:px-6">
-            <h2 className="truncate text-xs font-semibold uppercase tracking-wider text-ink-3">{group.label}</h2>
-            <span className="shrink-0 text-xs tabular-nums text-ink-3">
+            <h2 className="truncate text-xs font-semibold uppercase tracking-wider text-muted">{group.label}</h2>
+            <span className="shrink-0 text-xs tabular-nums text-muted">
               {group.solved}/{group.items.length}
             </span>
           </div>

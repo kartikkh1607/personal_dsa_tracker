@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { topicName } from '../constants.js'
-import { PhaseBadge } from './QuestionControls.jsx'
+import { PhaseIndex } from './QuestionControls.jsx'
 import { CheckIcon, ChevronIcon } from './icons.jsx'
 
 export const ALL_TOPICS = 'All topics'
@@ -14,14 +14,14 @@ function TopicItem({ label, solved, total, isSelected, onClick }) {
       onClick={onClick}
       aria-current={isSelected ? 'page' : undefined}
       className={`flex w-full items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${
-        isSelected ? 'bg-brand-soft font-semibold text-brand-strong' : 'text-ink-2 hover:bg-subtle hover:text-ink'
+        isSelected ? 'bg-tint font-semibold text-accent' : 'text-muted hover:bg-tint hover:text-ink'
       }`}
     >
       <span className="truncate">{label}</span>
       {complete ? (
-        <CheckIcon className="h-3.5 w-3.5 shrink-0 text-brand" />
+        <CheckIcon className="h-3.5 w-3.5 shrink-0 text-accent" />
       ) : (
-        <span className={`shrink-0 text-[11px] tabular-nums ${isSelected ? 'text-brand-strong/80' : 'text-ink-3'}`}>
+        <span className={`shrink-0 text-[11px] tabular-nums ${isSelected ? 'text-accent/80' : 'text-muted'}`}>
           {solved}/{total}
         </span>
       )}
@@ -52,15 +52,15 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
   // Narrow screens: the topic list collapses into a dropdown.
   if (isNarrow) {
     return (
-      <div className="border-b border-line bg-surface px-5 pb-3 pt-4">
-        <label htmlFor="topic-select" className="block text-xs font-medium text-ink-3">
+      <div className="border-b border-line bg-card px-5 pb-3 pt-4">
+        <label htmlFor="topic-select" className="block text-xs font-medium text-muted">
           Topic
         </label>
         <select
           id="topic-select"
           value={selectedTopic}
           onChange={(event) => onSelectTopic(event.target.value)}
-          className="mt-1.5 h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+          className="mt-1.5 h-10 w-full rounded-lg border border-line bg-card px-3 text-sm font-medium text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
         >
           <option value={ALL_TOPICS}>
             All problems ({overall.solved}/{overall.total})
@@ -90,7 +90,7 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
           onClick={() => onSelectTopic(ALL_TOPICS)}
         />
 
-        <p className="mb-1 mt-5 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-ink-3">Study plan</p>
+        <p className="mb-1 mt-5 px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted">Study plan</p>
         <ul className="space-y-0.5">
           {phaseStats.map((phase) => {
             const open = expanded.has(phase.phase)
@@ -100,14 +100,14 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
                   type="button"
                   onClick={() => togglePhase(phase.phase)}
                   aria-expanded={open}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-subtle"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-tint"
                 >
-                  <PhaseBadge number={phase.phase} complete={phase.solved === phase.total} current={phase.phase === currentPhase} />
+                  <PhaseIndex number={phase.phase} complete={phase.solved === phase.total} current={phase.phase === currentPhase} />
                   <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-ink">{phase.name}</span>
-                  <span className="shrink-0 text-[11px] tabular-nums text-ink-3">
+                  <span className="shrink-0 text-[11px] tabular-nums text-muted">
                     {phase.solved}/{phase.total}
                   </span>
-                  <ChevronIcon className={`h-3.5 w-3.5 shrink-0 text-ink-3 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+                  <ChevronIcon className={`h-3.5 w-3.5 shrink-0 text-muted transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
                 </button>
                 {open && (
                   <ul className="mb-2 ml-5 space-y-0.5 border-l border-line pl-2">

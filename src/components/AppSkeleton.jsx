@@ -5,12 +5,12 @@ import { CheckIcon } from './icons.jsx'
 // The shimmer is a plain pulse, which index.css already neutralises under
 // prefers-reduced-motion.
 function Block({ className }) {
-  return <div className={`animate-pulse rounded-lg bg-subtle ${className}`} />
+  return <div className={`animate-pulse rounded-lg bg-tint ${className}`} />
 }
 
 function Card() {
   return (
-    <section className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+    <section className="rounded-2xl border border-line bg-card p-5 sm:p-6">
       <Block className="h-4 w-40" />
       <Block className="mt-3 h-3 w-64 max-w-full" />
       <div className="mt-5 space-y-3">
@@ -29,9 +29,9 @@ function Card() {
 export default function AppSkeleton() {
   return (
     <div className="flex h-dvh flex-col bg-canvas font-sans text-ink">
-      <header className="shrink-0 border-b border-line bg-surface">
+      <header className="shrink-0 border-b border-line bg-card">
         <div className="flex h-14 items-center gap-2 px-3 sm:gap-8 sm:px-6">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand text-brand-contrast">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-fill text-onfill">
             <CheckIcon className="h-4 w-4" strokeWidth={2.6} />
           </span>
           <span className="hidden text-[15px] font-semibold tracking-tight text-ink md:block">DSA Tracker</span>

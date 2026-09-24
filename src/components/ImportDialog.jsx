@@ -56,20 +56,20 @@ export default function ImportDialog({ fileName, count, currentCount, signedIn, 
   }, [onCancel])
 
   return (
-    <div className="fixed inset-0 z-[70] flex animate-fade-in items-center justify-center bg-black/40 p-4" role="presentation" onMouseDown={onCancel}>
+    <div className="fixed inset-0 z-[70] flex animate-fade-in items-center justify-center bg-canvas/70 p-4" role="presentation" onMouseDown={onCancel}>
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-dialog-title"
         aria-describedby="import-dialog-summary"
-        className="w-full max-w-lg animate-fade-up rounded-2xl border border-line bg-surface p-5 shadow-2xl sm:p-6"
+        className="w-full max-w-lg animate-fade-up rounded-2xl border border-line bg-card p-5 sm:p-6"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <h2 id="import-dialog-title" className="text-base font-semibold text-ink">
           Import this backup
         </h2>
-        <p id="import-dialog-summary" className="mt-1 text-sm leading-6 text-ink-2">
+        <p id="import-dialog-summary" className="mt-1 text-sm leading-6 text-muted">
           <span className="font-medium text-ink">{fileName}</span> holds {plural(count, 'problem')}. This browser has{' '}
           {plural(currentCount, 'problem')}.
         </p>
@@ -79,13 +79,13 @@ export default function ImportDialog({ fileName, count, currentCount, signedIn, 
             ref={mergeButtonRef}
             type="button"
             onClick={onMerge}
-            className="rounded-xl border border-brand bg-brand-soft p-4 text-left transition-colors hover:border-brand-strong focus:outline-none focus:ring-2 focus:ring-brand/40"
+            className="rounded-xl border border-accent bg-tint p-4 text-left transition-colors hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent/40"
           >
             <span className="flex items-center gap-2">
               <span className="text-sm font-semibold text-ink">Merge</span>
-              <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-brand-contrast">Recommended</span>
+              <span className="rounded-full bg-fill px-2 py-0.5 text-[11px] font-semibold text-onfill">Recommended</span>
             </span>
-            <span className="mt-1 block text-xs leading-5 text-ink-2">
+            <span className="mt-1 block text-xs leading-5 text-muted">
               Keeps everything from both. Where the same problem differs, the more recent change wins. Nothing is deleted.
             </span>
           </button>
@@ -93,18 +93,18 @@ export default function ImportDialog({ fileName, count, currentCount, signedIn, 
           <button
             type="button"
             onClick={onReplace}
-            className="rounded-xl border border-line p-4 text-left transition-colors hover:border-hard/50 focus:outline-none focus:ring-2 focus:ring-hard/30"
+            className="rounded-xl border border-line p-4 text-left transition-colors hover:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
           >
             <span className="text-sm font-semibold text-ink">Replace</span>
-            <span className="mt-1 block text-xs leading-5 text-ink-2">
+            <span className="mt-1 block text-xs leading-5 text-muted">
               Throws away the {plural(currentCount, 'problem')} in this browser and keeps only what the file holds.
             </span>
             {signedIn && (
-              <span className="mt-1.5 block text-xs font-medium leading-5 text-hard">
+              <span className="mt-1.5 block text-xs font-medium leading-5 text-accent">
                 You are signed in, so this also deletes them from your account — on every device you are signed in to.
               </span>
             )}
-            <span className="mt-1.5 block text-xs leading-5 text-ink-3">You can undo this straight afterwards.</span>
+            <span className="mt-1.5 block text-xs leading-5 text-muted">You can undo this straight afterwards.</span>
           </button>
         </div>
 
@@ -112,7 +112,7 @@ export default function ImportDialog({ fileName, count, currentCount, signedIn, 
           <button
             type="button"
             onClick={onCancel}
-            className="h-9 rounded-lg px-3 text-sm font-medium text-ink-2 transition-colors hover:bg-subtle hover:text-ink"
+            className="h-9 rounded-lg px-3 text-sm font-medium text-muted transition-colors hover:bg-tint hover:text-ink"
           >
             Cancel
           </button>

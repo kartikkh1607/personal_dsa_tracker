@@ -211,7 +211,7 @@ function Tracker({ data }) {
           main?.focus()
           main?.scrollIntoView({ block: 'start' })
         }}
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[80] focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-contrast"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[80] focus:rounded-lg focus:bg-fill focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-onfill"
       >
         Skip to content
       </button>

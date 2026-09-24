@@ -8,7 +8,7 @@
 // everyone else a link was sent and never arrived.
 
 const ACTION_CLASS =
-  'inline-flex h-9 items-center justify-center rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink-2 transition-colors hover:border-ink-3/40 hover:text-ink disabled:pointer-events-none disabled:opacity-40'
+  'inline-flex h-9 items-center justify-center rounded-lg border border-line bg-card px-3 text-sm font-medium text-muted transition-colors hover:border-rule hover:text-ink disabled:pointer-events-none disabled:opacity-40'
 
 function statusLine({ status, lastSyncedAt, error }) {
   if (status === 'syncing') return 'Syncing…'
@@ -48,7 +48,7 @@ export default function AccountMenu({ sync }) {
         <p className="truncate text-sm font-medium text-ink" title={sync.email ?? undefined}>
           {sync.email}
         </p>
-        <p className={`mt-0.5 text-xs leading-5 ${sync.status === 'error' ? 'text-hard' : 'text-ink-3'}`}>
+        <p className={`mt-0.5 text-xs leading-5 ${sync.status === 'error' ? 'text-accent' : 'text-muted'}`}>
           {statusLine(sync)}
         </p>
         <div className="mt-2 flex gap-2">
@@ -69,7 +69,7 @@ export default function AccountMenu({ sync }) {
     return (
       <div className="border-b border-line px-3 pb-3 pt-1.5">
         <p className="text-sm font-medium text-ink">Sync across devices</p>
-        <p className="mt-0.5 text-xs leading-5 text-ink-3">
+        <p className="mt-0.5 text-xs leading-5 text-muted">
           Sign-in isn&rsquo;t available in this build. Your progress is saved in this browser as usual.
         </p>
       </div>
@@ -79,20 +79,20 @@ export default function AccountMenu({ sync }) {
   return (
     <div className="border-b border-line px-3 pb-3 pt-1.5">
       <p className="text-sm font-medium text-ink">Sync across devices</p>
-      <p className="mt-0.5 text-xs leading-5 text-ink-3">
+      <p className="mt-0.5 text-xs leading-5 text-muted">
         Sign in to mirror this browser&rsquo;s progress to your other devices. It stays saved here either way.
       </p>
 
       <button
         type="button"
         onClick={sync.signInWithGoogle}
-        className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-lg border border-line bg-surface px-3 text-sm font-semibold text-ink transition-colors hover:border-ink-3/40 hover:bg-subtle"
+        className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink transition-colors hover:border-rule hover:bg-tint"
       >
         <GoogleMark />
         Continue with Google
       </button>
 
-      {sync.error && <p className="mt-2 text-xs leading-5 text-hard">{sync.error}</p>}
+      {sync.error && <p className="mt-2 text-xs leading-5 text-accent">{sync.error}</p>}
     </div>
   )
 }

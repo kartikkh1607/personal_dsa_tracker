@@ -16,8 +16,8 @@ export default function Toast({ toast, onDismiss }) {
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[60] flex justify-center px-4">
       <div
-        className={`pointer-events-auto flex max-w-full animate-fade-up items-center gap-2 rounded-xl py-2 pl-4 pr-2 text-sm font-medium shadow-lg ${
-          toast.tone === 'error' ? 'bg-hard text-white' : 'bg-ink text-canvas'
+        className={`pointer-events-auto flex max-w-full animate-fade-up items-center gap-2 rounded-xl py-2 pl-4 pr-2 text-sm font-medium ${
+          toast.tone === 'error' ? 'bg-fill text-onfill' : 'bg-ink text-canvas'
         }`}
       >
         <span className="min-w-0 truncate">{toast.message}</span>

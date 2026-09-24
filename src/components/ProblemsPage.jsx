@@ -85,7 +85,7 @@ export default function ProblemsPage({
         isNarrow={isNarrow}
       />
 
-      <main id="main-content" tabIndex={-1} className="bg-surface md:flex md:min-h-0 md:flex-1 md:flex-col">
+      <main id="main-content" tabIndex={-1} className="bg-card md:flex md:min-h-0 md:flex-1 md:flex-col">
         <Filters
           eyebrow={header.eyebrow}
           title={header.title}
@@ -113,12 +113,12 @@ export default function ProblemsPage({
           {groups.length === 0 ? (
             <div className="px-6 py-20 text-center">
               <p className="font-semibold text-ink">{emptyState.title}</p>
-              <p className="mt-1 text-sm text-ink-3">{emptyState.body}</p>
+              <p className="mt-1 text-sm text-muted">{emptyState.body}</p>
               {isFiltered && (
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="mt-5 h-9 rounded-lg border border-line px-3 text-sm font-medium text-ink transition-colors hover:bg-subtle"
+                  className="mt-5 h-9 rounded-lg border border-line px-3 text-sm font-medium text-ink transition-colors hover:bg-tint"
                 >
                   Clear filters
                 </button>

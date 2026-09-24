@@ -41,17 +41,17 @@ function Thumbnail({ id, number, onOpen, onDelete }) {
         onClick={() => onOpen(id)}
         disabled={!ready}
         aria-label={`Open image ${number} full size`}
-        className="block h-20 w-20 overflow-hidden rounded-lg border border-line bg-subtle transition-colors hover:border-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        className="block h-20 w-20 overflow-hidden rounded-lg border border-line bg-tint transition-colors hover:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
       >
         {ready && <img src={url} alt="" className="h-full w-full object-cover" />}
-        {url === MISSING && <span className="grid h-full place-items-center px-1 text-center text-[11px] leading-4 text-ink-3">Image unavailable</span>}
+        {url === MISSING && <span className="grid h-full place-items-center px-1 text-center text-[11px] leading-4 text-muted">Image unavailable</span>}
       </button>
       <button
         type="button"
         onClick={() => onDelete(id)}
         aria-label={`Delete image ${number}`}
         title="Delete image"
-        className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border border-line bg-surface text-sm leading-none text-ink-2 shadow-sm transition-colors hover:border-hard/50 hover:text-hard"
+        className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border border-line bg-card text-sm leading-none text-muted transition-colors hover:border-accent hover:text-accent"
       >
         ×
       </button>
@@ -98,7 +98,7 @@ function Lightbox({ id, onClose }) {
         ×
       </button>
       {url && url !== MISSING && (
-        <img src={url} alt="Note image, full size" className="max-h-full max-w-full rounded-lg object-contain shadow-2xl" onClick={(event) => event.stopPropagation()} />
+        <img src={url} alt="Note image, full size" className="max-h-full max-w-full rounded-lg object-contain" onClick={(event) => event.stopPropagation()} />
       )}
     </div>,
     document.body,

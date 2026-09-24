@@ -2,14 +2,14 @@ import { useEffect, useRef } from 'react'
 import { dateFromIso, formatDate, isoFromDate } from '../progress.js'
 
 const WEEKS = 18
-const LEVELS = ['bg-subtle', 'bg-brand/30', 'bg-brand/55', 'bg-brand/80', 'bg-brand']
+// Empty, then 28%, 58% and 100% of the accent (see index.css).
+const LEVELS = ['heat-0', 'heat-1', 'heat-2', 'heat-3']
 
 function levelFor(count) {
   if (count === 0) return 0
   if (count === 1) return 1
   if (count <= 3) return 2
-  if (count <= 5) return 3
-  return 4
+  return 3
 }
 
 function plural(count, noun) {
@@ -59,8 +59,8 @@ export default function Heatmap({ activity, today }) {
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h3 className="text-sm font-medium text-ink-2">Activity</h3>
-        <p className="text-xs text-ink-3">
+        <h3 className="text-sm font-medium text-muted">Activity</h3>
+        <p className="text-xs text-muted">
           {summary} on {plural(activeDays, 'day')} · last {WEEKS} weeks
         </p>
       </div>
@@ -77,7 +77,7 @@ export default function Heatmap({ activity, today }) {
           })}
         </div>
       </div>
-      <div className="mt-2 flex items-center justify-end gap-1 text-[11px] text-ink-3" aria-hidden="true">
+      <div className="mt-2 flex items-center justify-end gap-1 text-[11px] text-muted" aria-hidden="true">
         Less
         {LEVELS.map((level) => (
           <span key={level} className={`h-2.5 w-2.5 rounded-[3px] ${level}`} />

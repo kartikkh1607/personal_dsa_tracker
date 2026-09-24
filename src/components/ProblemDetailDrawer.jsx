@@ -6,7 +6,7 @@ import { isDue, isLapsed, nextReviewDate, struggleCount } from '../review.js'
 import { isTypingTarget, reviewOutcomeFor } from '../keyboard.js'
 import { isValidUrl } from '../storage.js'
 import NoteImages from './NoteImages.jsx'
-import { DifficultyPill, NOTE_ACCENT, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
+import { Difficulty, NoteMark, ProblemLink, SolvedCheck } from './QuestionControls.jsx'
 import { BookmarkIcon, CheckIcon, ImageIcon } from './icons.jsx'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -37,12 +37,12 @@ function LinkFixer({ customLink, onSave }) {
           onChange={(event) => setDraft(event.target.value)}
           placeholder="https://…"
           aria-label="Problem URL"
-          className="h-9 min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 text-sm text-ink placeholder:text-ink-3 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+          className="h-9 min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 text-sm text-ink placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
         />
         <button type="submit" disabled={!valid} className="h-9 rounded-lg bg-ink px-3 text-sm font-medium text-canvas transition-opacity disabled:opacity-40">
           Save
         </button>
-        <button type="button" onClick={() => setEditing(false)} className="h-9 rounded-lg px-2 text-sm text-ink-3 hover:text-ink">
+        <button type="button" onClick={() => setEditing(false)} className="h-9 rounded-lg px-2 text-sm text-muted hover:text-ink">
           Cancel
         </button>
       </form>
@@ -51,13 +51,13 @@ function LinkFixer({ customLink, onSave }) {
 
   if (customLink) {
     return (
-      <p className="mt-3 text-xs text-ink-3">
+      <p className="mt-3 text-xs text-muted">
         Using the link you saved.{' '}
-        <button type="button" onClick={() => setEditing(true)} className="font-medium text-brand-strong hover:underline">
+        <button type="button" onClick={() => setEditing(true)} className="font-medium text-accent hover:underline">
           Change
         </button>{' '}
         ·{' '}
-        <button type="button" onClick={() => onSave('')} className="font-medium text-brand-strong hover:underline">
+        <button type="button" onClick={() => onSave('')} className="font-medium text-accent hover:underline">
           Reset
         </button>
       </p>
@@ -65,9 +65,9 @@ function LinkFixer({ customLink, onSave }) {
   }
 
   return (
-    <p className="mt-3 text-xs leading-5 text-ink-3">
+    <p className="mt-3 text-xs leading-5 text-muted">
       The direct link couldn’t be confirmed, so this searches Google.{' '}
-      <button type="button" onClick={() => setEditing(true)} className="font-medium text-brand-strong hover:underline">
+      <button type="button" onClick={() => setEditing(true)} className="font-medium text-accent hover:underline">
         Paste the real link
       </button>
     </p>
@@ -88,7 +88,7 @@ function pastedImages(clipboard) {
 }
 
 function reviewStatus(entry, due) {
-  if (due) return <span className="font-semibold text-brand-strong">Due for review</span>
+  if (due) return <span className="font-semibold text-accent">Due for review</span>
   const next = nextReviewDate(entry)
   if (next) return `Next review ${formatDate(next)}`
   return entry.solvedAt ? 'All reviews done' : null
@@ -99,14 +99,14 @@ function reviewStatus(entry, due) {
 function ReviewHistory({ history }) {
   const struggles = struggleCount({ history })
   return (
-    <p className="mt-2 flex flex-wrap items-center gap-1 text-xs text-ink-3">
+    <p className="mt-2 flex flex-wrap items-center gap-1 text-xs text-muted">
       <span className="mr-0.5">History</span>
       {history.map((item) => (
         <span
           key={`${item.date}-${item.result}`}
           title={`${item.result === 'got' ? 'Got it' : 'Struggled'} · ${formatDate(item.date)}`}
           className={`grid h-4 w-4 place-items-center rounded-full text-[10px] font-bold ${
-            item.result === 'got' ? 'bg-brand-soft text-brand-strong' : 'bg-medium/15 text-medium'
+            item.result === 'got' ? 'bg-tint text-accent' : 'bg-warn text-onwarn'
           }`}
         >
           {item.result === 'got' ? '✓' : '!'}
@@ -267,7 +267,7 @@ export default function ProblemDetailDrawer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-fade-in items-end bg-black/40 sm:items-stretch sm:justify-end"
+      className="fixed inset-0 z-50 flex animate-fade-in items-end bg-canvas/70 sm:items-stretch sm:justify-end"
       role="presentation"
       onMouseDown={onClose}
     >
@@ -277,7 +277,7 @@ export default function ProblemDetailDrawer({
         aria-modal="true"
         aria-labelledby="problem-detail-title"
         style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: 'none' } : undefined}
-        className="flex max-h-[90dvh] w-full animate-sheet-up flex-col rounded-t-2xl border-line bg-surface shadow-2xl transition-transform duration-200 sm:max-h-none sm:w-[28rem] sm:animate-slide-in sm:rounded-none sm:border-l"
+        className="flex max-h-[90dvh] w-full animate-sheet-up flex-col rounded-t-2xl border-line bg-card transition-transform duration-200 sm:max-h-none sm:w-[28rem] sm:animate-slide-in sm:rounded-none sm:border-l"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="shrink-0 touch-none sm:touch-auto" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
@@ -285,14 +285,14 @@ export default function ProblemDetailDrawer({
             <span className="h-1 w-10 rounded-full bg-line" />
           </div>
           <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3 sm:px-6">
-            <p className="truncate text-sm text-ink-3">
+            <p className="truncate text-sm text-muted">
               Phase {question.phase} · {topicName(question.topic)}
             </p>
             <button
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-xl leading-none text-ink-3 transition-colors hover:bg-subtle hover:text-ink"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-xl leading-none text-muted transition-colors hover:bg-tint hover:text-ink"
               aria-label="Close problem details"
             >
               ×
@@ -301,8 +301,8 @@ export default function ProblemDetailDrawer({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 pt-6 sm:px-6">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-ink-3">
-            <DifficultyPill difficulty={question.difficulty} />
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+            <Difficulty difficulty={question.difficulty} />
             <span>{question.pattern}</span>
             <span aria-hidden="true">·</span>
             <span>{question.tier} track</span>
@@ -329,7 +329,7 @@ export default function ProblemDetailDrawer({
               onClick={() => onToggleSolved(question.id)}
               aria-pressed={solved}
               className={`inline-flex h-10 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-colors ${
-                solved ? 'border-brand/40 bg-brand-soft text-brand-strong' : 'border-line text-ink hover:bg-subtle'
+                solved ? 'border-accent/40 bg-tint text-accent' : 'border-line text-ink hover:bg-tint'
               }`}
             >
               <CheckIcon className="h-4 w-4" />
@@ -340,7 +340,7 @@ export default function ProblemDetailDrawer({
               onClick={() => onToggleBookmark(question.id)}
               aria-pressed={bookmarked}
               className={`inline-flex h-10 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-colors ${
-                bookmarked ? 'border-mark/40 bg-mark/10 text-mark' : 'border-line text-ink hover:bg-subtle'
+                bookmarked ? 'border-accent text-accent' : 'border-line text-ink hover:bg-tint'
               }`}
             >
               <BookmarkIcon filled={bookmarked} />
@@ -349,7 +349,7 @@ export default function ProblemDetailDrawer({
           </div>
 
           {solved && (entry.solvedAt || review) && (
-            <div className="mt-3 rounded-xl bg-subtle/70 px-3.5 py-2.5 text-xs text-ink-2">
+            <div className="mt-3 rounded-xl bg-low px-3.5 py-2.5 text-xs text-muted">
               <span>
                 {entry.solvedAt ? `Solved ${formatDate(entry.solvedAt)}` : 'Solved'}
                 {review && <> · {review}</>}
@@ -362,7 +362,7 @@ export default function ProblemDetailDrawer({
                     type="button"
                     onClick={() => onReview(question.id, 'got')}
                     aria-label="Got it. Schedules the next review further out."
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-brand px-2.5 text-xs font-semibold text-brand-contrast transition-colors hover:bg-brand-strong"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-fill px-2.5 text-xs font-semibold text-onfill transition-colors hover:brightness-110"
                   >
                     <CheckIcon className="h-3.5 w-3.5" />
                     Got it
@@ -372,7 +372,7 @@ export default function ProblemDetailDrawer({
                     onClick={() => onReview(question.id, 'struggled')}
                     aria-label="Struggled. Comes back in 3 days, and is saved for revision."
                     title="Back in 3 days, and saved for revision"
-                    className="inline-flex h-9 items-center justify-center rounded-lg border border-medium/40 bg-medium/10 px-2.5 text-xs font-semibold text-medium transition-colors hover:bg-medium/20"
+                    className="inline-flex h-9 items-center justify-center rounded-lg border border-warn bg-warn px-2.5 text-xs font-semibold text-onwarn transition-colors hover:brightness-95"
                   >
                     Struggled
                   </button>
@@ -391,10 +391,10 @@ export default function ProblemDetailDrawer({
             onPaste={handlePaste}
             rows={4}
             placeholder="Approach, complexity, edge cases… Paste a screenshot to attach it."
-            className="mt-2 w-full resize-y rounded-xl border border-line bg-canvas px-3 py-2.5 text-sm leading-6 text-ink placeholder:text-ink-3 focus:border-brand focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand/20"
+            className="mt-2 w-full resize-y rounded-xl border border-line bg-canvas px-3 py-2.5 text-sm leading-6 text-ink placeholder:text-muted focus:border-accent focus:bg-card focus:outline-none focus:ring-2 focus:ring-accent/20"
           />
           <NoteImages ids={imageIds} onDelete={handleDeleteImage} />
-          <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-ink-3">
+          <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-muted">
             <p aria-live="polite">{attachingCount > 0 ? 'Adding image…' : 'Saved automatically in this browser.'}</p>
             <div className="flex items-center gap-3">
               <input
@@ -411,20 +411,20 @@ export default function ProblemDetailDrawer({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex h-7 items-center gap-1.5 font-medium text-brand-strong hover:underline"
+                className="inline-flex h-7 items-center gap-1.5 font-medium text-accent hover:underline"
               >
                 <ImageIcon className="h-3.5 w-3.5" />
                 Add image
               </button>
               {noted && (
-                <button type="button" onClick={handleClearNote} className="h-7 font-medium text-ink-3 hover:text-hard hover:underline">
+                <button type="button" onClick={handleClearNote} className="h-7 font-medium text-muted hover:text-accent hover:underline">
                   Clear note
                 </button>
               )}
             </div>
           </div>
           {imageError?.questionId === question.id && (
-            <p role="alert" className="mt-1 text-xs text-hard">
+            <p role="alert" className="mt-1 text-xs text-accent">
               {imageError.message}
             </p>
           )}
@@ -434,16 +434,16 @@ export default function ProblemDetailDrawer({
               <h3 className="text-sm font-semibold text-ink">More in {topicName(question.topic)}</h3>
               <ul className="-mx-5 mt-2 divide-y divide-line/70 border-y border-line sm:-mx-6">
                 {relatedQuestions.map((item) => (
-                  <li key={item.id} className={`flex items-center gap-3 px-5 py-2.5 sm:px-6 ${hasNote(progress[item.id]) ? NOTE_ACCENT : ''}`}>
+                  <li key={item.id} className={`flex items-center gap-3 px-5 py-2.5 sm:px-6`}>
                     <SolvedCheck solved={progress[item.id]?.solved === true} problem={item.problem} onToggle={() => onToggleSolved(item.id)} />
                     <button type="button" onClick={() => onSelectRelated(item.id)} className="group min-w-0 flex-1 text-left">
                       <span className="flex items-center gap-1.5">
-                        <span className="truncate text-sm font-medium text-ink group-hover:text-brand-strong">{item.problem}</span>
+                        <span className="truncate text-sm font-medium text-ink group-hover:text-accent">{item.problem}</span>
                         {hasNote(progress[item.id]) && <NoteMark />}
                       </span>
-                      <span className="block truncate text-xs text-ink-3">{item.pattern}</span>
+                      <span className="block truncate text-xs text-muted">{item.pattern}</span>
                     </button>
-                    <DifficultyPill difficulty={item.difficulty} />
+                    <Difficulty difficulty={item.difficulty} />
                   </li>
                 ))}
               </ul>
