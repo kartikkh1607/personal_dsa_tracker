@@ -1,16 +1,14 @@
-import { useRef, useState } from 'react'
-import { DIFFICULTIES, DIFFICULTY_LETTER, topicName } from '../constants.js'
+import { topicName } from '../constants.js'
 import { formatDate, hasNote } from '../progress.js'
-import { isLapsed, LAPSE_INTERVAL, REVIEW_INTERVALS, struggleCount } from '../review.js'
+import { struggleCount } from '../review.js'
 import Heatmap from './Heatmap.jsx'
-import { Difficulty, NoteMark, ProgressBar, SolvedCheck } from './QuestionControls.jsx'
+import { Difficulty, NoteMark, SolvedCheck } from './QuestionControls.jsx'
 import Credit from './Credit.jsx'
 import { ArrowRightIcon } from './icons.jsx'
-
-// Untouched patterns listed on Home, as a nudge toward the Patterns page.
-const PATTERN_PREVIEW_COUNT = 4
-// How long a reviewed row stays, faded, before it leaves the board.
-const LEAVE_MS = 200
+import DueBoard from './home/DueBoard.jsx'
+import { Empty, ListHead } from './home/ListHead.jsx'
+import PatternsPreview from './home/PatternsPreview.jsx'
+import StudyPlan from './home/StudyPlan.jsx'
 
 function greeting() {
   const hour = new Date().getHours()
@@ -24,10 +22,6 @@ function eyebrow(today) {
   const [, month, day] = today.split('-')
   const weekday = new Date(`${today}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'short' })
   return `${weekday} ${day}.${month} · ${greeting()}`
-}
-
-function reducedMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
 }
 
 function Figure({ value, label }) {
@@ -112,152 +106,6 @@ function GettingStartedCard({ total, onDismiss }) {
   )
 }
 
-// Where a problem sits in its review schedule: R2/3, or ↺ 3d on the relearn
-// step after a struggle. Text as well as colour, so it reads without either.
-function ReviewStep({ entry }) {
-  if (isLapsed(entry)) {
-    return (
-      <span className="step step--re" title={`Relearning: back in ${LAPSE_INTERVAL} days if it slips again`}>
-        ↺ {LAPSE_INTERVAL}d
-      </span>
-    )
-  }
-  return (
-    <span className="step" title={`Review ${(entry.reviews ?? 0) + 1} of ${REVIEW_INTERVALS.length}`}>
-      R{(entry.reviews ?? 0) + 1}/{REVIEW_INTERVALS.length}
-    </span>
-  )
-}
-
-// Today's reviews as a board: one row each, the two outcomes side by side so
-// they read as one question - "how did that go?" - rather than one button and
-// an escape hatch. A reviewed row fades before it leaves, so the list doesn't
-// jump under the pointer.
-function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestion, onShowReview }) {
-  const [leaving, setLeaving] = useState(() => new Set())
-  // Recorded through a ref so the review lands with the handler of the moment
-  // it lands, not the one from the render that started the fade.
-  const onReviewRef = useRef(onReview)
-  onReviewRef.current = onReview
-  const held = backlogCount - reviewToday.length
-
-  function review(id, result) {
-    if (leaving.has(id)) return
-    if (reducedMotion()) {
-      onReview(id, result)
-      return
-    }
-    setLeaving((previous) => new Set(previous).add(id))
-    setTimeout(() => {
-      onReviewRef.current(id, result)
-      setLeaving((previous) => {
-        const next = new Set(previous)
-        next.delete(id)
-        return next
-      })
-    }, LEAVE_MS)
-  }
-
-  return (
-    <>
-      <div className="sech items-center">
-        <h2 id="review-heading" className="lbl">
-          Due today — {reviewToday.length}
-          {held > 0 && ` of ${backlogCount}`}
-        </h2>
-        <button type="button" onClick={() => onOpenQuestion(reviewToday[0].id)} className="btn-primary">
-          Start reviewing
-        </button>
-        {backlogCount > reviewToday.length && (
-          <button type="button" onClick={onShowReview} className="sech-link ml-auto">
-            See all {backlogCount} →
-          </button>
-        )}
-      </div>
-      <table className="board board--cards board--roomy" aria-labelledby="review-heading">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Problem</th>
-            <th scope="col">Difficulty</th>
-            <th scope="col">Step</th>
-            <th scope="col">Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reviewToday.map((question, index) => {
-            const entry = progress[question.id]
-            const gone = leaving.has(question.id)
-            return (
-              <tr
-                key={question.id}
-                onClick={() => onOpenQuestion(question.id)}
-                {...(gone ? { className: 'row-open leaving' } : { className: 'row-open', 'data-review-row': true })}
-              >
-                <td className="cell-wide mono text-[11.5px] text-muted">{String(index + 1).padStart(2, '0')}</td>
-                <td className="cell-name w-full max-w-0">
-                  <button type="button" className="block max-w-full rounded text-left">
-                    <span className="flex items-center gap-1.5">
-                      <span className="pname min-w-0 truncate">{question.problem}</span>
-                      {hasNote(entry) && <NoteMark />}
-                    </span>
-                    <span className="psub">
-                      {topicName(question.topic)} · {question.pattern}
-                      {isLapsed(entry) && ` · struggled last time, back in ${LAPSE_INTERVAL} days if it slips again`}
-                    </span>
-                  </button>
-                </td>
-                <td>
-                  <Difficulty difficulty={question.difficulty} />
-                </td>
-                <td>
-                  <ReviewStep entry={entry} />
-                </td>
-                <td>
-                  <span className="inline-flex gap-1.5">
-                    <button
-                      type="button"
-                      disabled={gone}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        review(question.id, 'got')
-                      }}
-                      aria-label={`Got it: ${question.problem}. Schedules the next review further out.`}
-                      className="act act--go"
-                    >
-                      Got it
-                    </button>
-                    <button
-                      type="button"
-                      disabled={gone}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        review(question.id, 'struggled')
-                      }}
-                      aria-label={`Struggled with: ${question.problem}. Comes back in ${LAPSE_INTERVAL} days, and is saved for revision.`}
-                      className="act"
-                    >
-                      Struggled
-                    </button>
-                  </span>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <p className="flex justify-between gap-3 px-0.5 pt-[9px] text-xs text-muted">
-        <span>
-          Reviews left today: <b className="mono font-medium text-ink">{reviewToday.length}</b>
-        </span>
-        <span>
-          Held for tomorrow: <b className="mono font-medium text-ink">{held}</b>
-        </span>
-      </p>
-    </>
-  )
-}
-
 // Nothing due at all. Said rather than left blank: having cleared the schedule
 // is the good outcome, and a section that quietly disappears reads as
 // something broken rather than something finished.
@@ -311,21 +159,6 @@ function DoneForToday({ reviewedToday, remaining, onReviewMore }) {
       </div>
     </>
   )
-}
-
-function ListHead({ id, children, action }) {
-  return (
-    <div className="sech">
-      <h2 id={id} className="lbl">
-        {children}
-      </h2>
-      {action}
-    </div>
-  )
-}
-
-function Empty({ children }) {
-  return <p className="border-b border-line px-0.5 py-2 text-[13px] text-muted">{children}</p>
 }
 
 function UpNext({ upNext, currentPhase, progress, onSolve, onOpenQuestion, onContinue }) {
@@ -428,83 +261,6 @@ function Saved({ savedPreview, savedCount, onOpenQuestion, onShowSaved }) {
         <Empty>Nothing saved yet. Bookmark a tricky problem and it will wait here.</Empty>
       )}
     </section>
-  )
-}
-
-function PatternsPreview({ patternStats, onShowPatterns, onOpenPattern }) {
-  const started = patternStats.filter((pattern) => pattern.solved > 0).length
-  const untouched = patternStats.filter((pattern) => pattern.solved === 0).slice(0, PATTERN_PREVIEW_COUNT)
-  return (
-    <section aria-labelledby="pattern-heading">
-      <ListHead
-        id="pattern-heading"
-        action={
-          <button type="button" onClick={onShowPatterns} className="sech-link ml-auto">
-            View →
-          </button>
-        }
-      >
-        Patterns · {started}/{patternStats.length}
-      </ListHead>
-      {untouched.length > 0 ? (
-        <ul>
-          {untouched.map((pattern) => (
-            <li key={pattern.key}>
-              <button
-                type="button"
-                onClick={() => onOpenPattern(pattern.topic, pattern.pattern)}
-                className="group flex w-full items-center gap-[11px] border-b border-line px-0.5 py-2 text-left text-[13px] hover:bg-low"
-              >
-                <span className="min-w-0 flex-1 truncate group-hover:text-accent">{pattern.pattern}</span>
-                <span className="step">not started</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <Empty>Every pattern has at least one solve.</Empty>
-      )}
-    </section>
-  )
-}
-
-// The six phases as one strip rather than six cards.
-function StudyPlan({ phaseStats, difficulties, currentPhase, onSelectPhase }) {
-  return (
-    <>
-      <div className="sech">
-        <h2 id="plan-heading" className="lbl">
-          Study plan · {phaseStats.length} phases
-        </h2>
-        <p className="lbl ml-auto">
-          {DIFFICULTIES.map((level) => `${DIFFICULTY_LETTER[level]} ${difficulties[level].solved}/${difficulties[level].total}`).join(' · ')}
-        </p>
-      </div>
-      <ol className="grid grid-cols-2 gap-4 pt-1 min-[521px]:grid-cols-3 min-[901px]:grid-cols-6" aria-labelledby="plan-heading">
-        {phaseStats.map((phase) => {
-          const current = phase.phase === currentPhase
-          return (
-            <li key={phase.phase}>
-              <button
-                type="button"
-                onClick={() => onSelectPhase(phase.phase)}
-                aria-current={current ? 'step' : undefined}
-                className="group block w-full rounded text-left"
-              >
-                <span className="mono text-[10.5px] text-muted">{String(phase.phase).padStart(2, '0')}</span>
-                <span className={`mb-[7px] mt-[3px] block truncate text-[12.5px] font-[550] group-hover:underline ${current ? 'text-accent' : ''}`}>
-                  {phase.name}
-                </span>
-                <ProgressBar value={phase.solved} total={phase.total} label={`${phase.name}: ${phase.solved} of ${phase.total} solved`} />
-                <span className="mono mt-1.5 block text-[11px] text-muted">
-                  {phase.solved}/{phase.total}
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ol>
-    </>
   )
 }
 
