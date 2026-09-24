@@ -7681,7 +7681,7 @@
   },
   {
     "id": 843,
-    "step": 513,
+    "step": 514,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "15. Intervals",
     "pattern": "Booking",
@@ -7696,7 +7696,7 @@
   },
   {
     "id": 443,
-    "step": 514,
+    "step": 515,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Sort + pick",
@@ -7711,7 +7711,7 @@
   },
   {
     "id": 444,
-    "step": 515,
+    "step": 516,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Sort + pick",
@@ -7726,7 +7726,7 @@
   },
   {
     "id": 445,
-    "step": 516,
+    "step": 517,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Sort + pick",
@@ -7741,7 +7741,7 @@
   },
   {
     "id": 446,
-    "step": 517,
+    "step": 518,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Classic greedy",
@@ -7756,7 +7756,7 @@
   },
   {
     "id": 447,
-    "step": 518,
+    "step": 519,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Classic greedy",
@@ -7771,7 +7771,7 @@
   },
   {
     "id": 448,
-    "step": 519,
+    "step": 520,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Simulation",
@@ -7786,7 +7786,7 @@
   },
   {
     "id": 449,
-    "step": 520,
+    "step": 521,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Simulation",
@@ -7801,7 +7801,7 @@
   },
   {
     "id": 450,
-    "step": 521,
+    "step": 522,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Simulation",
@@ -7816,7 +7816,7 @@
   },
   {
     "id": 451,
-    "step": 522,
+    "step": 523,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Simulation",
@@ -7831,7 +7831,7 @@
   },
   {
     "id": 452,
-    "step": 523,
+    "step": 524,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Two pass",
@@ -7846,7 +7846,7 @@
   },
   {
     "id": 416,
-    "step": 524,
+    "step": 525,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Two pass",
@@ -7861,7 +7861,7 @@
   },
   {
     "id": 453,
-    "step": 525,
+    "step": 526,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Validation",
@@ -7876,7 +7876,7 @@
   },
   {
     "id": 454,
-    "step": 526,
+    "step": 527,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Validation",
@@ -7891,7 +7891,7 @@
   },
   {
     "id": 455,
-    "step": 527,
+    "step": 528,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Reachability",
@@ -7906,7 +7906,7 @@
   },
   {
     "id": 456,
-    "step": 528,
+    "step": 529,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Reachability",
@@ -7921,7 +7921,7 @@
   },
   {
     "id": 457,
-    "step": 529,
+    "step": 530,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Reachability",
@@ -7936,7 +7936,7 @@
   },
   {
     "id": 461,
-    "step": 530,
+    "step": 531,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Partitioning",
@@ -7951,7 +7951,7 @@
   },
   {
     "id": 462,
-    "step": 531,
+    "step": 532,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Partitioning",
@@ -7966,7 +7966,7 @@
   },
   {
     "id": 463,
-    "step": 532,
+    "step": 533,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Partitioning",
@@ -7981,7 +7981,7 @@
   },
   {
     "id": 464,
-    "step": 533,
+    "step": 534,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Reconstruction",
@@ -7996,7 +7996,7 @@
   },
   {
     "id": 465,
-    "step": 534,
+    "step": 535,
     "stage": "4. Greedy & Backtracking - Depth",
     "topic": "16. Greedy",
     "pattern": "Reconstruction",
@@ -8011,10 +8011,10 @@
   },
   {
     "id": 460,
-    "step": 535,
+    "step": 513,
     "stage": "4. Greedy & Backtracking - Depth",
-    "topic": "16. Greedy",
-    "pattern": "Interval greedy",
+    "topic": "15. Intervals",
+    "pattern": "Scheduling",
     "problem": "Job Sequencing Problem",
     "difficulty": "Medium",
     "tier": "Depth",
@@ -9046,7 +9046,7 @@
   },
   {
     "id": 525,
-    "step": 604,
+    "step": 605,
     "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "BST basics",
@@ -9061,7 +9061,7 @@
   },
   {
     "id": 526,
-    "step": 605,
+    "step": 606,
     "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "BST basics",
@@ -9076,7 +9076,7 @@
   },
   {
     "id": 527,
-    "step": 606,
+    "step": 607,
     "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "BST properties",
@@ -9091,7 +9091,7 @@
   },
   {
     "id": 528,
-    "step": 607,
+    "step": 608,
     "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "BST properties",
@@ -9106,7 +9106,7 @@
   },
   {
     "id": 605,
-    "step": 608,
+    "step": 609,
     "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "BST properties",
@@ -9121,7 +9121,7 @@
   },
   {
     "id": 529,
-    "step": 609,
+    "step": 610,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Design",
@@ -9136,7 +9136,7 @@
   },
   {
     "id": 530,
-    "step": 610,
+    "step": 611,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Design",
@@ -9151,7 +9151,7 @@
   },
   {
     "id": 531,
-    "step": 611,
+    "step": 612,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Prefix search",
@@ -9166,7 +9166,7 @@
   },
   {
     "id": 532,
-    "step": 612,
+    "step": 613,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Prefix search",
@@ -9181,7 +9181,7 @@
   },
   {
     "id": 533,
-    "step": 613,
+    "step": 614,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Counting",
@@ -9196,7 +9196,7 @@
   },
   {
     "id": 535,
-    "step": 614,
+    "step": 615,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Trie + grid",
@@ -9211,7 +9211,7 @@
   },
   {
     "id": 536,
-    "step": 615,
+    "step": 616,
     "stage": "5. Trees & Graphs - Core",
     "topic": "19. Tries",
     "pattern": "Bit trie",
@@ -9226,7 +9226,7 @@
   },
   {
     "id": 537,
-    "step": 616,
+    "step": 617,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Representation",
@@ -9241,7 +9241,7 @@
   },
   {
     "id": 538,
-    "step": 617,
+    "step": 618,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Representation",
@@ -9256,7 +9256,7 @@
   },
   {
     "id": 539,
-    "step": 618,
+    "step": 619,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Representation",
@@ -9271,7 +9271,7 @@
   },
   {
     "id": 540,
-    "step": 619,
+    "step": 620,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Representation",
@@ -9286,7 +9286,7 @@
   },
   {
     "id": 541,
-    "step": 620,
+    "step": 621,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Representation",
@@ -9301,7 +9301,7 @@
   },
   {
     "id": 542,
-    "step": 621,
+    "step": 622,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Traversal",
@@ -9316,7 +9316,7 @@
   },
   {
     "id": 543,
-    "step": 622,
+    "step": 623,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Traversal",
@@ -9331,7 +9331,7 @@
   },
   {
     "id": 544,
-    "step": 623,
+    "step": 624,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Traversal",
@@ -9346,7 +9346,7 @@
   },
   {
     "id": 618,
-    "step": 624,
+    "step": 625,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Traversal",
@@ -9361,7 +9361,7 @@
   },
   {
     "id": 545,
-    "step": 625,
+    "step": 626,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Grid DFS/BFS",
@@ -9376,7 +9376,7 @@
   },
   {
     "id": 546,
-    "step": 626,
+    "step": 627,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Grid DFS/BFS",
@@ -9391,7 +9391,7 @@
   },
   {
     "id": 620,
-    "step": 627,
+    "step": 628,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Grid DFS/BFS",
@@ -9406,7 +9406,7 @@
   },
   {
     "id": 621,
-    "step": 628,
+    "step": 629,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Grid DFS/BFS",
@@ -9421,7 +9421,7 @@
   },
   {
     "id": 547,
-    "step": 629,
+    "step": 630,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Multi-source BFS",
@@ -9436,7 +9436,7 @@
   },
   {
     "id": 548,
-    "step": 630,
+    "step": 631,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Multi-source BFS",
@@ -9451,7 +9451,7 @@
   },
   {
     "id": 549,
-    "step": 631,
+    "step": 632,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Connected components",
@@ -9466,7 +9466,7 @@
   },
   {
     "id": 441,
-    "step": 632,
+    "step": 633,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Coloring",
@@ -9481,7 +9481,7 @@
   },
   {
     "id": 550,
-    "step": 633,
+    "step": 634,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Coloring",
@@ -9496,7 +9496,7 @@
   },
   {
     "id": 551,
-    "step": 634,
+    "step": 635,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Cycle detection",
@@ -9511,7 +9511,7 @@
   },
   {
     "id": 552,
-    "step": 635,
+    "step": 636,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Cycle detection",
@@ -9526,7 +9526,7 @@
   },
   {
     "id": 553,
-    "step": 636,
+    "step": 637,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "BFS shortest path",
@@ -9541,7 +9541,7 @@
   },
   {
     "id": 554,
-    "step": 637,
+    "step": 638,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "BFS shortest path",
@@ -9556,7 +9556,7 @@
   },
   {
     "id": 555,
-    "step": 638,
+    "step": 639,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Topological sort",
@@ -9571,7 +9571,7 @@
   },
   {
     "id": 556,
-    "step": 639,
+    "step": 640,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Topological sort",
@@ -9586,7 +9586,7 @@
   },
   {
     "id": 639,
-    "step": 640,
+    "step": 641,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Topological sort",
@@ -9601,7 +9601,7 @@
   },
   {
     "id": 557,
-    "step": 641,
+    "step": 642,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "DSU",
@@ -9616,7 +9616,7 @@
   },
   {
     "id": 558,
-    "step": 642,
+    "step": 643,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "DSU",
@@ -9631,7 +9631,7 @@
   },
   {
     "id": 643,
-    "step": 643,
+    "step": 644,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "DSU",
@@ -9646,7 +9646,7 @@
   },
   {
     "id": 559,
-    "step": 644,
+    "step": 645,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Dijkstra",
@@ -9661,7 +9661,7 @@
   },
   {
     "id": 560,
-    "step": 645,
+    "step": 646,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Dijkstra",
@@ -9676,7 +9676,7 @@
   },
   {
     "id": 561,
-    "step": 646,
+    "step": 647,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Bellman-Ford",
@@ -9691,7 +9691,7 @@
   },
   {
     "id": 562,
-    "step": 647,
+    "step": 648,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Bellman-Ford",
@@ -9706,7 +9706,7 @@
   },
   {
     "id": 563,
-    "step": 648,
+    "step": 649,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Floyd-Warshall",
@@ -9721,7 +9721,7 @@
   },
   {
     "id": 564,
-    "step": 649,
+    "step": 650,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Floyd-Warshall",
@@ -9736,7 +9736,7 @@
   },
   {
     "id": 565,
-    "step": 650,
+    "step": 651,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "MST",
@@ -9751,7 +9751,7 @@
   },
   {
     "id": 566,
-    "step": 651,
+    "step": 652,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "MST",
@@ -9766,7 +9766,7 @@
   },
   {
     "id": 571,
-    "step": 652,
+    "step": 653,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Misc",
@@ -9781,7 +9781,7 @@
   },
   {
     "id": 572,
-    "step": 653,
+    "step": 654,
     "stage": "5. Trees & Graphs - Core",
     "topic": "20. Graphs",
     "pattern": "Misc",
@@ -9796,7 +9796,7 @@
   },
   {
     "id": 573,
-    "step": 654,
+    "step": 655,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Traversal",
@@ -9811,7 +9811,7 @@
   },
   {
     "id": 574,
-    "step": 655,
+    "step": 656,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Traversal",
@@ -9826,7 +9826,7 @@
   },
   {
     "id": 579,
-    "step": 656,
+    "step": 657,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Structure",
@@ -9841,7 +9841,7 @@
   },
   {
     "id": 580,
-    "step": 657,
+    "step": 658,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Structure",
@@ -9856,7 +9856,7 @@
   },
   {
     "id": 581,
-    "step": 658,
+    "step": 659,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Structure",
@@ -9871,7 +9871,7 @@
   },
   {
     "id": 372,
-    "step": 659,
+    "step": 660,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "BFS",
@@ -9886,7 +9886,7 @@
   },
   {
     "id": 582,
-    "step": 660,
+    "step": 661,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "BFS",
@@ -9901,7 +9901,7 @@
   },
   {
     "id": 583,
-    "step": 661,
+    "step": 662,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "BFS",
@@ -9916,7 +9916,7 @@
   },
   {
     "id": 584,
-    "step": 662,
+    "step": 663,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "BFS",
@@ -9931,7 +9931,7 @@
   },
   {
     "id": 585,
-    "step": 663,
+    "step": 664,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Views",
@@ -9946,7 +9946,7 @@
   },
   {
     "id": 586,
-    "step": 664,
+    "step": 665,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Views",
@@ -9961,7 +9961,7 @@
   },
   {
     "id": 588,
-    "step": 665,
+    "step": 666,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Path sum",
@@ -9976,7 +9976,7 @@
   },
   {
     "id": 589,
-    "step": 666,
+    "step": 667,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Path sum",
@@ -9991,7 +9991,7 @@
   },
   {
     "id": 475,
-    "step": 667,
+    "step": 668,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Construction",
@@ -10006,7 +10006,7 @@
   },
   {
     "id": 590,
-    "step": 668,
+    "step": 669,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Construction",
@@ -10021,7 +10021,7 @@
   },
   {
     "id": 591,
-    "step": 669,
+    "step": 670,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Construction",
@@ -10036,7 +10036,7 @@
   },
   {
     "id": 592,
-    "step": 670,
+    "step": 671,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Construction",
@@ -10051,7 +10051,7 @@
   },
   {
     "id": 593,
-    "step": 671,
+    "step": 672,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "LCA",
@@ -10066,7 +10066,7 @@
   },
   {
     "id": 594,
-    "step": 672,
+    "step": 673,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "LCA",
@@ -10081,7 +10081,7 @@
   },
   {
     "id": 595,
-    "step": 673,
+    "step": 674,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "LCA",
@@ -10096,7 +10096,7 @@
   },
   {
     "id": 596,
-    "step": 674,
+    "step": 675,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Distance",
@@ -10111,7 +10111,7 @@
   },
   {
     "id": 597,
-    "step": 675,
+    "step": 676,
     "stage": "5. Trees & Graphs - Depth",
     "topic": "18. Trees & BST",
     "pattern": "Distance",
@@ -10126,13 +10126,13 @@
   },
   {
     "id": 598,
-    "step": 676,
-    "stage": "5. Trees & Graphs - Depth",
+    "step": 604,
+    "stage": "5. Trees & Graphs - Core",
     "topic": "18. Trees & BST",
     "pattern": "Serialization",
     "problem": "Serialize and Deserialize BST",
     "difficulty": "Medium",
-    "tier": "Depth",
+    "tier": "Core",
     "phase": 5,
     "phaseName": "Trees & Graphs",
     "platform": "LeetCode",

@@ -65,7 +65,7 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
   spent entirely on reviews keeps your streak going. A streak that ended yesterday still
   counts, so it doesn't reset before you've had a chance today.
 - **Patterns** lists every pattern in the sheet, topic by topic, so you can find the ones you haven't
-  touched. That is 172 entries: 156 distinct patterns, some of which appear under more than one topic.
+  touched. That is 171 entries: 155 distinct patterns, some of which appear under more than one topic.
 - The page, topic and filters are in the URL, so refresh, Back and bookmarks keep your place.
   The app also reopens wherever you left off.
 - **Light and dark** follow your system until you flip the sun/moon button in the top bar.
@@ -79,8 +79,10 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
 <kbd>g</kbd> and <kbd>s</kbd> work on the problem that's focused in the list and inside the
 open detail panel, and only when that problem is actually due for review.
 
-**Tiers, phases and steps** come from the Excel sheet. `Core` (387 problems) covers every
-pattern, `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's
+**Tiers, phases and steps** come from the Excel sheet. `Core` (388 problems) is the main track.
+It deliberately skips the advanced patterns (SCC, Euler path, bridges and articulation points,
+binary lifting, bitmask DP, and everything in Advanced DS), which live in Depth and Stretch.
+`Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's
 `step` is its place on the sheet's study path: within each phase, Core, then Depth, then Stretch.
 Its `id` is only a stable key for saved progress and sync, so ids are not in study order and have
 gaps where duplicates were removed.
