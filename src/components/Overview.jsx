@@ -189,10 +189,14 @@ function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestio
             const entry = progress[question.id]
             const gone = leaving.has(question.id)
             return (
-              <tr key={question.id} {...(gone ? { className: 'leaving' } : { 'data-review-row': true })}>
+              <tr
+                key={question.id}
+                onClick={() => onOpenQuestion(question.id)}
+                {...(gone ? { className: 'row-open leaving' } : { className: 'row-open', 'data-review-row': true })}
+              >
                 <td className="cell-wide mono text-[11.5px] text-muted">{String(index + 1).padStart(2, '0')}</td>
                 <td className="cell-name w-full max-w-0">
-                  <button type="button" onClick={() => onOpenQuestion(question.id)} className="block max-w-full rounded text-left hover:text-accent">
+                  <button type="button" className="block max-w-full rounded text-left">
                     <span className="flex items-center gap-1.5">
                       <span className="pname min-w-0 truncate">{question.problem}</span>
                       {hasNote(entry) && <NoteMark />}
@@ -214,7 +218,10 @@ function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestio
                     <button
                       type="button"
                       disabled={gone}
-                      onClick={() => review(question.id, 'got')}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        review(question.id, 'got')
+                      }}
                       aria-label={`Got it: ${question.problem}. Schedules the next review further out.`}
                       className="act act--go"
                     >
@@ -223,7 +230,10 @@ function DueBoard({ reviewToday, backlogCount, progress, onReview, onOpenQuestio
                     <button
                       type="button"
                       disabled={gone}
-                      onClick={() => review(question.id, 'struggled')}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        review(question.id, 'struggled')
+                      }}
                       aria-label={`Struggled with: ${question.problem}. Comes back in ${LAPSE_INTERVAL} days, and is saved for revision.`}
                       className="act"
                     >

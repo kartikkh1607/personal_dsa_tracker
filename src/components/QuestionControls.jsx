@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { problemUrl } from '../links.js'
 import { BookmarkIcon, CheckIcon, ExternalIcon, NoteIcon, SearchIcon } from './icons.jsx'
 
@@ -15,6 +16,14 @@ export function NoteMark() {
 // page's main sense of progress. The button is larger than the circle
 // (negative margin keeps layout tight) so it's easy to hit on touch.
 export function SolvedCheck({ solved, problem, onToggle }) {
+  // The fill pops in only when a problem turns solved, never for rows that
+  // were already solved when the page loaded.
+  const wasSolved = useRef(solved)
+  const pop = solved && !wasSolved.current
+  useEffect(() => {
+    wasSolved.current = solved
+  }, [solved])
+
   return (
     <button
       type="button"
@@ -22,11 +31,15 @@ export function SolvedCheck({ solved, problem, onToggle }) {
       aria-checked={solved}
       aria-label={`Solved: ${problem}`}
       title={solved ? 'Solved. Click to undo' : 'Mark as solved'}
-      onClick={onToggle}
+      // Rows open the drawer on click; ticking is its own action.
+      onClick={(event) => {
+        event.stopPropagation()
+        onToggle()
+      }}
       className="group/check -m-2 grid h-10 w-10 shrink-0 place-items-center rounded-full"
     >
       <span
-        className={`grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] ${
+        className={`grid h-[22px] w-[22px] place-items-center rounded-full border-[1.5px] ${pop ? 'tick-pop' : ''} ${
           solved ? 'border-transparent bg-fill text-onfill' : 'border-rule text-transparent group-hover/check:border-accent group-hover/check:text-accent'
         }`}
       >
@@ -41,7 +54,10 @@ export function BookmarkButton({ bookmarked, problem, onToggle, ...rest }) {
     <button
       {...rest}
       type="button"
-      onClick={onToggle}
+      onClick={(event) => {
+        event.stopPropagation()
+        onToggle()
+      }}
       aria-pressed={bookmarked}
       aria-label={`Save for revision: ${problem}`}
       title={bookmarked ? 'Saved for revision. Click to remove' : 'Save for revision'}
@@ -97,6 +113,7 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
       rel="noopener noreferrer"
       aria-label={`${action}: ${problem}`}
       title={action}
+      onClick={(event) => event.stopPropagation()}
       className={`group/src inline-flex shrink-0 items-center gap-1.5 rounded text-xs text-muted ${className}`}
     >
       {/* The platform's initial in a small square. Text stays muted: with 900+

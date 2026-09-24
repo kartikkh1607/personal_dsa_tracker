@@ -312,14 +312,14 @@ export default function ProblemDetailDrawer({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex animate-fade-in items-end bg-canvas/60 sm:items-stretch sm:justify-end" role="presentation" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex motion-safe:animate-fade-in items-end bg-canvas/60 sm:items-stretch sm:justify-end" role="presentation" onMouseDown={onClose}>
       <aside
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="problem-detail-title"
         style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: 'none' } : undefined}
-        className="flex max-h-[90dvh] w-full animate-sheet-up flex-col rounded-t-2xl border-t border-rule bg-low transition-transform duration-200 sm:max-h-none sm:w-[min(496px,92%)] sm:animate-slide-in sm:rounded-none sm:border-l sm:border-t-0"
+        className="flex max-h-[90dvh] w-full motion-safe:animate-sheet-up flex-col rounded-t-2xl border-t border-rule bg-low transition-transform duration-200 sm:max-h-none sm:w-[min(496px,92%)] motion-safe:sm:animate-slide-in sm:rounded-none sm:border-l sm:border-t-0"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="shrink-0 touch-none sm:touch-auto" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>

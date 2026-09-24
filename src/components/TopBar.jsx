@@ -109,7 +109,7 @@ export default function TopBar({ view, onViewChange, solved, total, theme, onThe
               {menuOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 top-full mt-2 flex w-[296px] animate-fade-up flex-col gap-3 rounded-2xl border border-rule bg-low p-3.5"
+                  className="absolute right-0 top-full mt-2 flex w-[296px] motion-safe:animate-fade-up flex-col gap-3 rounded-2xl border border-rule bg-low p-3.5"
                 >
                   <AccountMenu sync={sync} />
                   {sync.configured && <hr className="border-line" />}

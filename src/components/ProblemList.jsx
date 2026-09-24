@@ -25,12 +25,15 @@ function problemStatus(entry, today) {
 // keyboard shortcuts look for.
 const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, status, statusTitle, statusDue, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
-    <tr data-problem-row data-question-id={question.id} className="scroll-mt-20">
+    // The whole row opens the drawer. The name stays a real button - it is
+    // the row's keyboard handle, where j/k land and Enter opens - and its
+    // click simply bubbles up to here.
+    <tr data-problem-row data-question-id={question.id} onClick={() => onOpen(question.id)} className="row-open scroll-mt-20">
       <td>
         <SolvedCheck solved={solved} problem={question.problem} onToggle={() => onToggleSolved(question.id)} />
       </td>
       <td className="cell-name cell-name--after-tick w-full max-w-0">
-        <button type="button" data-row-open onClick={() => onOpen(question.id)} className="block max-w-full rounded text-left hover:text-accent">
+        <button type="button" data-row-open className="block max-w-full rounded text-left">
           <span className="flex items-center gap-1.5">
             <span className="pname min-w-0 truncate">{question.problem}</span>
             {noted && <NoteMark />}

@@ -4,6 +4,7 @@ import Sidebar, { ALL_TOPICS } from './Sidebar.jsx'
 import Filters, { ALL } from './Filters.jsx'
 import ProblemList, { groupId } from './ProblemList.jsx'
 import Credit from './Credit.jsx'
+import { ProgressBar } from './QuestionControls.jsx'
 
 const EMPTY_STATES = {
   all: { title: 'No problems match', body: 'Try a different search or clear the filters.' },
@@ -90,9 +91,18 @@ export default function ProblemsPage({
         />
 
         <main id="main-content" tabIndex={-1} className="min-w-0">
-          {/* The page's name, for screen readers and the document outline: the
-              sidebar and the footer line already say it on screen. */}
-          <h1 className="sr-only">{scope.title}</h1>
+          {/* Where you are and how far through it: the topic (or the whole
+              sheet) and its solved fraction, above the list it describes. */}
+          <div className="mb-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <h1 className="text-xl font-semibold tracking-tight">{scope.title}</h1>
+              <p className="text-[13px] text-muted">
+                <span className="mono font-semibold text-ink">{scope.solved}</span>
+                <span className="mono"> / {scope.total}</span> solved
+              </p>
+            </div>
+            <ProgressBar value={scope.solved} total={scope.total} label={`${scope.title}: ${scope.solved} of ${scope.total} solved`} className="mt-2.5" />
+          </div>
           <Filters
             search={search}
             onSearchChange={(value) => navigate({ q: value }, { replace: true })}

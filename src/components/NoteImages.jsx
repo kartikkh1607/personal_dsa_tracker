@@ -87,7 +87,7 @@ function Lightbox({ id, onClose }) {
   }, [onClose])
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-label="Note image" className="fixed inset-0 z-[60] flex animate-fade-in items-center justify-center bg-canvas/95 p-4 sm:p-10" onClick={onClose}>
+    <div role="dialog" aria-modal="true" aria-label="Note image" className="fixed inset-0 z-[60] flex motion-safe:animate-fade-in items-center justify-center bg-canvas/95 p-4 sm:p-10" onClick={onClose}>
       <button
         ref={closeButtonRef}
         type="button"

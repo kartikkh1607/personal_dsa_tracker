@@ -16,7 +16,7 @@ export default function Toast({ toast, onDismiss }) {
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[60] flex justify-center px-4">
       <div
-        className={`pointer-events-auto flex max-w-full animate-fade-up items-center gap-2 rounded-xl py-2 pl-4 pr-2 text-sm font-medium ${
+        className={`pointer-events-auto flex max-w-full motion-safe:animate-fade-up items-center gap-2 rounded-xl py-2 pl-4 pr-2 text-sm font-medium ${
           toast.tone === 'error' ? 'bg-fill text-onfill' : 'bg-ink text-canvas'
         }`}
       >

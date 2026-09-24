@@ -56,14 +56,14 @@ export default function ImportDialog({ fileName, count, currentCount, signedIn, 
   }, [onCancel])
 
   return (
-    <div className="fixed inset-0 z-[70] flex animate-fade-in items-center justify-center bg-canvas/70 p-4" role="presentation" onMouseDown={onCancel}>
+    <div className="fixed inset-0 z-[70] flex motion-safe:animate-fade-in items-center justify-center bg-canvas/70 p-4" role="presentation" onMouseDown={onCancel}>
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-dialog-title"
         aria-describedby="import-dialog-summary"
-        className="w-full max-w-lg animate-fade-up rounded-2xl border border-line bg-card p-5 sm:p-6"
+        className="w-full max-w-lg motion-safe:animate-fade-up rounded-2xl border border-line bg-card p-5 sm:p-6"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <h2 id="import-dialog-title" className="text-base font-semibold text-ink">
