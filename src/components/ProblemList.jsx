@@ -38,10 +38,7 @@ const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, stat
             <span className="pname min-w-0 truncate">{question.problem}</span>
             {noted && <NoteMark />}
           </span>
-          <span className="psub">
-            {question.pattern}
-            {meta && ` · ${meta}`}
-          </span>
+          {meta && <span className="psub">{meta}</span>}
         </button>
       </td>
       <td>
@@ -62,12 +59,16 @@ const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, stat
   )
 })
 
-// The optional Depth and Stretch tiers, marked after the pattern.
-function problemMeta(question) {
-  return question.tier !== 'Core' ? question.tier : ''
+// The line under a problem's name: its pattern, then the optional Depth and
+// Stretch tiers. Under a pattern heading the pattern would only repeat it, so
+// just the tier is left, and a Core row there has no line at all.
+function problemMeta(question, groupByPattern) {
+  const tier = question.tier !== 'Core' ? question.tier : ''
+  if (groupByPattern) return tier
+  return tier ? `${question.pattern} · ${tier}` : question.pattern
 }
 
-export default function ProblemList({ groups, progress, today, onToggleSolved, onToggleBookmark, onOpen }) {
+export default function ProblemList({ groups, groupByPattern, progress, today, onToggleSolved, onToggleBookmark, onOpen }) {
   return (
     <table className="board board--cards board--roomy board--ticked">
       <thead>
@@ -107,7 +108,7 @@ export default function ProblemList({ groups, progress, today, onToggleSolved, o
                 statusDue={status.due === true}
                 noted={hasNote(entry)}
                 link={entry?.link ?? question.link}
-                meta={problemMeta(question)}
+                meta={problemMeta(question, groupByPattern)}
                 onToggleSolved={onToggleSolved}
                 onToggleBookmark={onToggleBookmark}
                 onOpen={onOpen}

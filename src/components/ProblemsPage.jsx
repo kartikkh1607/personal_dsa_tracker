@@ -144,6 +144,7 @@ export default function ProblemsPage({
             ) : (
               <ProblemList
                 groups={groups}
+                groupByPattern={groupByPattern}
                 progress={progress}
                 today={today}
                 onToggleSolved={onToggleSolved}
