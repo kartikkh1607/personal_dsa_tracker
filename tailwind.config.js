@@ -10,7 +10,7 @@ export default {
       fontFamily: {
         sans: ['Archivo', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-        script: ['"Dancing Script"', '"Segoe Script"', '"Brush Script MT"', 'cursive'],
+        script: ['"Segoe Script"', '"Brush Script MT"', 'cursive'],
       },
       colors: {
         canvas: token('canvas'),
