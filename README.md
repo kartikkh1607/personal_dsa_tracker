@@ -38,25 +38,38 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
     failed review runs 3 → 7 → 30 → 90 rather than jumping months ahead.
 
   Due reviews appear on Home and under the **Review** filter.
-- **Weak spots.** Problems you've struggled with twice or more collect in their own card on
-  Home, so the patterns that haven't landed are visible rather than buried.
+- **Home** is a daily board. Today's reviews come first, one row each with **Got it** and
+  **Struggled** side by side. Home asks for at most **15 reviews a day**: anything beyond that
+  waits, and Home says how many, with a button to take on the next batch. Nothing is dropped
+  or rescheduled; the cap only limits how much of the schedule is put in front of you at once.
+  Below that are **Up next** (the next unsolved steps in your current phase), **Weak spots**,
+  **Saved**, untouched **Patterns**, the six-phase **Study plan**, and a 26-week **activity**
+  heatmap. A new tracker gets a short "how this works" panel, once.
+- **Weak spots.** Problems you've struggled with twice or more collect on Home, so the patterns
+  that haven't landed are visible rather than buried.
 - **Bookmark** tricky problems to save them. They collect on Home and under **Saved**.
-- **Click a problem** for its details: notes, the problem link, review dates, and more problems
-  from the same topic. On a phone, swipe the panel down to close it.
-- **Images in notes.** Paste a screenshot into a note, or use **Add image**. Images are
-  shrunk to at most 1200px wide and shown as thumbnails under the note; click one to see it
-  full size. **Clear note** removes the text and its images.
-- Problems with a note get a small note icon and a green edge in every list. **Has notes** on the
-  Problems page shows only those.
+- **Problems** is the full sheet: a sidebar of phases and topics with progress bars, and a list
+  you can filter by status (**All**, **To do**, **Solved**, **Review**, **Saved**), difficulty
+  and **Has notes**. **Search** always covers all 922 problems, whatever topic is selected, and
+  picking a topic ends the search. **Random** opens a random unsolved problem from the list.
+- **Click a problem**, anywhere on its row, for its details: a button to open it, Solved and
+  Save toggles, where it sits in the review schedule, notes, and more problems from the same
+  topic, with its review history folded at the bottom. When it's due, **Got it** and
+  **Struggled** say what each will do before you press one. On a phone, swipe the panel down
+  to close it.
+- **Images in notes.** Paste a screenshot into a note, drop one onto it, or use **Add image**.
+  Images are shrunk to at most 1200px wide and shown as thumbnails under the note; click one
+  to see it full size. **Clear note** removes the text and its images, with an Undo.
+- Problems with a note get a small note icon in every list.
 - **Streak and activity.** A day counts if you solved a problem *or* reviewed one, so a day
   spent entirely on reviews keeps your streak going. A streak that ended yesterday still
   counts, so it doesn't reset before you've had a chance today.
-- **Home** shows what's due, what to solve next, your progress and activity, the study plan,
-  and pattern coverage.
 - **Patterns** lists all 168 patterns in the sheet, so you can find the ones you haven't touched.
-- **Random** opens a random unsolved problem from the current list.
 - The page, topic and filters are in the URL, so refresh, Back and bookmarks keep your place.
   The app also reopens wherever you left off.
+- **Light and dark** follow your system until you flip the sun/moon button in the top bar.
+  Motion is limited to
+  short state changes and switches off under your system's reduced-motion setting.
 
 **Keyboard:** <kbd>/</kbd> search · <kbd>j</kbd>/<kbd>k</kbd> move between problems ·
 <kbd>x</kbd> tick · <kbd>b</kbd> bookmark · <kbd>Enter</kbd> open · <kbd>Esc</kbd> close ·
@@ -193,6 +206,17 @@ The row also carries the server's own timestamp, set by a trigger. That one is n
 decide which copy wins - only as the "everything since" marker for the next pull, so a device
 with a wrong clock can misorder its own edits but can never hide its rows from another device.
 
+**What signing in tells you.** A sign-in that just pulls your account down says nothing. When
+the merge genuinely combined two sides, a toast says what changed, counting only entries that
+were new to one side or different on the two, never the ones both already agreed on:
+
+- "1 change from this device merged in"
+- "2 changes merged: 1 from this device, 1 from your account"
+- "1 conflict resolved by most recent", added when both sides held different versions of an
+  entry
+
+**Sync now** in the **⋯** menu always reports, and says "Nothing to merge" when that's the case.
+
 Signing out leaves everything in this browser exactly where it was.
 
 ## How it works
@@ -214,8 +238,9 @@ Signing out leaves everything in this browser exactly where it was.
 | `supabase/` | The SQL behind it: the `progress` table with its policies and trigger, and `verify.sql` to check what landed. |
 | `src/images.js` | Compresses note images and stores them in IndexedDB; cleans up unused ones. |
 | `src/csv.js` | The Excel-ready CSV export. |
-| `src/theme.js`, `src/index.css` | Light / dark theme and the colour tokens every component uses. |
-| `src/components/` | `TopBar`, `AccountMenu` (sign-in and sync status), `Overview` (Home), `ProblemsPage`, `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `Heatmap`, `QuestionControls`, `Toast`, `AppSkeleton`, `LoadFailed`, `icons`. |
+| `src/theme.js`, `src/index.css` | Light / dark theme, the colour tokens (RGB triplets as CSS variables, exposed to Tailwind in `tailwind.config.js`), and the shared component classes. Type is Archivo and IBM Plex Mono. |
+| `src/components/` | `TopBar`, `AccountMenu` (sign-in and sync status), `Overview` (Home), `ProblemsPage`, `PatternsView`, `Sidebar`, `Filters`, `ProblemList`, `ProblemDetailDrawer`, `NoteImages`, `ImportDialog`, `Heatmap`, `QuestionControls`, `Toast`, `AppSkeleton`, `LoadFailed`, `Credit`, `icons`. |
+| `src/components/home/` | Home's larger pieces: `DueBoard` (today's reviews), `StudyPlan`, `PatternsPreview`, and the `ListHead` / `Empty` parts its lists share. |
 | `src/serviceWorker.js` | Registers the worker and surfaces the "new version ready" prompt. |
 | `public/sw.js`, `public/manifest.webmanifest` | Offline support and app install. The worker is a template; `vite.config.js` stamps the build id and precache list into `dist/sw.js`. |
 
