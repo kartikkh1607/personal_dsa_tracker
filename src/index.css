@@ -527,6 +527,62 @@
     pointer-events: none;
   }
 
+  /* The difficulty filter's chip and list (DifficultyFilter.jsx). The dot
+     takes its colour from the dif--e/m/h class beside it. */
+  .dif-dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .chev {
+    transition: transform 150ms ease-out;
+  }
+  [aria-expanded='true'] > .chev {
+    transform: rotate(180deg);
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .opt[data-active='true'] {
+    background: rgb(var(--tint));
+  }
+  /* Opens down from the chip, and plays back the other way before it goes.
+     Kept outside the no-preference block on purpose: the list waits for the
+     exit animation to end before unmounting, and under reduced motion the
+     global rule makes that 1ms rather than removing it. */
+  .pop {
+    transform-origin: top left;
+    box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.35);
+  }
+  .pop[data-state='open'] {
+    animation: pop-in 150ms ease-out;
+  }
+  .pop[data-state='closing'] {
+    animation: pop-out 120ms ease-in forwards;
+    pointer-events: none;
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+  }
+
   .kbd {
     font-family: theme('fontFamily.mono');
     font-size: 10.5px;

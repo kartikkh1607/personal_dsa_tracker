@@ -33,6 +33,14 @@ export function SearchIcon({ className = 'h-3.5 w-3.5' }) {
   )
 }
 
+export function ChevronDownIcon({ className = 'h-3 w-3' }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export function ArrowRightIcon({ className = 'h-4 w-4' }) {
   return (
     <svg viewBox="0 0 16 16" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">

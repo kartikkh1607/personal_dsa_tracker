@@ -1,4 +1,4 @@
-import { DIFFICULTIES } from '../constants.js'
+import DifficultyFilter from './DifficultyFilter.jsx'
 import { SearchIcon, ShuffleIcon } from './icons.jsx'
 
 export const ALL = 'All'
@@ -91,19 +91,7 @@ export default function Filters({
           })}
         </div>
 
-        <select
-          value={difficulty}
-          onChange={(event) => onDifficultyChange(event.target.value)}
-          aria-label="Filter by difficulty"
-          className={`chip bg-canvas pr-7 ${difficulty !== ALL ? 'is-on' : ''}`}
-        >
-          <option value={ALL}>Any difficulty</option>
-          {DIFFICULTIES.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <DifficultyFilter value={difficulty} onChange={onDifficultyChange} any={ALL} />
 
         <ToggleChip checked={coreOnly} onChange={onCoreOnlyChange} title="Core: two problems per pattern, the main track of the sheet">
           Core only
