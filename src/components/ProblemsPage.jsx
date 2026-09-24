@@ -86,10 +86,7 @@ export default function ProblemsPage({
           onSelectTopic={(topic) => navigate({ topic: topic === ALL_TOPICS ? null : splitTopic(topic).number, pattern: null, q: '' })}
           currentPhase={currentPhase?.phase}
           isNarrow={isNarrow}
-          search={search}
           searching={searching}
-          onSearchChange={(value) => navigate({ q: value }, { replace: true })}
-          searchInputRef={searchInputRef}
         />
 
         <main id="main-content" tabIndex={-1} className="min-w-0">
@@ -97,6 +94,11 @@ export default function ProblemsPage({
               sidebar and the footer line already say it on screen. */}
           <h1 className="sr-only">{scope.title}</h1>
           <Filters
+            search={search}
+            onSearchChange={(value) => navigate({ q: value }, { replace: true })}
+            searchInputRef={searchInputRef}
+            total={stats.total}
+            searching={searching}
             show={show}
             onShowChange={(value) => navigate({ show: value }, { replace: true })}
             reviewCount={reviewCount}

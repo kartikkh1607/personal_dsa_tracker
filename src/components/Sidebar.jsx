@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { topicName } from '../constants.js'
 import { ProgressBar } from './QuestionControls.jsx'
-import { CheckIcon, SearchIcon } from './icons.jsx'
+import { CheckIcon } from './icons.jsx'
 
 export const ALL_TOPICS = 'All topics'
 
@@ -42,33 +42,10 @@ function TopicItem({ label, solved, total, isSelected, overridden = false, onCli
   )
 }
 
-// The search box leads the sidebar: "/" jumps here from anywhere.
-function Search({ search, onSearchChange, searchInputRef, total }) {
-  return (
-    <div className="mb-4 flex items-center gap-2 rounded-lg border border-line px-2.5 py-[7px] focus-within:border-accent">
-      <SearchIcon className="h-3.5 w-3.5 shrink-0 text-muted" />
-      <input
-        ref={searchInputRef}
-        type="search"
-        value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
-        placeholder={`Search ${total} problems`}
-        aria-label="Search problems or patterns"
-        className="w-full min-w-0 bg-transparent text-[13px] text-ink placeholder:text-muted focus:outline-none"
-      />
-      {search === '' && (
-        <kbd className="kbd hidden shrink-0 sm:inline" aria-hidden="true">
-          /
-        </kbd>
-      )}
-    </div>
-  )
-}
-
-// Search, then the study plan as a tree: the six phases, each with its topics.
+// The study plan as a tree: the six phases, each with its topics.
 // Only the phase you're working in starts open, so the list reads as a plan
 // rather than 23 empty bars.
-export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTopic, currentPhase, isNarrow, search, searching, onSearchChange, searchInputRef }) {
+export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTopic, currentPhase, isNarrow, searching }) {
   const selectedPhase = phaseStats.find((phase) => phase.topics.some((topic) => topic.topic === selectedTopic))?.phase
   const [expanded, setExpanded] = useState(() => new Set([selectedPhase ?? currentPhase]))
 
@@ -86,24 +63,10 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
     })
   }
 
-  // While a search runs it covers the whole sheet, so the selected topic is
-  // set aside: dimmed rather than cleared, and back once the search is empty.
-  const searchBox = (
-    <>
-      <Search search={search} onSearchChange={onSearchChange} searchInputRef={searchInputRef} total={overall.total} />
-      {searching && (
-        <p className="lbl -mt-2 mb-4 text-accent" role="status">
-          Searching all problems
-        </p>
-      )}
-    </>
-  )
-
-  // Narrow screens: the tree collapses into a dropdown under the search box.
+  // Narrow screens: the tree collapses into a dropdown.
   if (isNarrow) {
     return (
       <div>
-        {searchBox}
         <label htmlFor="topic-select" className="lbl block">
           Topic
         </label>
@@ -132,7 +95,6 @@ export default function Sidebar({ phaseStats, overall, selectedTopic, onSelectTo
 
   return (
     <aside className="self-start min-[1001px]:sticky min-[1001px]:top-5">
-      {searchBox}
       <h2 className="lbl mb-2">Study plan</h2>
       <nav aria-label="Topics" className="max-h-80 overflow-y-auto min-[1001px]:max-h-[calc(100dvh-190px)]">
         <TopicItem

@@ -1,5 +1,5 @@
 import { DIFFICULTIES } from '../constants.js'
-import { ShuffleIcon } from './icons.jsx'
+import { SearchIcon, ShuffleIcon } from './icons.jsx'
 
 export const ALL = 'All'
 
@@ -21,11 +21,42 @@ function ToggleChip({ checked, onChange, title, children }) {
   )
 }
 
+// Search leads the filter row: it covers the whole sheet, so it sits above the
+// list rather than in the topic tree. "/" jumps here from anywhere. It keeps
+// its width when the row gets tight - the row wraps instead - and takes the
+// full width on phones.
+function Search({ search, onSearchChange, searchInputRef, total }) {
+  return (
+    <div className="flex w-full items-center gap-2 rounded-lg border border-line px-2.5 py-[7px] focus-within:border-accent sm:w-auto sm:min-w-[240px] sm:max-w-[360px] sm:flex-[1_1_240px]">
+      <SearchIcon className="h-3.5 w-3.5 shrink-0 text-muted" />
+      <input
+        ref={searchInputRef}
+        type="search"
+        value={search}
+        onChange={(event) => onSearchChange(event.target.value)}
+        placeholder={`Search ${total} problems`}
+        aria-label="Search problems or patterns"
+        className="w-full min-w-0 bg-transparent text-[13px] text-ink placeholder:text-muted focus:outline-none"
+      />
+      {search === '' && (
+        <kbd className="kbd hidden shrink-0 sm:inline" aria-hidden="true">
+          /
+        </kbd>
+      )}
+    </div>
+  )
+}
+
 function Kbd({ children }) {
   return <kbd className="kbd mr-1">{children}</kbd>
 }
 
 export default function Filters({
+  search,
+  onSearchChange,
+  searchInputRef,
+  total,
+  searching,
   show,
   onShowChange,
   reviewCount,
@@ -43,6 +74,7 @@ export default function Filters({
   return (
     <div className="shrink-0">
       <div className="flex flex-wrap items-center gap-2 border-b border-line pb-3">
+        <Search search={search} onSearchChange={onSearchChange} searchInputRef={searchInputRef} total={total} />
         <div role="group" aria-label="Show" className="seg">
           {SHOW_OPTIONS.map((option) => {
             const count = option.value === 'review' && reviewCount > 0 ? reviewCount : null
@@ -98,6 +130,14 @@ export default function Filters({
           <ShuffleIcon className="h-3.5 w-3.5" />
         </button>
       </div>
+
+      {/* A search covers the whole sheet, so the selected topic is set aside
+          while it runs: the sidebar dims it, and this says why. */}
+      {searching && (
+        <p className="lbl pt-[9px] text-accent" role="status">
+          Searching all problems
+        </p>
+      )}
 
       {/* Every shortcut the problems page listens for, including the two review
           keys. Shown from the small breakpoint up rather than only on wide
