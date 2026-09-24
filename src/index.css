@@ -219,6 +219,12 @@
   .board tbody tr.group-row th {
     color: rgb(var(--ink));
   }
+  /* ...but its solved count stays muted. The label says what the group is, the
+     count how far along it is: a bright count on every group down the page is
+     noise. */
+  .board tbody tr.group-row .group-count {
+    color: rgb(var(--muted));
+  }
   .board td {
     padding: 9px 10px;
     border-bottom: 1px solid rgb(var(--line));

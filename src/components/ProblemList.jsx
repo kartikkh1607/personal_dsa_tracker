@@ -88,7 +88,7 @@ export default function ProblemList({ groups, groupByPattern, progress, today, o
             <th colSpan={5} scope="colgroup" className="sticky top-0 z-10 !bg-canvas !pb-1.5 !pt-4 text-left">
               <span className="flex items-baseline justify-between gap-3">
                 <span className="truncate">{group.label}</span>
-                <span className="shrink-0 tracking-normal">
+                <span className="group-count shrink-0 tracking-normal">
                   {group.solved}/{group.items.length}
                 </span>
               </span>
