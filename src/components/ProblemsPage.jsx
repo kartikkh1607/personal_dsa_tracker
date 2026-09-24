@@ -80,7 +80,10 @@ export default function ProblemsPage({
           phaseStats={stats.phaseStats}
           overall={stats}
           selectedTopic={selectedTopic}
-          onSelectTopic={(topic) => navigate({ topic: topic === ALL_TOPICS ? null : splitTopic(topic).number, pattern: null })}
+          // Picking a topic is asking for that topic, so it ends any search -
+          // otherwise the search would keep overriding it and the click would
+          // look like it did nothing.
+          onSelectTopic={(topic) => navigate({ topic: topic === ALL_TOPICS ? null : splitTopic(topic).number, pattern: null, q: '' })}
           currentPhase={currentPhase?.phase}
           isNarrow={isNarrow}
           search={search}
