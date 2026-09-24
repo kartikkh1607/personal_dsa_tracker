@@ -79,7 +79,7 @@ Sync is optional: with no `.env.local` the app runs entirely on local storage. S
 <kbd>g</kbd> and <kbd>s</kbd> work on the problem that's focused in the list and inside the
 open detail panel, and only when that problem is actually due for review.
 
-**Tiers, phases and steps** come from the Excel sheet. `Core` (388 problems) is the main track.
+**Tiers, phases and steps** come from the Excel sheet. `Core` (387 problems) is the main track.
 It deliberately skips the advanced patterns (SCC, Euler path, bridges and articulation points,
 binary lifting, bitmask DP, and everything in Advanced DS), which live in Depth and Stretch.
 `Depth` adds reps on shaky patterns, and `Stretch` is Hard + Advanced DS. Each problem's

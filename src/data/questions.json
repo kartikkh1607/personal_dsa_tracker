@@ -180,23 +180,8 @@
     "linkVerified": true
   },
   {
-    "id": 14,
-    "step": 13,
-    "stage": "1. Foundations - Core",
-    "topic": "01. Basics & Recursion",
-    "pattern": "Divide & Conquer",
-    "problem": "Count Inversions",
-    "difficulty": "Medium",
-    "tier": "Core",
-    "phase": 1,
-    "phaseName": "Foundations",
-    "platform": "GeeksforGeeks",
-    "link": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
-    "linkVerified": true
-  },
-  {
     "id": 15,
-    "step": 14,
+    "step": 13,
     "stage": "1. Foundations - Core",
     "topic": "01. Basics & Recursion",
     "pattern": "Divide & Conquer",
@@ -211,7 +196,7 @@
   },
   {
     "id": 18,
-    "step": 15,
+    "step": 14,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Basics",
@@ -226,7 +211,7 @@
   },
   {
     "id": 19,
-    "step": 16,
+    "step": 15,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Basics",
@@ -241,7 +226,7 @@
   },
   {
     "id": 20,
-    "step": 17,
+    "step": 16,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Basics",
@@ -256,7 +241,7 @@
   },
   {
     "id": 21,
-    "step": 18,
+    "step": 17,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Two pointers",
@@ -271,7 +256,7 @@
   },
   {
     "id": 22,
-    "step": 19,
+    "step": 18,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Two pointers",
@@ -286,7 +271,7 @@
   },
   {
     "id": 76,
-    "step": 20,
+    "step": 19,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Two pointers",
@@ -301,7 +286,7 @@
   },
   {
     "id": 77,
-    "step": 21,
+    "step": 20,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Two pointers",
@@ -316,7 +301,7 @@
   },
   {
     "id": 23,
-    "step": 22,
+    "step": 21,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Dutch National Flag",
@@ -331,7 +316,7 @@
   },
   {
     "id": 25,
-    "step": 23,
+    "step": 22,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Dutch National Flag",
@@ -346,7 +331,7 @@
   },
   {
     "id": 26,
-    "step": 24,
+    "step": 23,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Frequency scan",
@@ -361,7 +346,7 @@
   },
   {
     "id": 27,
-    "step": 25,
+    "step": 24,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Frequency scan",
@@ -376,7 +361,7 @@
   },
   {
     "id": 11,
-    "step": 26,
+    "step": 25,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Voting / counting",
@@ -391,7 +376,7 @@
   },
   {
     "id": 29,
-    "step": 27,
+    "step": 26,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Voting / counting",
@@ -406,7 +391,7 @@
   },
   {
     "id": 30,
-    "step": 28,
+    "step": 27,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Rearrangement",
@@ -421,7 +406,7 @@
   },
   {
     "id": 31,
-    "step": 29,
+    "step": 28,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "Rearrangement",
@@ -436,7 +421,7 @@
   },
   {
     "id": 32,
-    "step": 30,
+    "step": 29,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "K-Sum",
@@ -451,7 +436,7 @@
   },
   {
     "id": 33,
-    "step": 31,
+    "step": 30,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "K-Sum",
@@ -466,7 +451,7 @@
   },
   {
     "id": 34,
-    "step": 32,
+    "step": 31,
     "stage": "1. Foundations - Core",
     "topic": "02. Arrays & Two Pointers",
     "pattern": "K-Sum",
@@ -481,7 +466,7 @@
   },
   {
     "id": 58,
-    "step": 33,
+    "step": 32,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Custom comparator",
@@ -496,7 +481,7 @@
   },
   {
     "id": 59,
-    "step": 34,
+    "step": 33,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Custom comparator",
@@ -511,7 +496,7 @@
   },
   {
     "id": 60,
-    "step": 35,
+    "step": 34,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Custom comparator",
@@ -526,7 +511,7 @@
   },
   {
     "id": 61,
-    "step": 36,
+    "step": 35,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Counting sort",
@@ -541,7 +526,7 @@
   },
   {
     "id": 62,
-    "step": 37,
+    "step": 36,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Counting sort",
@@ -556,7 +541,7 @@
   },
   {
     "id": 63,
-    "step": 38,
+    "step": 37,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Counting sort",
@@ -571,7 +556,7 @@
   },
   {
     "id": 64,
-    "step": 39,
+    "step": 38,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Counting sort",
@@ -586,7 +571,7 @@
   },
   {
     "id": 65,
-    "step": 40,
+    "step": 39,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Cyclic sort",
@@ -601,7 +586,7 @@
   },
   {
     "id": 66,
-    "step": 41,
+    "step": 40,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Cyclic sort",
@@ -616,7 +601,7 @@
   },
   {
     "id": 67,
-    "step": 42,
+    "step": 41,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Sorting application",
@@ -631,7 +616,7 @@
   },
   {
     "id": 68,
-    "step": 43,
+    "step": 42,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Sorting application",
@@ -646,7 +631,7 @@
   },
   {
     "id": 69,
-    "step": 44,
+    "step": 43,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Sorting application",
@@ -661,7 +646,7 @@
   },
   {
     "id": 83,
-    "step": 45,
+    "step": 44,
     "stage": "1. Foundations - Core",
     "topic": "03. Sorting & Cyclic Sort",
     "pattern": "Sorting application",
@@ -676,7 +661,7 @@
   },
   {
     "id": 185,
-    "step": 46,
+    "step": 45,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set basics",
@@ -691,7 +676,7 @@
   },
   {
     "id": 186,
-    "step": 47,
+    "step": 46,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set basics",
@@ -706,7 +691,7 @@
   },
   {
     "id": 187,
-    "step": 48,
+    "step": 47,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set basics",
@@ -721,7 +706,7 @@
   },
   {
     "id": 143,
-    "step": 49,
+    "step": 48,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set basics",
@@ -736,7 +721,7 @@
   },
   {
     "id": 16,
-    "step": 50,
+    "step": 49,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Complement lookup",
@@ -751,7 +736,7 @@
   },
   {
     "id": 188,
-    "step": 51,
+    "step": 50,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Frequency map",
@@ -766,7 +751,7 @@
   },
   {
     "id": 189,
-    "step": 52,
+    "step": 51,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Frequency map",
@@ -781,7 +766,7 @@
   },
   {
     "id": 190,
-    "step": 53,
+    "step": 52,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set + scan",
@@ -796,7 +781,7 @@
   },
   {
     "id": 191,
-    "step": 54,
+    "step": 53,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set + scan",
@@ -811,7 +796,7 @@
   },
   {
     "id": 192,
-    "step": 55,
+    "step": 54,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set + scan",
@@ -826,7 +811,7 @@
   },
   {
     "id": 193,
-    "step": 56,
+    "step": 55,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Set + scan",
@@ -841,7 +826,7 @@
   },
   {
     "id": 194,
-    "step": 57,
+    "step": 56,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Cycle detection",
@@ -856,7 +841,7 @@
   },
   {
     "id": 195,
-    "step": 58,
+    "step": 57,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Grid hashing",
@@ -871,7 +856,7 @@
   },
   {
     "id": 196,
-    "step": 59,
+    "step": 58,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Grid hashing",
@@ -886,7 +871,7 @@
   },
   {
     "id": 197,
-    "step": 60,
+    "step": 59,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Grid hashing",
@@ -901,7 +886,7 @@
   },
   {
     "id": 198,
-    "step": 61,
+    "step": 60,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Line hashing",
@@ -916,7 +901,7 @@
   },
   {
     "id": 199,
-    "step": 62,
+    "step": 61,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Line hashing",
@@ -931,7 +916,7 @@
   },
   {
     "id": 201,
-    "step": 63,
+    "step": 62,
     "stage": "1. Foundations - Core",
     "topic": "04. Hashing",
     "pattern": "Meet in the middle",
@@ -946,7 +931,7 @@
   },
   {
     "id": 47,
-    "step": 64,
+    "step": 63,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Prefix basics",
@@ -961,7 +946,7 @@
   },
   {
     "id": 48,
-    "step": 65,
+    "step": 64,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Prefix basics",
@@ -976,7 +961,7 @@
   },
   {
     "id": 109,
-    "step": 66,
+    "step": 65,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Prefix basics",
@@ -991,7 +976,7 @@
   },
   {
     "id": 50,
-    "step": 67,
+    "step": 66,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Kadane",
@@ -1006,7 +991,7 @@
   },
   {
     "id": 17,
-    "step": 68,
+    "step": 67,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Kadane",
@@ -1021,7 +1006,7 @@
   },
   {
     "id": 49,
-    "step": 69,
+    "step": 68,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Kadane",
@@ -1036,7 +1021,7 @@
   },
   {
     "id": 111,
-    "step": 70,
+    "step": 69,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Kadane",
@@ -1051,7 +1036,7 @@
   },
   {
     "id": 51,
-    "step": 71,
+    "step": 70,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Prefix + HashMap",
@@ -1066,7 +1051,7 @@
   },
   {
     "id": 52,
-    "step": 72,
+    "step": 71,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Prefix + HashMap",
@@ -1081,7 +1066,7 @@
   },
   {
     "id": 53,
-    "step": 73,
+    "step": 72,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Difference array",
@@ -1096,7 +1081,7 @@
   },
   {
     "id": 54,
-    "step": 74,
+    "step": 73,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Difference array",
@@ -1111,7 +1096,7 @@
   },
   {
     "id": 55,
-    "step": 75,
+    "step": 74,
     "stage": "1. Foundations - Core",
     "topic": "05. Prefix Sum & Kadane",
     "pattern": "Difference array",
@@ -1126,7 +1111,7 @@
   },
   {
     "id": 35,
-    "step": 76,
+    "step": 75,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Fixed window",
@@ -1141,7 +1126,7 @@
   },
   {
     "id": 36,
-    "step": 77,
+    "step": 76,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Fixed window",
@@ -1156,7 +1141,7 @@
   },
   {
     "id": 37,
-    "step": 78,
+    "step": 77,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Fixed window",
@@ -1171,7 +1156,7 @@
   },
   {
     "id": 38,
-    "step": 79,
+    "step": 78,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Variable window",
@@ -1186,7 +1171,7 @@
   },
   {
     "id": 39,
-    "step": 80,
+    "step": 79,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Variable window",
@@ -1201,7 +1186,7 @@
   },
   {
     "id": 93,
-    "step": 81,
+    "step": 80,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Variable window",
@@ -1216,7 +1201,7 @@
   },
   {
     "id": 94,
-    "step": 82,
+    "step": 81,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Variable window",
@@ -1231,7 +1216,7 @@
   },
   {
     "id": 40,
-    "step": 83,
+    "step": 82,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Anagram window",
@@ -1246,7 +1231,7 @@
   },
   {
     "id": 41,
-    "step": 84,
+    "step": 83,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Anagram window",
@@ -1261,7 +1246,7 @@
   },
   {
     "id": 42,
-    "step": 85,
+    "step": 84,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Count exactly-K trick",
@@ -1276,7 +1261,7 @@
   },
   {
     "id": 43,
-    "step": 86,
+    "step": 85,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Count exactly-K trick",
@@ -1291,7 +1276,7 @@
   },
   {
     "id": 45,
-    "step": 87,
+    "step": 86,
     "stage": "1. Foundations - Core",
     "topic": "06. Sliding Window",
     "pattern": "Hard window",
@@ -1302,6 +1287,21 @@
     "phaseName": "Foundations",
     "platform": "LeetCode",
     "link": "https://leetcode.com/problems/minimum-window-substring/",
+    "linkVerified": true
+  },
+  {
+    "id": 14,
+    "step": 87,
+    "stage": "1. Foundations - Depth",
+    "topic": "01. Basics & Recursion",
+    "pattern": "Divide & Conquer",
+    "problem": "Count Inversions",
+    "difficulty": "Medium",
+    "tier": "Depth",
+    "phase": 1,
+    "phaseName": "Foundations",
+    "platform": "GeeksforGeeks",
+    "link": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
     "linkVerified": true
   },
   {
