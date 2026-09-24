@@ -214,6 +214,11 @@
     color: rgb(var(--muted));
     white-space: nowrap;
   }
+  /* A group heading labels the rows under it, so it can't be quieter than
+     them. The column headers above stay muted: they're chrome, not content. */
+  .board tbody tr.group-row th {
+    color: rgb(var(--ink));
+  }
   .board td {
     padding: 9px 10px;
     border-bottom: 1px solid rgb(var(--line));
