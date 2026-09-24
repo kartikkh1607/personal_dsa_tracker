@@ -29,7 +29,7 @@ vi.mock('../sync/client.js', () => ({
 
 vi.mock('../sync/cloud.js', () => ({ pullRows: vi.fn(), pushRows: vi.fn(async () => {}) }))
 
-const IDS = new Set(['1', '2', '3'])
+const IDS = new Set(['1', '2', '3', '4', '5', '6', '7', '8'])
 const at = (day) => `2026-09-${day}T10:00:00.000Z`
 const row = (id, data) => ({ question_id: id, data, deleted_at: null, updated_at: data.updatedAt })
 
@@ -61,12 +61,27 @@ describe('the toast after signing in', () => {
     expect(await signIn({ local: same, cloud })).not.toHaveBeenCalled()
   })
 
-  it('still reports a merge that combined two sides', async () => {
+  it('counts only the entry ticked while signed out, not the ones both sides agree on', async () => {
+    const agreed = [1, 2, 3, 4, 5, 6, 7].map((id) => row(id, { solved: true, updatedAt: at('10') }))
+    const local = Object.fromEntries(agreed.map((r) => [r.question_id, r.data]))
+    local[8] = { solved: true, updatedAt: at('20') }
+    expect(await signIn({ local, cloud: agreed })).toHaveBeenCalledWith('1 change from this device merged in')
+  })
+
+  it('splits the changes by side when both contributed', async () => {
     const showToast = await signIn({
-      // 1 only here, 2 in both with the cloud's newer, 3 only in the cloud.
-      local: { 1: { solved: true, updatedAt: at('10') }, 2: { solved: true, updatedAt: at('11') } },
-      cloud: [row(2, { solved: true, notes: 'later', updatedAt: at('12') }), row(3, { bookmarked: true, updatedAt: at('12') })],
+      local: { 1: { solved: true, updatedAt: at('10') } },
+      cloud: [row(3, { bookmarked: true, updatedAt: at('12') })],
     })
-    expect(showToast).toHaveBeenCalledWith('Merged 1 local + 2 cloud entries')
+    expect(showToast).toHaveBeenCalledWith('2 changes merged: 1 from this device, 1 from your account')
+  })
+
+  it('reports a conflict separately from the changes', async () => {
+    const showToast = await signIn({
+      // 1 only here, 2 in both with the cloud's newer.
+      local: { 1: { solved: true, updatedAt: at('10') }, 2: { solved: true, updatedAt: at('11') } },
+      cloud: [row(2, { solved: true, notes: 'later', updatedAt: at('12') })],
+    })
+    expect(showToast).toHaveBeenCalledWith('1 change from this device merged in · 1 conflict resolved by most recent')
   })
 })

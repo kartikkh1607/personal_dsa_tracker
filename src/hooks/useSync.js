@@ -165,9 +165,8 @@ export function useSync({ progress, tombstones, questionIds, applySynced, showTo
         setLastSyncedAt(Date.now())
         setError(null)
         setStatus('idle')
-        if (announce === 'always' || (announce === 'if-two-sided' && mergeWasTwoSided(merged.stats))) {
-          showToast(mergeSummary(merged.stats))
-        }
+        if (announce === 'always') showToast(mergeSummary(merged.stats) ?? 'Nothing to merge')
+        else if (announce === 'if-two-sided' && mergeWasTwoSided(merged.stats)) showToast(mergeSummary(merged.stats))
       } catch (cause) {
         // A failed round changes nothing: the progress in this browser is
         // untouched and the same merge is attempted again on the next trigger.

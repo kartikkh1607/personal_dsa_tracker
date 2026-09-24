@@ -117,9 +117,7 @@ test('a first sign-in keeps both sides and says what it merged', async ({ page, 
   // The sign-in link landing back on the app.
   await page.goto('/?code=stub-auth-code')
 
-  await expect(page.getByText(/^Merged /)).toBeVisible({ timeout: 15_000 })
-  await expect(page.getByText(/^Merged /)).toContainText('1 local')
-  await expect(page.getByText(/^Merged /)).toContainText('1 cloud')
+  await expect(page.getByText('2 changes merged: 1 from this device, 1 from your account', { exact: true })).toBeVisible({ timeout: 15_000 })
 
   // Neither side lost, on the device...
   await expect.poll(() => savedProgress(page).then(Object.keys)).toEqual(['1', '2'])

@@ -202,10 +202,10 @@ export function mergeProgress({ local = {}, tombstones = {}, remote = [], questi
   const progress = {}
   const nextTombstones = {}
   const push = []
-  // localOnly and collided count the entries where two sides actually met:
-  // one the cloud had never seen, or one both sides held in different
-  // versions. A plain pull of the account has neither.
-  const stats = { fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0, localOnly: 0, collided: 0 }
+  // What actually changed, for the toast: entries only this device had, entries
+  // only the account had, and entries both held in different versions. An
+  // entry both sides already agree on counts in none of them.
+  const stats = { fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0, localOnly: 0, cloudOnly: 0, collided: 0 }
 
   for (const id of ids) {
     const localEntry = local[id] ?? null
@@ -237,6 +237,7 @@ export function mergeProgress({ local = {}, tombstones = {}, remote = [], questi
     else if (source === 'cloud') stats.fromCloud++
     else stats.merged++
     if (localEntry && !remoteEntry) stats.localOnly++
+    else if (!localEntry && remoteEntry) stats.cloudOnly++
     else if (localEntry && remoteEntry && differ(localEntry, remoteEntry)) stats.collided++
 
     // Push anything the cloud doesn't already have in this exact form.
@@ -260,12 +261,32 @@ export function mergeWasTwoSided(stats) {
   return (stats?.localOnly ?? 0) + (stats?.collided ?? 0) > 0
 }
 
-// "Merged 84 local + 12 cloud entries", for the toast after a first sign-in.
+const count = (n, one, many) => `${n} ${n === 1 ? one : many}`
+
+// What a merge changed, in words, or null when it changed nothing:
+//   "1 change from this device merged in"
+//   "2 changes merged: 1 from this device, 1 from your account"
+//   "1 conflict resolved by most recent"
+// Only entries that were new to one side, or different on the two, count;
+// the ones both sides already agreed on are left out of the numbers.
 export function mergeSummary(stats) {
+  const fromDevice = stats?.localOnly ?? 0
+  const fromAccount = stats?.cloudOnly ?? 0
+  const combined = stats?.merged ?? 0
+  const byRecency = (stats?.collided ?? 0) - combined
   const parts = []
-  if (stats.fromLocal > 0) parts.push(`${stats.fromLocal} local`)
-  if (stats.fromCloud > 0) parts.push(`${stats.fromCloud} cloud`)
-  if (stats.merged > 0) parts.push(`${stats.merged} combined`)
-  if (parts.length === 0) return 'Nothing to merge'
-  return `Merged ${parts.join(' + ')} ${stats.fromLocal + stats.fromCloud + stats.merged === 1 ? 'entry' : 'entries'}`
+
+  if (fromDevice > 0 && fromAccount > 0) {
+    parts.push(
+      `${count(fromDevice + fromAccount, 'change', 'changes')} merged: ${fromDevice} from this device, ${fromAccount} from your account`,
+    )
+  } else if (fromDevice > 0) {
+    parts.push(`${count(fromDevice, 'change', 'changes')} from this device merged in`)
+  } else if (fromAccount > 0) {
+    parts.push(`${count(fromAccount, 'change', 'changes')} from your account merged in`)
+  }
+  if (byRecency > 0) parts.push(`${count(byRecency, 'conflict', 'conflicts')} resolved by most recent`)
+  if (combined > 0) parts.push(`${count(combined, 'conflict', 'conflicts')} resolved by keeping both`)
+
+  return parts.length > 0 ? parts.join(' · ') : null
 }

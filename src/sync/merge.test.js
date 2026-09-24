@@ -357,11 +357,38 @@ describe('unionEntries', () => {
 })
 
 describe('mergeSummary', () => {
-  it('reads as a sentence for the toast', () => {
-    expect(mergeSummary({ fromLocal: 84, fromCloud: 12, merged: 0, deleted: 0 })).toBe('Merged 84 local + 12 cloud entries')
-    expect(mergeSummary({ fromLocal: 1, fromCloud: 0, merged: 0, deleted: 0 })).toBe('Merged 1 local entry')
-    expect(mergeSummary({ fromLocal: 3, fromCloud: 2, merged: 4, deleted: 0 })).toBe('Merged 3 local + 2 cloud + 4 combined entries')
-    expect(mergeSummary({ fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0 })).toBe('Nothing to merge')
+  const stats = (counts) => ({ fromLocal: 0, fromCloud: 0, merged: 0, deleted: 0, localOnly: 0, cloudOnly: 0, collided: 0, ...counts })
+
+  it('counts what changed, not everything the merge touched', () => {
+    // Eight entries after the merge, seven of which both sides already agreed on.
+    expect(mergeSummary(stats({ fromLocal: 1, fromCloud: 7, localOnly: 1 }))).toBe('1 change from this device merged in')
+    expect(mergeSummary(stats({ localOnly: 3 }))).toBe('3 changes from this device merged in')
+    expect(mergeSummary(stats({ cloudOnly: 1 }))).toBe('1 change from your account merged in')
+  })
+
+  it('splits the changes by side when both contributed', () => {
+    expect(mergeSummary(stats({ localOnly: 1, cloudOnly: 1 }))).toBe('2 changes merged: 1 from this device, 1 from your account')
+  })
+
+  it('reports conflicts separately', () => {
+    expect(mergeSummary(stats({ collided: 1 }))).toBe('1 conflict resolved by most recent')
+    expect(mergeSummary(stats({ localOnly: 1, collided: 2 }))).toBe('1 change from this device merged in · 2 conflicts resolved by most recent')
+    // Pre-sync copies with no stamp to compare are combined rather than picked.
+    expect(mergeSummary(stats({ collided: 2, merged: 1 }))).toBe('1 conflict resolved by most recent · 1 conflict resolved by keeping both')
+  })
+
+  it('has nothing to say when nothing changed', () => {
+    expect(mergeSummary(stats({ fromCloud: 7 }))).toBeNull()
+  })
+
+  it('reads the counts off a real merge', () => {
+    const result = mergeProgress({
+      local: { 1: { solved: true, updatedAt: at('10') }, 2: { solved: true, updatedAt: at('11') }, 3: { bookmarked: true, updatedAt: at('10') } },
+      remote: [row(2, { solved: true, notes: 'x', updatedAt: at('12') }), row(3, { bookmarked: true, updatedAt: at('10') }), row(4, { solved: true, updatedAt: at('10') })],
+      questionIds: IDS,
+    })
+    expect(result.stats).toMatchObject({ localOnly: 1, cloudOnly: 1, collided: 1 })
+    expect(mergeSummary(result.stats)).toBe('2 changes merged: 1 from this device, 1 from your account · 1 conflict resolved by most recent')
   })
 })
 
