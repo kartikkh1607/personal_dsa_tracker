@@ -86,8 +86,17 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
       rel="noopener noreferrer"
       aria-label={`${action}: ${problem}`}
       title={action}
-      className={`inline-flex shrink-0 items-center gap-1 rounded text-xs text-muted hover:text-accent hover:underline ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded text-xs text-muted hover:underline ${className}`}
     >
+      {/* The platform's initial in a small square. Text stays muted: with 900+
+          rows, a coloured link per row would drown the "due today" signal. An
+          unconfirmed link searches Google, so it keeps the search icon and
+          gets no mark - a G there would read as GeeksforGeeks. */}
+      {verified && (
+        <span aria-hidden="true" className="mono grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[3px] bg-tint text-[9px] font-semibold no-underline">
+          {platform[0]}
+        </span>
+      )}
       <span className={variant === 'compact' ? 'hidden lg:inline' : ''}>{verified ? platform : 'Google'}</span>
       {icon}
     </a>
