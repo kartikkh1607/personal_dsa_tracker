@@ -21,7 +21,7 @@ function problemStatus(entry, today) {
 }
 
 // One row per problem. Memoised on primitives, so ticking a problem re-renders
-// that row only rather than all 922. The data-* hooks are what the j/k/x/b
+// that row only rather than all 917. The data-* hooks are what the j/k/x/b
 // keyboard shortcuts look for.
 const ProblemRow = memo(function ProblemRow({ question, solved, bookmarked, status, statusTitle, statusDue, noted, link, meta, onToggleSolved, onToggleBookmark, onOpen }) {
   return (

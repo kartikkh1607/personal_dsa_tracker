@@ -1,7 +1,7 @@
 {
   "name": "DSA Tracker",
   "short_name": "DSA Tracker",
-  "description": "Track your progress through 922 DSA problems across 23 topics.",
+  "description": "Track your progress through 917 DSA problems across 23 topics.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
