@@ -119,8 +119,8 @@ describe('old question ids', () => {
   it('maps every old id to a distinct existing problem', () => {
     const ids = new Set(questions.map((question) => question.id))
     const targets = Object.values(legacyIds)
-    expect(targets).toHaveLength(570)
-    expect(new Set(targets).size).toBe(570)
+    expect(targets).toHaveLength(569)
+    expect(new Set(targets).size).toBe(569)
     expect(targets.every((id) => ids.has(id))).toBe(true)
   })
 

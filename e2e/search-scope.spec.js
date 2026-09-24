@@ -17,7 +17,7 @@ test('clicking a topic while searching clears the search and shows that topic', 
   await expect(search).toHaveValue('')
   await expect(page.getByText('Searching all problems', { exact: true })).toBeHidden()
   await expect(page.getByRole('heading', { level: 1, name: 'Sliding Window' })).toBeAttached()
-  expect(await page.evaluate(() => location.hash)).toBe('#/problems?topic=03')
+  expect(await page.evaluate(() => location.hash)).toBe('#/problems?topic=06')
   // Grouped by pattern again, as a single topic is - not by topic, as a search is.
   expect(await topics(page)).not.toContain('Basics & Recursion')
 })
@@ -29,9 +29,9 @@ test('picking from the phone dropdown while searching does the same', async ({ p
   await search.fill('sum')
   await expect(page.getByText('Searching all problems', { exact: true })).toBeVisible()
 
-  await page.getByLabel('Topic').selectOption({ label: 'Sliding Window (0/33)' })
+  await page.getByLabel('Topic').selectOption({ label: 'Sliding Window (0/28)' })
 
   await expect(search).toHaveValue('')
   await expect(page.getByText('Searching all problems', { exact: true })).toBeHidden()
-  expect(await page.evaluate(() => location.hash)).toBe('#/problems?topic=03')
+  expect(await page.evaluate(() => location.hash)).toBe('#/problems?topic=06')
 })

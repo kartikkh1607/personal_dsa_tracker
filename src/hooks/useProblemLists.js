@@ -66,13 +66,14 @@ export function useStats({ questions, topics, phases, topicPhase, progress, toda
 // `extraReviews` is what "Review more" adds: the day's budget, deliberately
 // raised, rather than the cap being quietly ignored.
 export function useHomeLists({ questions, progress, today, extraReviews = 0 }) {
-  // The sheet's study path: ids are its steps, so each phase's Core, Depth and
-  // Stretch problems come before the next phase.
+  // The sheet's study path, in step order: each phase's Core, Depth and
+  // Stretch problems come before the next phase. Ids are stable keys for saved
+  // progress and don't follow the path.
   const upNext = useMemo(
     () =>
       questions
         .filter((question) => !progress[question.id]?.solved)
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => a.step - b.step)
         .slice(0, UP_NEXT_COUNT),
     [progress, questions],
   )

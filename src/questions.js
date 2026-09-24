@@ -8,7 +8,7 @@ import { splitTopic } from './constants.js'
 // worker (see the plugin in vite.config.js) and cached across deploys until
 // the data actually changes.
 
-export const EXPECTED_QUESTIONS = 922
+export const EXPECTED_QUESTIONS = 917
 export const EXPECTED_TOPICS = 23
 
 // Everything the app derives from the raw list, built once. Kept pure and
