@@ -105,10 +105,26 @@ function Lightbox({ id, onClose }) {
   )
 }
 
-// Thumbnails, then a dashed tile to add another.
+// Thumbnails, then a dashed tile to add another - or, with none yet, a drop
+// zone.
 export default function NoteImages({ ids, onDelete, onAdd, canAdd }) {
   const [openId, setOpenId] = useState(null)
   const closeLightbox = useCallback(() => setOpenId(null), [])
+
+  // No images yet: one wide target that says both ways in, rather than a lone
+  // + that says neither.
+  if (ids.length === 0) {
+    if (!canAdd) return null
+    return (
+      <button
+        type="button"
+        onClick={onAdd}
+        className="block w-full rounded-xl border border-dashed border-rule px-4 py-5 text-center text-[12.5px] text-muted hover:border-accent hover:text-accent"
+      >
+        Paste a screenshot, or click to add
+      </button>
+    )
+  }
 
   return (
     <>

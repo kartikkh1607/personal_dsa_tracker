@@ -70,11 +70,20 @@ export function ProblemLink({ href, verified, platform, problem, variant = 'row'
   const action = verified ? `Open on ${platform}` : 'Search on Google'
   const icon = verified ? <ExternalIcon className="h-3 w-3" /> : <SearchIcon className="h-3 w-3" />
 
+  // The drawer's main action: the source mark, what to do, and where it opens.
+  // The mark is outlined in the button's own text colour, so it holds the same
+  // contrast as the label on --fill.
   if (variant === 'primary') {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={`btn-primary ${className}`}>
-        {action}
-        {icon}
+      <a href={url} target="_blank" rel="noopener noreferrer" className={`btn-primary w-full !justify-start ${className}`}>
+        {verified && (
+          <span aria-hidden="true" className="mono grid h-3.5 w-3.5 shrink-0 place-items-center rounded-[3px] border border-current text-[9px] font-semibold">
+            {platform[0]}
+          </span>
+        )}
+        {!verified && <SearchIcon className="h-3.5 w-3.5 shrink-0" />}
+        <span className="min-w-0 flex-1 truncate">{verified ? `Solve on ${platform}` : 'Search for this problem'}</span>
+        {verified && <ExternalIcon className="h-3.5 w-3.5 shrink-0" />}
       </a>
     )
   }

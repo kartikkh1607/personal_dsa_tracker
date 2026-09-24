@@ -348,15 +348,23 @@ export default function ProblemDetailDrawer({
           <div className="px-5 pb-3.5 pt-4">
             <p className="lbl truncate">
               {topicName(question.topic)} · {question.pattern}
+              {question.tier !== 'Core' && ` · ${question.tier}`}
             </p>
             <h2 id="problem-detail-title" className="mt-[7px] text-[21px] font-[650] leading-[1.22] tracking-[-0.025em]">
               {question.problem}
             </h2>
-            <div className="mt-[11px] flex flex-wrap items-center gap-2">
+            <ProblemLink
+              href={link}
+              verified={question.linkVerified || Boolean(entry.link)}
+              platform={question.platform}
+              problem={question.problem}
+              variant="primary"
+              className="mt-3.5"
+            />
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <Difficulty difficulty={question.difficulty} />
               <span className="step">{solved ? stepLabel(entry) : 'Not solved'}</span>
               {due && <span className="step step--re">Due today</span>}
-              {question.tier !== 'Core' && <span className="step">{question.tier}</span>}
               <button
                 type="button"
                 onClick={() => onToggleBookmark(question.id)}
@@ -368,7 +376,6 @@ export default function ProblemDetailDrawer({
                 <BookmarkIcon filled={bookmarked} className="h-3 w-3" />
                 {bookmarked ? 'Saved' : 'Save'}
               </button>
-              <ProblemLink href={link} verified={question.linkVerified || Boolean(entry.link)} platform={question.platform} problem={question.problem} />
             </div>
             {!question.linkVerified && <LinkFixer key={question.id} customLink={entry.link} onSave={(url) => onLinkChange(question.id, url)} />}
           </div>
