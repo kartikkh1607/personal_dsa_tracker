@@ -17,7 +17,7 @@ export const REVIEW_RESULTS = ['got', 'struggled']
 export const MAX_HISTORY = 20
 
 // Two failed re-solves is the point where a problem is worth calling out.
-export const WEAK_STRUGGLES = 2
+const WEAK_STRUGGLES = 2
 
 export function lastResult(entry) {
   const history = entry?.history

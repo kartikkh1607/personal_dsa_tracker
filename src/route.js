@@ -2,8 +2,8 @@
 // Back/Forward and bookmarks all keep your place. Example:
 //   #/problems?topic=06&show=todo&difficulty=Hard&core=1&notes=1&q=sum&problem=120
 
-export const VIEWS = ['home', 'problems', 'patterns']
-export const SHOW_VALUES = ['all', 'todo', 'solved', 'review', 'saved']
+const VIEWS = ['home', 'problems', 'patterns']
+const SHOW_VALUES = ['all', 'todo', 'solved', 'review', 'saved']
 const DIFFICULTY_VALUES = ['Easy', 'Medium', 'Hard']
 const LAST_ROUTE_KEY = 'dsa-last-route'
 

@@ -4,7 +4,7 @@
 
 // Fields the sync layer keeps for its own bookkeeping rather than fields the
 // user set. An entry holding nothing but these is one the user has cleared.
-export const META_KEYS = ['updatedAt']
+const META_KEYS = ['updatedAt']
 
 export function isEmptyEntry(entry) {
   return Object.keys(entry).every((key) => META_KEYS.includes(key))

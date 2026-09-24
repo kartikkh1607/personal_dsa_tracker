@@ -53,7 +53,7 @@ export function parseBackup(text, questionIds) {
   return progress
 }
 
-export function importedCount(progress) {
+function importedCount(progress) {
   const count = Object.keys(progress).length
   return `Imported progress for ${count} ${count === 1 ? 'problem' : 'problems'}`
 }
@@ -81,13 +81,13 @@ export function mergeImported(progress, imported, questionIds) {
 
 // What a merge actually did, which is not the same as the file's entry count:
 // most of a re-imported backup is usually already here.
-export function mergedCount(before, after) {
+function mergedCount(before, after) {
   const added = Object.keys(after).length - Object.keys(before).length
   if (added <= 0) return 'Merged - nothing new in that file'
   return `Merged in ${added} ${added === 1 ? 'problem' : 'problems'}`
 }
 
-export function replacedCount(progress) {
+function replacedCount(progress) {
   const count = Object.keys(progress).length
   return `Replaced with ${count} ${count === 1 ? 'problem' : 'problems'}`
 }

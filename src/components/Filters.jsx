@@ -3,7 +3,7 @@ import { SearchIcon, ShuffleIcon } from './icons.jsx'
 
 export const ALL = 'All'
 
-export const SHOW_OPTIONS = [
+const SHOW_OPTIONS = [
   { value: 'all', label: 'All' },
   { value: 'todo', label: 'To do' },
   { value: 'solved', label: 'Solved' },

@@ -4,7 +4,7 @@
 // Neither call filters by user beyond the index hint: row level security does
 // that, and a policy the client cannot forget to apply is the point of it.
 
-export const TABLE = 'progress'
+const TABLE = 'progress'
 const COLUMNS = 'question_id, data, updated_at, deleted_at'
 
 // A full sheet is under a thousand rows, so paging is really only insurance

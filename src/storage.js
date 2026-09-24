@@ -10,12 +10,12 @@ import { MAX_HISTORY, REVIEW_RESULTS } from './review.js'
 export const STORAGE_KEY = 'dsa-tracker-progress'
 // Question ids were renumbered when the sheet grew from 570 problems to 922 in
 // study-path order. Progress saved without this version uses the old ids.
-export const DATA_VERSION_KEY = 'dsa-data-version'
+const DATA_VERSION_KEY = 'dsa-data-version'
 export const DATA_VERSION = 3
 const PRE_MIGRATION_KEY = 'dsa-tracker-progress-before-v3'
 export const BACKUP_KEY = 'dsa-last-backup'
 export const BACKUP_SNOOZE_KEY = 'dsa-backup-snoozed-until'
-export const BACKUP_REMIND_AFTER_DAYS = 14
+const BACKUP_REMIND_AFTER_DAYS = 14
 // Entries this browser has cleared, as { [questionId]: isoTimestamp }, kept so
 // the deletion reaches the cloud instead of the row coming back on the next
 // pull. There is at most one per question, so the map is bounded by the size of
@@ -50,7 +50,7 @@ function isDate(value) {
   return typeof value === 'string' && DATE_PATTERN.test(value)
 }
 
-export function isTimestamp(value) {
+function isTimestamp(value) {
   return typeof value === 'string' && TIMESTAMP_PATTERN.test(value)
 }
 

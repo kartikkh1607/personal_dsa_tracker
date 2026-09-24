@@ -12,7 +12,7 @@ export function isTypingTarget(element) {
 }
 
 // The two review outcomes, by key: g for "Got it", s for "Struggled".
-export const REVIEW_KEYS = { g: 'got', s: 'struggled' }
+const REVIEW_KEYS = { g: 'got', s: 'struggled' }
 
 // What pressing a key should record for a problem, or null for nothing.
 // Reviewing early would let you race ahead of the schedule, which is the whole
