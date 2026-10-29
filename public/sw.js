@@ -68,6 +68,9 @@ self.addEventListener('fetch', (event) => {
 
   const sameOrigin = url.origin === self.location.origin
   if (!sameOrigin && !FONT_HOSTS.includes(url.hostname)) return
+  // Vercel Web Analytics lives under /_vercel/. Leave it to the network so the
+  // analytics script is never served stale from the cache.
+  if (sameOrigin && url.pathname.startsWith('/_vercel/')) return
 
   event.respondWith(
     caches.match(request).then(
